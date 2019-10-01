@@ -32,6 +32,7 @@ public class EventManager {
                 if (method.getParameterCount() == 1 && Event.class.isAssignableFrom(method.getParameterTypes()[0])) {
                     method.setAccessible(true);
 
+                    @SuppressWarnings("unchecked")
                     Class<? extends Event> clazz = (Class<? extends Event>) method.getParameterTypes()[0];
 
                     if (!SUBSCRIBERS.containsKey(clazz)) {
