@@ -6,7 +6,7 @@ import java.util.*;
 
 /**
  * The EventManager class watches all the GLFW events (such as user input, window events...) and game-fired events.
- * When such an event is fired, the EventManager notifies all the subscribed objects so that they can be handled.
+ * When such an event is fired, the EventManager invokes all the associated event handlers so that they can be handled.
  *
  * @author Antoine
  */
@@ -14,58 +14,58 @@ public class EventManager {
     /**
      * Contains a set of subscribers for registered Event classes
      */
-    private static final Map<Class<? extends Event>, SortedSet<Subscriber>> SUBSCRIBERS = new HashMap<>();
+    private static final Map<Class<? extends Event>, SortedSet<Handler>> EVENT_HANDLERS = new HashMap<>();
 
     private EventManager() {
 
     }
 
     /**
-     * Registers the object as a potential subscriber of an event later fired.
-     * Event subscriber methods inside the passed object must be annotated with @{@link Subscribe}, and contain only one parameter that is a subclass of Event.
+     * Registers the object's methods as potential handlers of an event later fired.
+     * Event handler methods inside the passed object must be annotated with @{@link Handle}, and contain only one parameter that is a subclass of Event.
      *
-     * @param subscriber the object to be registered
+     * @param object the object to be registered
      */
-    public static synchronized void register(Object subscriber) {
-        for (Method method : subscriber.getClass().getDeclaredMethods()) {
-            if (method.isAnnotationPresent(Subscribe.class)) {
+    public static synchronized void register(Object object) {
+        for (Method method : object.getClass().getDeclaredMethods()) {
+            if (method.isAnnotationPresent(Handle.class)) {
                 if (method.getParameterCount() == 1 && Event.class.isAssignableFrom(method.getParameterTypes()[0])) {
                     method.setAccessible(true);
 
                     @SuppressWarnings("unchecked")
                     Class<? extends Event> clazz = (Class<? extends Event>) method.getParameterTypes()[0];
 
-                    if (!SUBSCRIBERS.containsKey(clazz)) {
-                        SUBSCRIBERS.put(clazz, new TreeSet<>());
+                    if (!EVENT_HANDLERS.containsKey(clazz)) {
+                        EVENT_HANDLERS.put(clazz, new TreeSet<>());
                     }
 
-                    SUBSCRIBERS.get(clazz).add(new Subscriber(subscriber, method, method.getDeclaredAnnotation(Subscribe.class).priority()));
+                    EVENT_HANDLERS.get(clazz).add(new Handler(object, method, method.getDeclaredAnnotation(Handle.class).priority()));
                 }
             }
         }
     }
 
     /**
-     * Unregisters the object from the event subscribers.
+     * Unregisters the object from the event handlers.
      *
-     * @param subscriber the object to be unregistered
+     * @param object the object to be unregistered
      */
-    public static synchronized void unregister(Object subscriber) {
-        for (SortedSet<Subscriber> subscriberSet : SUBSCRIBERS.values()) {
-            subscriberSet.removeIf(s -> subscriber.equals(s.getObject()));
+    public static synchronized void unregister(Object object) {
+        for (SortedSet<Handler> handlerSet : EVENT_HANDLERS.values()) {
+            handlerSet.removeIf(s -> object.equals(s.getObject()));
         }
     }
 
     public static synchronized void fireEvent(Event event) {
-        if (!SUBSCRIBERS.containsKey(event.getClass())) {
+        if (!EVENT_HANDLERS.containsKey(event.getClass())) {
             return;
         }
 
-        SUBSCRIBERS.get(event.getClass()).removeIf(s -> s.getObject() == null);
+        EVENT_HANDLERS.get(event.getClass()).removeIf(s -> s.getObject() == null);
 
-        for (Subscriber subscriber : SUBSCRIBERS.get(event.getClass())) {
+        for (Handler handler : EVENT_HANDLERS.get(event.getClass())) {
             try {
-                subscriber.getMethod().invoke(subscriber.getObject(), event);
+                handler.getMethod().invoke(handler.getObject(), event);
             } catch (IllegalAccessException | InvocationTargetException e) {
                 e.printStackTrace();
             }

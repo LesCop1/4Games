@@ -9,11 +9,11 @@ import java.lang.annotation.Target;
 public abstract class Event {
     private boolean cancelled;
 
-    public boolean isCancelled() {
+    public final boolean isCancelled() {
         return cancelled;
     }
 
-    public void setCancelled(boolean cancelled) throws UncancellableEventException {
+    public final void setCancelled(boolean cancelled) throws UncancellableEventException {
         if (!isCancellable()) {
             throw new UncancellableEventException();
         }
