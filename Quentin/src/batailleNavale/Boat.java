@@ -6,11 +6,11 @@ import java.util.stream.Stream;
 
 public enum Boat {
 
-    A("AircraftCarrier", 1/*5*/, true, true),
-    C("Cruiser", 1/*4*/, true, true),
-    F("Frigate", 1/*3*/, true, true),
-    S("Submarine", 1/*3*/, true, true),
-    T("Torpedo", 1/*2*/, true, true);
+    A("A", 5, false, true), //AircraftCarrier
+    C("C", 4, true, true), //Cruiser
+    F("F", 3, true, true), //Frigate
+    S("S", 3, true, true), //Submarine
+    T("T", 2, true, true); //Torpedo
 
     private String name;
     private int sizeBoat;

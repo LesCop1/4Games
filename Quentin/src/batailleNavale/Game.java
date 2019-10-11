@@ -22,13 +22,28 @@ public class Game {
     }
 
     public void putBoat(Boat boat, int i) {
-        if (boat.isOrientation()) {
-            for(int j=i; j<boat.getSizeBoat(); j++){
-                board.set(j,"A");
+        int j = i;
+        int cpt = 0; //Compte le nombre de case du bateau déjà posé
+        if (boat.isOrientation()) { //Si le bateau est horizontal
+           while (j<boat.getSizeBoat()+i){
+               verification(j);
+               board.set(j,boat.getName());
+               j++;
+           }
+        }else{ //Si le bateau est vertical
+            while (cpt<boat.getSizeBoat()){
+                board.set(j,boat.getName());
+                cpt++;
+                j+=10;
             }
-        }else{
-            System.out.println("ALED");
         }
+    }
+
+    public boolean verification(int i){
+        if(board.indexOf(i)!='o'){
+            return false;
+        }
+        return true;
     }
 
     public void swapOrientation(Boat boat) {
