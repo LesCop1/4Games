@@ -1,11 +1,8 @@
 package fr.bcecb;
 
-import org.lwjgl.opengl.GL;
-
 import java.util.logging.Logger;
 
 import static org.lwjgl.glfw.GLFW.*;
-import static org.lwjgl.opengl.GL11.glClearColor;
 import static org.lwjgl.system.MemoryUtil.NULL;
 
 public class Main {
