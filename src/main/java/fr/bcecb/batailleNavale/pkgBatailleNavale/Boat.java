@@ -1,18 +1,16 @@
-package batailleNavale;
+package fr.bcecb.batailleNavale.pkgBatailleNavale;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.stream.Stream;
 
-public enum Boat {
+public enum Boat { //Définit une énumération des différents bateaux du jeu
 
     A("A", 5, false, true), //AircraftCarrier
     C("C", 4, true, true), //Cruiser
     F("F", 3, true, true), //Frigate
     S("S", 3, true, true), //Submarine
-    T("T", 2, true, true); //Torpedo
+    T("T", 2, false, true); //Torpedo
 
-    private String name;
+    private final String name;
     private int sizeBoat;
     private boolean orientation; // True = Horizontal, False = Vertical
     private boolean alive;
@@ -30,10 +28,6 @@ public enum Boat {
 
     public String getName() {
         return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 
     public int getSizeBoat() {
