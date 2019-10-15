@@ -2,33 +2,34 @@ package fr.bcecb.bingo;
 
 
 
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
 public class Bingo {
     private List<Integer> numberList = new ArrayList<>();
-    private List<Grid> grids = new ArrayList<>();
-    // 0-9 ligne 1
-    // 10-19 ligne 2
-    // 20-29 ligne 3
+    private List<Player> bots = new ArrayList<>();
+    private Player p = new Player();
+    private final static int NB_BOTS = 5;
 
-    public void initGame() {
+    public void init(int nbGrids) {
+        p.init(nbGrids);
         int i = 1;
         while (i < 91) {
             numberList.add(i - 1, i);
             i++;
         }
-
+        initBots(NB_BOTS);
     }
 
-    public void dispList() {
-        int i = 1;
-        while (i < numberList.size()) {
-            System.out.print(numberList.get(i - 1) + " ;");
-            i++;
+    public void initBots(int nbBots){
+        Random rand = new Random();
+        for (int i = 0; i < nbBots; i++) {
+            Player bot = new Player();
+            bot.init((rand.nextInt(5)+1));
+            bots.add(bot);
         }
-        System.out.println("\n");
     }
 
     public int dropNumber() {
@@ -38,17 +39,27 @@ public class Bingo {
         number = numberList.get(randInt);
         numberList.remove(randInt);
         return number;
-
     }
 
-    public void addGrid(){
-        Grid g = new Grid();
-        g.init();
-        this.grids.add(g);
-    }
+    private class Player {
 
-    public void dispGrid(int index){
-        this.grids.get(index).dispGrid();
+        private List<Grid> grids = new ArrayList<>();
+
+        public void init(int nbGrid){
+            for (int i = 0; i < nbGrid; i++) {
+                addGrid();
+            }
+        }
+
+        private void addGrid(){
+            Grid g = new Grid();
+            g.init();
+            this.grids.add(g);
+        }
+
+        public void dispGrid(int index){
+            this.grids.get(index).dispGrid();
+        }
     }
 
     private class Grid {
@@ -63,7 +74,7 @@ public class Bingo {
             holeInGrid();
         }
 
-        public int randGen(int x) {
+        private int randGen(int x) {
             Random rand = new Random();
             int randInt = rand.nextInt(10);
             if (x == 0) {
@@ -79,7 +90,7 @@ public class Bingo {
             }
         }
 
-        public boolean isInGrid(int n) {
+        private boolean isInGrid(int n) {
             if (n == 0) {
                 return true;
             }
@@ -93,7 +104,7 @@ public class Bingo {
             return false;
         }
 
-        public void fillGrid() {
+        private void fillGrid() {
             int value = 0;
             for (int i = 0; i < 3; i++) {
                 for (int j = 0; j < 9; j++) {
@@ -105,22 +116,7 @@ public class Bingo {
             }
         }
 
-        public void dispGrid() {
-            for (int i = 0; i < 3; i++) {
-                for (int j = 0; j < 9; j++) {
-                    if (this.grid[i][j] == 0) {
-                        System.out.print("X | ");
-                    } else {
-                        System.out.print(this.grid[i][j] + " | ");
-                    }
-                    if (j == 8){
-                        System.out.println();
-                    }
-                }
-            }
-        }
-
-        public void holeInGrid(){
+        private void holeInGrid(){
             Random rand = new Random();
             int compteur = 0;
             for (int i = 0; i < 3; i++) {
@@ -152,7 +148,34 @@ public class Bingo {
 
         }
 
+        public void dispGrid() {
+            for (int i = 0; i < 3; i++) {
+                for (int j = 0; j < 9; j++) {
+                    if (this.grid[i][j] == 0) {
+                        System.out.print("X | ");
+                    } else {
+                        System.out.print(this.grid[i][j] + " | ");
+                    }
+                    if (j == 8){
+                        System.out.println();
+                    }
+                }
+            }
+        }
+
     }
 
+    public void dispList() {
+        int i = 1;
+        while (i < numberList.size()) {
+            System.out.print(numberList.get(i - 1) + " ;");
+            i++;
+        }
+        System.out.println("\n");
+    }
+
+    public void dispPlayerGrid(int index){
+        p.dispGrid(index);
+    }
 }
 
