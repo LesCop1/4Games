@@ -3,7 +3,7 @@ package fr.bcecb.event;
 import java.lang.ref.WeakReference;
 import java.lang.reflect.Method;
 
-public class Handler implements Comparable {
+public class Handler implements Comparable<Handler> {
     private final WeakReference<Object> objectRef;
     private final Method method;
     private final int priority;
@@ -22,25 +22,17 @@ public class Handler implements Comparable {
         return method;
     }
 
-    public int getPriority() {
-        return priority;
-    }
-
     @Override
-    public int compareTo(Object o) {
-        return compareTo((Handler)o);
-    }
-
-    private int compareTo(Handler handler) {
+    public int compareTo(Handler handler) {
         return priority - handler.priority;
     }
 
     @Override
     public boolean equals(Object obj) {
-        return super.equals(obj);
+        return obj instanceof Handler && (super.equals(obj) || this.equals((Handler)obj));
     }
 
-    public boolean equals(Handler handler) {
+    private boolean equals(Handler handler) {
         return this.objectRef.get() == handler.objectRef.get() && this.method.equals(handler.method) && this.priority == handler.priority;
     }
 }

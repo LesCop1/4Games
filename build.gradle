@@ -34,7 +34,7 @@ dependencies {
     runtimeOnly "org.lwjgl:lwjgl-opengl::$lwjglNatives"
 
     implementation "org.joml:joml:1.9.17"
-    implementation 'com.google.guava:guava:28.1-jre'
+    implementation "com.google.guava:guava:28.1-jre"
 }
 
 mainClassName = "fr.bcecb.Game"

@@ -2,7 +2,10 @@ package fr.bcecb.event;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 /**
  * The EventManager class watches all the GLFW events (such as user input, window events...) and game-fired events.

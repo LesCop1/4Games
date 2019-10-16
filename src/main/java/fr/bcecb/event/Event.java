@@ -5,7 +5,6 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-@Event.Cancellable
 public abstract class Event {
     private boolean cancelled;
 
@@ -13,12 +12,8 @@ public abstract class Event {
         return cancelled;
     }
 
-    public final void setCancelled(boolean cancelled) throws UncancellableEventException {
-        if (!isCancellable()) {
-            throw new UncancellableEventException();
-        }
-
-        this.cancelled = cancelled;
+    public final void setCancelled(boolean cancelled) {
+        this.cancelled = isCancellable() && cancelled;
     }
 
     private boolean isCancellable() {
@@ -27,8 +22,6 @@ public abstract class Event {
 
     @Retention(RetentionPolicy.RUNTIME)
     @Target(ElementType.TYPE)
-    public @interface Cancellable {
+    protected @interface Cancellable {
     }
-
-    private static class UncancellableEventException extends Exception { }
 }
