@@ -1,6 +1,6 @@
 package fr.bcecb.input;
 
-import fr.bcecb.event.Event;
+import fr.bcecb.Event;
 
 public abstract class MouseEvent extends Event {
     private MouseEvent() {

@@ -1,5 +1,6 @@
 package fr.bcecb;
 
+import com.google.common.eventbus.EventBus;
 import fr.bcecb.render.RenderEngine;
 import fr.bcecb.resources.ResourceManager;
 import fr.bcecb.state.MainMenuState;
@@ -10,6 +11,8 @@ import static org.lwjgl.glfw.GLFW.glfwGetTime;
 
 public final class Game {
     private static final Game INSTANCE = new Game();
+
+    private static final EventBus EVENT_BUS = new EventBus();
 
     private static final int ticksPerSecond = 60;
 
@@ -97,7 +100,11 @@ public final class Game {
         return resourceManager;
     }
 
-    public static Game getInstance() {
+    public static EventBus getEventBus() {
+        return EVENT_BUS;
+    }
+
+    public static Game instance() {
         return INSTANCE;
     }
 

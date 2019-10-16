@@ -1,4 +1,4 @@
-package fr.bcecb.event;
+package fr.bcecb;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -22,6 +22,6 @@ public abstract class Event {
 
     @Retention(RetentionPolicy.RUNTIME)
     @Target(ElementType.TYPE)
-    protected @interface Cancellable {
+    public @interface Cancellable {
     }
 }

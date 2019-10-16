@@ -1,7 +1,7 @@
 package fr.bcecb.input;
 
-import fr.bcecb.event.Event;
-import fr.bcecb.event.EventManager;
+import fr.bcecb.Event;
+import fr.bcecb.Game;
 import fr.bcecb.render.Window;
 
 import static org.lwjgl.glfw.GLFW.*;
@@ -40,7 +40,7 @@ public class MouseManager {
         MouseEvent.Click.Type type = action == GLFW_PRESS ? MouseEvent.Click.Type.PRESSED : MouseEvent.Click.Type.RELEASED;
 
         Event event = new MouseEvent.Click(type, button, positionX, positionY);
-        EventManager.fireEvent(event);
+        Game.getEventBus().post(event);
     }
 
     private void mouseMoveCallback(long window, double x, double y) {
@@ -51,16 +51,16 @@ public class MouseManager {
         this.positionY = y;
 
         Event event = new MouseEvent.Move(x, y, lastPositionX - positionX, lastPositionY - positionY);
-        EventManager.fireEvent(event);
+        Game.getEventBus().post(event);
     }
 
     private void mouseScrollCallback(long window, double x, double y) {
         Event event = new MouseEvent.Scroll(x, y);
-        EventManager.fireEvent(event);
+        Game.getEventBus().post(event);
     }
 
     private void mouseEnterCallback(long window, boolean entered) {
         Event event = new MouseEvent.Enter(entered);
-        EventManager.fireEvent(event);
+        Game.getEventBus().post(event);
     }
 }

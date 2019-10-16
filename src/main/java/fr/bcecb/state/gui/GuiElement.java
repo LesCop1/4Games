@@ -1,7 +1,7 @@
 package fr.bcecb.state.gui;
 
-import fr.bcecb.event.EventManager;
-import fr.bcecb.event.Handle;
+import com.google.common.eventbus.Subscribe;
+import fr.bcecb.Game;
 import fr.bcecb.input.MouseEvent;
 import fr.bcecb.input.MouseManager;
 import fr.bcecb.render.IRenderable;
@@ -16,14 +16,14 @@ public abstract class GuiElement implements IRenderable {
     public GuiElement() {
         this.visible = true;
         this.boundingBox = null;
-        EventManager.register(this);
+        Game.getEventBus().register(this);
     }
 
     public GuiElement(BoundingBox boundingBox) {
         this.boundingBox = boundingBox;
     }
 
-    @Handle
+    @Subscribe
     private void handleClickEvent(MouseEvent.Click event) {
         if (!isVisible()) return;
 
@@ -36,7 +36,7 @@ public abstract class GuiElement implements IRenderable {
         }
     }
 
-    @Handle
+    @Subscribe
     private void handleHoverEvent(MouseEvent.Move event) {
         if (!isVisible()) return;
 
@@ -45,7 +45,7 @@ public abstract class GuiElement implements IRenderable {
         }
     }
 
-    @Handle
+    @Subscribe
     private void handleScrollEvent(MouseEvent.Scroll event) {
         if (!isVisible()) return;
 

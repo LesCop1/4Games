@@ -1,8 +1,7 @@
 package fr.bcecb.state;
 
 import fr.bcecb.Game;
-import fr.bcecb.event.EventManager;
-import fr.bcecb.render.RenderManager;
+import fr.bcecb.render.RenderEngine;
 import fr.bcecb.render.Renderer;
 import fr.bcecb.util.Log;
 
@@ -16,7 +15,7 @@ public class StateEngine {
 
     public void pushState(State state) {
         StateEvent.Enter event = new StateEvent.Enter(state, getCurrentState());
-        EventManager.fireEvent(event);
+        Game.getEventBus().post(event);
 
         if (!event.isCancelled()) {
             state.onEnter();
@@ -27,7 +26,7 @@ public class StateEngine {
     public void popState() {
         if (!stateStack.empty()) {
             StateEvent.Exit event = new StateEvent.Exit(stateStack.peek());
-            EventManager.fireEvent(event);
+            Game.getEventBus().post(event);
 
             if (!event.isCancelled()) {
                 stateStack.pop().onExit();
