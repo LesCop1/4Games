@@ -19,12 +19,14 @@ public final class Game {
     private final RenderEngine renderEngine;
     private final StateEngine stateEngine;
 
-    private ResourceManager resourceManager;
+    private final ResourceManager resourceManager;
 
     private boolean running = false;
 
     private Game() {
-        this.renderEngine = new RenderEngine();
+        this.resourceManager = new ResourceManager();
+
+        this.renderEngine = new RenderEngine(resourceManager);
         this.stateEngine = new StateEngine();
     }
 
@@ -32,8 +34,6 @@ public final class Game {
         Log.info("Initializing the game");
 
         Log.config("Tick rate is set to " + ticksPerSecond + " ticks/s");
-
-        resourceManager = new ResourceManager();
 
         if (!renderEngine.init()) {
             Log.severe(Log.RENDER, "Couldn't initialize renderer");
@@ -49,7 +49,7 @@ public final class Game {
         }
 
         Log.info("Starting the game");
-        this.running = true;
+        running = true;
 
         stateEngine.pushState(new MainMenuState());
 
@@ -70,7 +70,7 @@ public final class Game {
             }
 
             renderEngine.render(delta);
-            stateEngine.render(delta);
+            stateEngine.render(renderEngine, delta);
 
             renderEngine.update();
         }
@@ -78,7 +78,7 @@ public final class Game {
 
     public void stop() {
         Log.info("Stopping the game");
-        this.running = false;
+        running = false;
 
         renderEngine.cleanUp();
         resourceManager.cleanUp();
@@ -109,6 +109,6 @@ public final class Game {
     }
 
     public static void main(String[] args) {
-        Game.getInstance().start();
+        Game.instance().start();
     }
 }

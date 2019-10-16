@@ -1,6 +1,7 @@
 package fr.bcecb.state.gui;
 
 import fr.bcecb.input.MouseEvent;
+import fr.bcecb.render.RenderManager;
 import fr.bcecb.render.Renderer;
 
 public class Button extends GuiElement {
@@ -21,6 +22,10 @@ public class Button extends GuiElement {
     }
 
     public static class ButtonRenderer extends Renderer<Button> {
+
+        public ButtonRenderer(RenderManager renderManager) {
+            super(renderManager);
+        }
 
         @Override
         public void render(Button object, double partialTick) {

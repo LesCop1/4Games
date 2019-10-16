@@ -36,7 +36,7 @@ public class StateEngine {
 
     public void update() {
         if (stateStack.empty()) {
-            Game.getInstance().stop();
+            Game.instance().stop();
         }
 
         for (State state : stateStack) {
@@ -46,19 +46,19 @@ public class StateEngine {
         }
     }
 
-    public void render(double partialTick) {
-        renderState(stateStack.iterator(), partialTick);
+    public void render(RenderEngine renderEngine, double partialTick) {
+        renderState(renderEngine, stateStack.iterator(), partialTick);
     }
 
-    private void renderState(Iterator<State> stateIterator, double partialTick) {
+    private void renderState(RenderEngine renderEngine, Iterator<State> stateIterator, double partialTick) {
         if (stateIterator.hasNext()) {
             State state = stateIterator.next();
 
             if (state.shouldRenderBelow()) {
-                renderState(stateIterator, partialTick);
+                renderState(renderEngine, stateIterator, partialTick);
             }
 
-            Renderer<State> renderer = RenderManager.getRendererFor(state);
+            Renderer<State> renderer = renderEngine.getRenderManager().getRendererFor(state);
 
             if (renderer != null) {
                 renderer.render(state, partialTick);
