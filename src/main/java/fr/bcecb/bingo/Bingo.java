@@ -1,8 +1,5 @@
 package fr.bcecb.bingo;
 
-
-
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -20,12 +17,12 @@ public class Bingo {
             numberList.add(i - 1, i);
             i++;
         }
-        initBots(NB_BOTS);
+        initBots();
     }
 
-    public void initBots(int nbBots){
+    private void initBots(){
         Random rand = new Random();
-        for (int i = 0; i < nbBots; i++) {
+        for (int i = 0; i < NB_BOTS; i++) {
             Player bot = new Player();
             bot.init((rand.nextInt(5)+1));
             bots.add(bot);
@@ -41,13 +38,22 @@ public class Bingo {
         return number;
     }
 
-    private class Player {
+    private static class Player {
 
         private List<Grid> grids = new ArrayList<>();
+        private boolean win;
 
-        public void init(int nbGrid){
+        private void init(int nbGrid){
+            this.win = false;
             for (int i = 0; i < nbGrid; i++) {
                 addGrid();
+            }
+        }
+
+        private void checkWin(){
+            for (Grid g :
+                    grids) {
+                if (g.checkWin()) this.win = true;
             }
         }
 
@@ -57,18 +63,18 @@ public class Bingo {
             this.grids.add(g);
         }
 
-        public void dispGrid(int index){
+        private void dispGrid(int index){
             this.grids.get(index).dispGrid();
         }
     }
 
-    private class Grid {
+    private static class Grid {
 
         private final static int NB_ROWS = 3;
         private final static int NB_COLS = 9;
         private int[][] grid;
 
-        public void init() {
+        private void init() {
             this.grid = new int[NB_ROWS][NB_COLS];
             fillGrid();
             holeInGrid();
@@ -148,7 +154,26 @@ public class Bingo {
 
         }
 
-        public void dispGrid() {
+        private void removeValue(int i,int j){
+            if(this.grid[i][j] != 0){
+                this.grid[i][j] = 0;
+            }
+        }
+
+        private boolean checkWin(){
+            int compteur = 0;
+            for (int i = 0; i < 3; i++) {
+                for (int j = 0; j < 9; j++) {
+                    if(this.grid[i][j] == 0){
+                        compteur++;
+                    }
+                }
+            }
+            return compteur == 24;
+
+        }
+
+        private void dispGrid() {
             for (int i = 0; i < 3; i++) {
                 for (int j = 0; j < 9; j++) {
                     if (this.grid[i][j] == 0) {
@@ -178,4 +203,3 @@ public class Bingo {
         p.dispGrid(index);
     }
 }
-
