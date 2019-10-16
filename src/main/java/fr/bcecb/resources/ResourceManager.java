@@ -17,7 +17,7 @@ public class ResourceManager {
     }
 
     public <R extends IResource> IResource getResource(ResourceHandle<R> handle) {
-        return LOADED_RESOURCES.computeIfAbsent(handle, (n) -> {
+        if (!LOADED_RESOURCES.containsKey(handle)) {
             try {
                 InputStream inputStream = getInputStream(handle);
 
@@ -25,16 +25,19 @@ public class ResourceManager {
                     throw new FileNotFoundException(handle.getHandle());
                 }
 
-                R resource = handle.getTypeToken().constructor(handle.getTypeToken().getRawType().getConstructor()).invoke(null);
+                IResource resource = handle.getTypeToken().constructor(handle.getTypeToken().getRawType().getDeclaredConstructor()).invoke(null);
                 resource.load(inputStream);
-
+                LOADED_RESOURCES.put(handle, resource);
                 return resource;
             } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException | IOException e) {
-                Log.warning("Couldn't create resource for " + handle.getHandle() + " : " + e.getMessage());
+                Log.warning("Couldn't create resource for " + handle.getHandle() + " : ");
+                e.printStackTrace();
+                return null;
             }
-
-            return null;
-        });
+        }
+        else {
+            return LOADED_RESOURCES.get(handle);
+        }
     }
 
     private InputStream getInputStream(ResourceHandle resource) {

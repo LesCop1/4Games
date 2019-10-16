@@ -1,6 +1,10 @@
 package fr.bcecb.resources;
 
+import com.google.common.base.Strings;
+import com.google.gson.Gson;
 import fr.bcecb.util.Log;
+import fr.bcecb.util.Resources;
+import fr.bcecb.util.ShaderDescriptor;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -23,7 +27,11 @@ public class Shader extends GLResource {
 
     @Override
     public int create(InputStream inputStream) throws IOException {
-        return create("", "", ""); //TODO
+        ShaderDescriptor descriptor = new Gson().fromJson(Resources.readResource(inputStream), ShaderDescriptor.class);
+        Resource vertRes = Resources.getResource(new ResourceHandle<>("shaders/" + descriptor.getName() + ".vert") {});
+        Resource fragRes = Resources.getResource(new ResourceHandle<>("shaders/" + descriptor.getName() + ".frag") {});
+
+        return create(vertRes.asString(), fragRes.asString(), null);
     }
 
     private int create(String vertexSource, String fragmentSource, String geometrySource) throws IOException {
@@ -31,7 +39,7 @@ public class Shader extends GLResource {
         int fragment = compile(GL_FRAGMENT_SHADER, fragmentSource);
         int geometry = compile(GL_GEOMETRY_SHADER, geometrySource);
 
-        if (vertex == 0 || fragment == 0 || (geometry == 0 && geometrySource != null)) {
+        if (vertex == 0 || fragment == 0 || (geometry == 0 && !Strings.isNullOrEmpty(geometrySource))) {
             return -1;
         }
 
@@ -46,7 +54,7 @@ public class Shader extends GLResource {
         glLinkProgram(program);
 
         String infoLog = glGetProgramInfoLog(program, glGetProgrami(program, GL_INFO_LOG_LENGTH));
-        if (!infoLog.isBlank()) {
+        if (!Strings.isNullOrEmpty(infoLog)) {
             Log.warning(Log.RENDER, "Shader program linking returned with warnings : " + infoLog);
         }
 
@@ -66,7 +74,7 @@ public class Shader extends GLResource {
     }
 
     private int compile(int type, String source) {
-        if (source == null || source.length() == 0) {
+        if (Strings.isNullOrEmpty(source)) {
             return 0;
         }
 
@@ -76,7 +84,7 @@ public class Shader extends GLResource {
         glCompileShader(id);
 
         String infoLog = glGetShaderInfoLog(id, glGetShaderi(id, GL_INFO_LOG_LENGTH));
-        if (!infoLog.isBlank()) {
+        if (!Strings.isNullOrEmpty(infoLog)) {
             Log.warning(Log.RENDER, "Shader compilation returned with warnings : " + infoLog);
         }
 

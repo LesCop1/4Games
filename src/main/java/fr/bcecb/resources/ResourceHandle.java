@@ -2,18 +2,20 @@ package fr.bcecb.resources;
 
 import com.google.common.reflect.TypeToken;
 
+import java.lang.reflect.Type;
+
 @SuppressWarnings("UnstableApiUsage")
-public class ResourceHandle<R extends IResource> {
+public abstract class ResourceHandle<R extends IResource> {
     private final String handle;
 
-    private final TypeToken<R> typeToken = new TypeToken<>(getClass()) {};
+    private final TypeToken<R> type = new TypeToken<>(getClass()) {};
 
     public ResourceHandle(String handle) {
         this.handle = handle;
     }
 
-    TypeToken<R> getTypeToken() {
-        return typeToken;
+    public TypeToken<R> getTypeToken() {
+        return type;
     }
 
     String getHandle() {

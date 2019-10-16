@@ -1,6 +1,9 @@
 package fr.bcecb.render;
 
 import fr.bcecb.Game;
+import fr.bcecb.resources.ResourceHandle;
+import fr.bcecb.resources.ResourceManager;
+import fr.bcecb.resources.Shader;
 import fr.bcecb.util.Log;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.opengl.GL;
@@ -11,7 +14,15 @@ import static org.lwjgl.opengl.GL33.*;
 public class RenderEngine {
     private Window window;
 
-    public RenderEngine() {
+    private final ResourceManager resourceManager;
+
+    private final ResourceHandle<Shader> shaderResourceHandle = new ResourceHandle<>("shaders/main.json") {};
+
+    private final RenderManager renderManager;
+
+    public RenderEngine(ResourceManager resourceManager) {
+        this.resourceManager = resourceManager;
+        this.renderManager = new RenderManager(resourceManager);
     }
 
     public boolean init() {
@@ -30,9 +41,11 @@ public class RenderEngine {
         }
 
         GL.createCapabilities();
-
-        RenderManager.init();
         glfwShowWindow(window.id());
+
+
+        Shader shader = (Shader) resourceManager.getResource(shaderResourceHandle);
+        shader.bind();
 
         return true;
     }
@@ -48,7 +61,7 @@ public class RenderEngine {
 
     public void update() {
         if (window.shouldClose()) {
-            Game.getInstance().stop();
+            Game.instance().stop();
             return;
         }
 
@@ -61,6 +74,10 @@ public class RenderEngine {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         glViewport(0, 0, window.width(), window.height());
+    }
+
+    public RenderManager getRenderManager() {
+        return renderManager;
     }
 
     public Window getWindow() {

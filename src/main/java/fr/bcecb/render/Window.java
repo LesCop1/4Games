@@ -69,7 +69,7 @@ public class Window {
     }
 
     public static Window getCurrentWindow() {
-        return Game.getInstance().getRenderEngine().getWindow();
+        return Game.instance().getRenderEngine().getWindow();
     }
 
     public void destroy() {

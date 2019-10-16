@@ -1,5 +1,7 @@
 package fr.bcecb.resources;
 
+import fr.bcecb.Game;
+
 import java.io.IOException;
 import java.io.InputStream;
 
