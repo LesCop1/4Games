@@ -1,5 +1,6 @@
 package fr.bcecb.util;
 
+import javax.annotation.Nonnull;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -9,6 +10,7 @@ import java.util.logging.Formatter;
 public enum Log {
     SYSTEM("System"),
     GAME("Game"),
+    UI("UI"),
     RENDER("Render Engine");
     
     private final Logger logger;
@@ -27,48 +29,50 @@ public enum Log {
         return logger;
     }
 
-    public static void info(String message) {
-        info(Log.SYSTEM, message);
+    public void info(@Nonnull Object... message) {
+        log(Level.INFO, this, message);
     }
 
-    public static void info(Log log, String message) {
-        log(Level.INFO, log, message);
+    public void config(@Nonnull Object... message) {
+        log(Level.CONFIG, this, message);
     }
 
-    public static void config(String message) {
-        config(Log.SYSTEM, message);
+    public void warning(@Nonnull Object... message) {
+        log(Level.WARNING, this, message);
     }
 
-    public static void config(Log log, String message) {
-        log(Level.CONFIG, log, message);
+    public void severe(@Nonnull Object... message) {
+        log(Level.SEVERE, this, message);
     }
 
-    public static void warning(String message) {
-        warning(Log.SYSTEM, message);
-    }
-
-    public static void warning(Log log, String message) {
-        log(Level.WARNING, log, message);
-    }
-
-    public static void severe(String message) {
-        severe(Log.SYSTEM, message);
-    }
-
-    public static void severe(Log log, String message) {
-        log(Level.SEVERE, log, message);
-    }
-
-    public static void log(String message) {
+    public void log(@Nonnull Object... message) {
         log(Level.INFO, message);
     }
 
-    public static void log(Level level, String message) {
+    public static void info(Log log, @Nonnull Object... message) {
+        log(Level.INFO, log, message);
+    }
+
+    public static void config(Log log, @Nonnull Object... message) {
+        log(Level.CONFIG, log, message);
+    }
+
+    public static void warning(Log log, @Nonnull Object... message) {
+        log(Level.WARNING, log, message);
+    }
+
+    public static void severe(Log log, @Nonnull Object... message) {
+        log(Level.SEVERE, log, message);
+    }
+
+    public static void log(Level level, @Nonnull Object... message) {
         log(level, Log.SYSTEM, message);
     }
 
-    public static void log(Level level, Log log, String message) {
-        log.getLogger().log(level, message);
+    public static void log(Level level, Log log, @Nonnull Object... message) {
+        if (message.length >= 1) {
+            log.getLogger().log(level, String.valueOf(message[0]), Arrays.copyOfRange(message, 1, message.length));
+        }
     }
 
     private static class LogFormatter extends Formatter {

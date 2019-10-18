@@ -3,11 +3,12 @@ package fr.bcecb;
 import com.google.common.eventbus.EventBus;
 import fr.bcecb.render.RenderEngine;
 import fr.bcecb.resources.ResourceManager;
-import fr.bcecb.state.MainMenuState;
+import fr.bcecb.state.MainMenuScreen;
 import fr.bcecb.state.StateEngine;
 import fr.bcecb.util.Log;
+import org.lwjgl.glfw.GLFWErrorCallback;
 
-import static org.lwjgl.glfw.GLFW.glfwGetTime;
+import static org.lwjgl.glfw.GLFW.*;
 
 public final class Game {
     private static final Game INSTANCE = new Game();
@@ -24,42 +25,34 @@ public final class Game {
     private boolean running = false;
 
     private Game() {
+        if (!glfwInit()) {
+            Log.SYSTEM.severe("Couldn't initialize GLFW");
+        }
+
+        glfwSetErrorCallback(GLFWErrorCallback.createPrint(System.err));
+        Log.SYSTEM.config("Tick rate is set to {0} ticks/s", ticksPerSecond);
+
         this.resourceManager = new ResourceManager();
 
         this.renderEngine = new RenderEngine(resourceManager);
         this.stateEngine = new StateEngine();
     }
 
-    private boolean init() {
-        Log.info("Initializing the game");
-
-        Log.config("Tick rate is set to " + ticksPerSecond + " ticks/s");
-
-        if (!renderEngine.init()) {
-            Log.severe(Log.RENDER, "Couldn't initialize renderer");
-            return false;
-        }
-
-        return true;
-    }
-
     private void start() {
-        if (!init()) {
-            return;
-        }
+        glfwShowWindow(renderEngine.getWindow().id());
 
-        Log.info("Starting the game");
+        Log.SYSTEM.info("Starting the game");
         running = true;
 
-        stateEngine.pushState(new MainMenuState());
+        stateEngine.pushState(new MainMenuScreen());
 
-        double ticks = 1.0D / ticksPerSecond;
-        double currentTime;
-        double lastTime = 0.0D;
-        double delta = 0.0D;
+        float ticks = 1.0f / ticksPerSecond;
+        float currentTime;
+        float lastTime = 0.0f;
+        float delta = 0.0f;
 
         while (this.isRunning()) {
-            currentTime = glfwGetTime();
+            currentTime = (float) glfwGetTime();
             delta += (currentTime - lastTime) / ticks;
             lastTime = currentTime;
 
@@ -69,19 +62,18 @@ public final class Game {
                 --delta;
             }
 
-            renderEngine.render(delta);
-            stateEngine.render(renderEngine, delta);
+            renderEngine.render(stateEngine, delta);
 
             renderEngine.update();
         }
+
+        resourceManager.cleanUp();
+        renderEngine.cleanUp();
     }
 
     public void stop() {
-        Log.info("Stopping the game");
+        Log.SYSTEM.info("Stopping the game");
         running = false;
-
-        renderEngine.cleanUp();
-        resourceManager.cleanUp();
     }
 
     public boolean isRunning() {

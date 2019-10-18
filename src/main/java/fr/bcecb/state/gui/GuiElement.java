@@ -1,57 +1,32 @@
 package fr.bcecb.state.gui;
 
-import com.google.common.eventbus.Subscribe;
-import fr.bcecb.Game;
 import fr.bcecb.input.MouseEvent;
-import fr.bcecb.input.MouseManager;
 import fr.bcecb.render.IRenderable;
 import fr.bcecb.util.BoundingBox;
 
-import static fr.bcecb.input.MouseEvent.Click.Type.PRESSED;
-
 public abstract class GuiElement implements IRenderable {
-    private boolean visible;
+    private final int id;
     private final BoundingBox boundingBox;
+    private boolean hovered;
+    private boolean visible;
 
-    public GuiElement() {
-        this.visible = true;
-        this.boundingBox = null;
-        Game.getEventBus().register(this);
-    }
-
-    public GuiElement(BoundingBox boundingBox) {
+    public GuiElement(int id, BoundingBox boundingBox) {
+        this.id = id;
         this.boundingBox = boundingBox;
+        this.visible = true;
+        this.hovered = false;
     }
 
-    @Subscribe
-    private void handleClickEvent(MouseEvent.Click event) {
-        if (!isVisible()) return;
-
-        if (!event.isCancelled()) {
-            if (event.getType() == PRESSED && boundingBox.checkCoordinates(event.getX(), event.getY())) {
-                onClick(event);
-            }
-
-            event.setCancelled(true);
-        }
+    public int getId() {
+        return id;
     }
 
-    @Subscribe
-    private void handleHoverEvent(MouseEvent.Move event) {
-        if (!isVisible()) return;
-
-        if (boundingBox.checkCoordinates(event.getX(), event.getY())) {
-            onHover(event);
-        }
+    public void setHovered(boolean hovered) {
+        this.hovered = hovered;
     }
 
-    @Subscribe
-    private void handleScrollEvent(MouseEvent.Scroll event) {
-        if (!isVisible()) return;
-
-        if (boundingBox.checkCoordinates(MouseManager.getPositionX(), MouseManager.getPositionY())) {
-            onScroll(event);
-        }
+    public boolean isHovered() {
+        return hovered;
     }
 
     public boolean isVisible() {

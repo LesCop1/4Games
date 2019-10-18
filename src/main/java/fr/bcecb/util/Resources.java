@@ -3,15 +3,23 @@ package fr.bcecb.util;
 import fr.bcecb.Game;
 import fr.bcecb.resources.IResource;
 import fr.bcecb.resources.ResourceHandle;
+import org.lwjgl.BufferUtils;
 
 import java.io.*;
+import java.nio.ByteBuffer;
 import java.util.stream.Collectors;
 
 public class Resources {
 
     public static <R extends IResource> R getResource(ResourceHandle<R> handle) {
-        //noinspection unchecked
-        return (R) Game.instance().getResourceManager().getResource(handle);
+        return Game.instance().getResourceManager().getResource(handle);
+    }
+
+    public static ByteBuffer readBytes(InputStream inputStream) throws IOException {
+        ByteBuffer buffer = BufferUtils.createByteBuffer(inputStream.available());
+        buffer.put(inputStream.readAllBytes());
+
+        return buffer;
     }
 
     public static String readResource(InputStream inputStream) throws IOException {

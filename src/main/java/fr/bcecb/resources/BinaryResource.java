@@ -3,19 +3,15 @@ package fr.bcecb.resources;
 import java.io.IOException;
 import java.io.InputStream;
 
-public class Resource implements IResource {
+public class BinaryResource implements IResource {
     private byte[] bytes;
 
-    public Resource() {
+    public BinaryResource() {
 
     }
 
     public byte[] getBytes() {
         return bytes;
-    }
-
-    public String asString() {
-        return new String(getBytes());
     }
 
     @Override

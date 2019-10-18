@@ -1,6 +1,7 @@
 package fr.bcecb.render;
 
 import fr.bcecb.Game;
+import fr.bcecb.input.MouseManager;
 import fr.bcecb.util.Log;
 import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.system.MemoryStack;
@@ -13,17 +14,20 @@ import static org.lwjgl.system.MemoryUtil.NULL;
 public class Window {
     private final long windowId;
 
+    private final MouseManager mouseManager;
+
     private int width, minWidth;
     private int height, minHeight;
 
     private Window(String title, int width, int height, boolean fullscreen) {
         this.windowId = glfwCreateWindow(width, height, title, fullscreen ? glfwGetPrimaryMonitor() : NULL, NULL);
+        this.mouseManager = new MouseManager(this);
     }
 
     public static Window newInstance(String title, int width, int height, boolean fullscreen) {
         glfwDefaultWindowHints();
         glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
-        glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
+        glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
 
         GLFWVidMode vidMode = glfwGetVideoMode(glfwGetPrimaryMonitor());
 
@@ -31,15 +35,9 @@ public class Window {
             glfwWindowHint(GLFW_RED_BITS, vidMode.redBits());
             glfwWindowHint(GLFW_GREEN_BITS, vidMode.greenBits());
             glfwWindowHint(GLFW_BLUE_BITS, vidMode.blueBits());
-        } else Log.warning(Log.RENDER, "No video mode available !");
+        } else Log.SYSTEM.warning("No video mode available !");
 
-        glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-        glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-        glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-        glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GLFW_TRUE);
-
-        Log.config(Log.RENDER, "Using OpenGL Version 3.3 Core");
-        Log.config(Log.RENDER, "Window size is " + width + "x" + height);
+        Log.SYSTEM.config("Window size is {0}x{1}", width, height);
 
         Window window = new Window(title, width, height, fullscreen);
 
@@ -56,7 +54,7 @@ public class Window {
 
                 if (vidMode != null) {
                     glfwSetWindowPos(window.id(), (vidMode.width() - pWidth.get(0)) / 2, (vidMode.height() - pHeight.get(0)) / 2);
-                } else Log.warning(Log.RENDER, "No video mode available !");
+                } else Log.SYSTEM.warning("No video mode available !");
             }
         }
 
@@ -70,6 +68,10 @@ public class Window {
 
     public static Window getCurrentWindow() {
         return Game.instance().getRenderEngine().getWindow();
+    }
+
+    public MouseManager getMouseManager() {
+        return mouseManager;
     }
 
     public void destroy() {
@@ -99,7 +101,7 @@ public class Window {
             } else {
                 glfwSetWindowMonitor(windowId, NULL, (vidMode.width() - this.minWidth) / 2, (vidMode.height() - this.minHeight) / 2, minWidth, minHeight, GLFW_DONT_CARE);
             }
-        } else Log.warning(Log.RENDER, "No video mode available !");
+        } else Log.SYSTEM.warning("No video mode available !");
     }
 
     public boolean shouldClose() {

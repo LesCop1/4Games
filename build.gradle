@@ -32,6 +32,7 @@ dependencies {
     runtimeOnly "org.lwjgl:lwjgl-glfw::$lwjglNatives"
     runtimeOnly "org.lwjgl:lwjgl-openal::$lwjglNatives"
     runtimeOnly "org.lwjgl:lwjgl-opengl::$lwjglNatives"
+    runtimeOnly "org.lwjgl:lwjgl-stb::$lwjglNatives"
 
     implementation "org.joml:joml:1.9.17"
     implementation "com.google.guava:guava:28.1-jre"

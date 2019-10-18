@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 public abstract class GLResource implements IResource {
-    private int id = -1;
+    private int id = 0;
 
     @Override
     public void load(InputStream inputStream) throws IOException {
@@ -16,7 +16,7 @@ public abstract class GLResource implements IResource {
     public abstract void bind();
     public abstract void unbind();
     
-    int getGLId() {
+    public int getGLId() {
         return id;
     }
 }
