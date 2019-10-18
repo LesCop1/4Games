@@ -1,6 +1,7 @@
 package fr.bcecb.render;
 
-import fr.bcecb.resources.ResourceManager;
+import fr.bcecb.resources.ResourceHandle;
+import fr.bcecb.resources.Texture;
 
 public abstract class Renderer<T extends IRenderable> {
     protected final RenderManager renderManager;
@@ -9,5 +10,7 @@ public abstract class Renderer<T extends IRenderable> {
         this.renderManager = renderManager;
     }
 
-    public abstract void render(T object, double partialTick);
+    public abstract ResourceHandle<Texture> getTexture(T object);
+
+    public abstract void render(T object, float partialTick);
 }

@@ -9,10 +9,10 @@ public abstract class MouseEvent extends Event {
     @Cancellable
     public static final class Click extends MouseEvent {
         private final int button;
-        private final double x, y;
+        private final float x, y;
         private final Type type;
 
-        Click(Type type, int button, double x, double y) {
+        Click(Type type, int button, float x, float y) {
             this.type = type;
             this.button = button;
             this.x = x;
@@ -27,11 +27,11 @@ public abstract class MouseEvent extends Event {
             return button;
         }
 
-        public double getX() {
+        public float getX() {
             return x;
         }
 
-        public double getY() {
+        public float getY() {
             return y;
         }
 
@@ -39,39 +39,39 @@ public abstract class MouseEvent extends Event {
     }
 
     public static final class Move extends MouseEvent {
-        private final double x, dx;
-        private final double y, dy;
+        private final float x, dx;
+        private final float y, dy;
 
-        Move(double x, double y, double dx, double dy) {
+        Move(float x, float y, float dx, float dy) {
             this.x = x;
             this.dx = dx;
             this.y = y;
             this.dy = dy;
         }
 
-        public double getX() {
+        public float getX() {
             return x;
         }
 
-        public double getDeltaX() {
+        public float getDeltaX() {
             return dx;
         }
 
-        public double getY() {
+        public float getY() {
             return y;
         }
 
-        public double getDeltaY() {
+        public float getDeltaY() {
             return dy;
         }
     }
 
     @Cancellable
     public static final class Scroll extends MouseEvent {
-        private final double x;
-        private final double y;
+        private final float x;
+        private final float y;
 
-        Scroll(double x, double y) {
+        Scroll(float x, float y) {
             this.x = x;
             this.y = y;
         }

@@ -1,17 +1,18 @@
 package fr.bcecb.state;
 
 import fr.bcecb.Game;
-import fr.bcecb.render.RenderEngine;
+import fr.bcecb.render.RenderManager;
 import fr.bcecb.render.Renderer;
 import fr.bcecb.util.Log;
 
+import java.util.ArrayDeque;
+import java.util.Deque;
 import java.util.Iterator;
-import java.util.Stack;
 
 import static fr.bcecb.state.State.StateEvent;
 
 public class StateEngine {
-    private final Stack<State> stateStack = new Stack<>();
+    private final Deque<State> stateStack = new ArrayDeque<>();
 
     public void pushState(State state) {
         StateEvent.Enter event = new StateEvent.Enter(state, getCurrentState());
@@ -24,7 +25,7 @@ public class StateEngine {
     }
 
     public void popState() {
-        if (!stateStack.empty()) {
+        if (!stateStack.isEmpty()) {
             StateEvent.Exit event = new StateEvent.Exit(stateStack.peek());
             Game.getEventBus().post(event);
 
@@ -35,7 +36,7 @@ public class StateEngine {
     }
 
     public void update() {
-        if (stateStack.empty()) {
+        if (stateStack.isEmpty()) {
             Game.instance().stop();
         }
 
@@ -46,31 +47,35 @@ public class StateEngine {
         }
     }
 
-    public void render(RenderEngine renderEngine, double partialTick) {
-        renderState(renderEngine, stateStack.iterator(), partialTick);
+    public void render(RenderManager renderManager, float partialTick) {
+        renderState(renderManager, stateStack.iterator(), partialTick);
     }
 
-    private void renderState(RenderEngine renderEngine, Iterator<State> stateIterator, double partialTick) {
+    private void renderState(RenderManager renderManager, Iterator<State> stateIterator, float partialTick) {
         if (stateIterator.hasNext()) {
             State state = stateIterator.next();
 
             if (state.shouldRenderBelow()) {
-                renderState(renderEngine, stateIterator, partialTick);
+                renderState(renderManager, stateIterator, partialTick);
             }
 
-            Renderer<State> renderer = renderEngine.getRenderManager().getRendererFor(state);
+            Renderer<State> renderer = renderManager.getRendererFor(state);
 
             if (renderer != null) {
                 renderer.render(state, partialTick);
-            } else Log.warning(Log.RENDER, "State " + state.getName() + " has no renderer !");
+            } else Log.RENDER.warning("State {0} has no renderer !", state.getName());
         }
     }
 
-    public State getCurrentState() {
-        return !stateStack.empty() ? stateStack.peek() : null;
+    public boolean isCurrentState(State state) {
+        return state == getCurrentState();
     }
 
-    public Stack<State> getStateStack() {
+    public State getCurrentState() {
+        return !stateStack.isEmpty() ? stateStack.peek() : null;
+    }
+
+    public Deque<State> getStateStack() {
         return stateStack;
     }
 }

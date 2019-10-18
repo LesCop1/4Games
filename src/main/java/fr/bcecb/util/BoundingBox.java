@@ -1,14 +1,16 @@
 package fr.bcecb.util;
 
+import com.google.common.base.MoreObjects;
+
 import java.util.Objects;
 
 public class BoundingBox {
-    private double minX;
-    private double maxX;
-    private double minY;
-    private double maxY;
+    private float minX;
+    private float maxX;
+    private float minY;
+    private float maxY;
 
-    public BoundingBox(double minX, double minY, double maxX, double maxY) {
+    public BoundingBox(float minX, float minY, float maxX, float maxY) {
         this.minX = minX;
         this.minY = minY;
         this.maxX = maxX;
@@ -19,51 +21,59 @@ public class BoundingBox {
         this(boundingBox.minX, boundingBox.minY, boundingBox.maxX, boundingBox.maxY);
     }
 
-    public boolean checkCoordinates(double x, double y) {
+    public static boolean checkCoordinates(float minX, float maxX, float minY, float maxY, float x, float y) {
         return minX <= x && maxX >= x && minY <= y && maxY >= y;
     }
 
-    public double getSizeX() {
+    public static boolean checkCoordinates(BoundingBox boundingBox, float x, float y) {
+        return boundingBox.checkCoordinates(x, y);
+    }
+
+    public boolean checkCoordinates(float x, float y) {
+        return minX <= x && maxX >= x && minY <= y && maxY >= y;
+    }
+
+    public float getWidth() {
         return Math.abs(maxX - minX);
     }
 
-    public double getSizeY() {
+    public float getHeight() {
         return Math.abs(maxY - minY);
     }
 
     public Point getCenter() {
-        return new Point((maxX - minX) / 2, (maxY - minY) / 2);
+        return new Point(getWidth() / 2, getHeight() / 2);
     }
 
-    public double getMinX() {
+    public float getMinX() {
         return minX;
     }
 
-    public void setMinX(double minX) {
+    public void setMinX(float minX) {
         this.minX = minX;
     }
 
-    public double getMaxX() {
+    public float getMaxX() {
         return maxX;
     }
 
-    public void setMaxX(double maxX) {
+    public void setMaxX(float maxX) {
         this.maxX = maxX;
     }
 
-    public double getMinY() {
+    public float getMinY() {
         return minY;
     }
 
-    public void setMinY(double minY) {
+    public void setMinY(float minY) {
         this.minY = minY;
     }
 
-    public double getMaxY() {
+    public float getMaxY() {
         return maxY;
     }
 
-    public void setMaxY(double maxY) {
+    public void setMaxY(float maxY) {
         this.maxY = maxY;
     }
 
@@ -81,5 +91,15 @@ public class BoundingBox {
     @Override
     public int hashCode() {
         return Objects.hash(getMinX(), getMaxX(), getMinY(), getMaxY());
+    }
+
+    @Override
+    public String toString() {
+        return MoreObjects.toStringHelper(this)
+                .add("minX", minX)
+                .add("maxX", maxX)
+                .add("minY", minY)
+                .add("maxY", maxY)
+                .toString();
     }
 }
