@@ -19,12 +19,12 @@ public class RenderEngine {
 
     private final ResourceManager resourceManager;
 
-    private final ResourceHandle<Shader> shaderResourceHandle = new ResourceHandle<>("shaders/base.json") {};
+    private final ResourceHandle<Shader> shaderResourceHandle = new ResourceHandle<>("shaders/base.json") {
+    };
 
     private final RenderManager renderManager;
 
     private final int vao, vbo, ebo;
-    private final int ubo;
 
     private final Matrix4f projection;
 
@@ -46,9 +46,6 @@ public class RenderEngine {
         ebo = glGenBuffers();
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, new int[]{0, 1, 3, 1, 2, 3}, GL_STATIC_DRAW);
-
-        ubo = glGenBuffers();
-        glBindBuffer(GL_UNIFORM_BUFFER, ubo);
 
         glVertexAttribPointer(0, 2, GL_FLOAT, false, 0, 0);
         glEnableVertexAttribArray(0);
@@ -90,7 +87,7 @@ public class RenderEngine {
         stateEngine.render(renderManager, partialTick);
         shader.unbind();
 
-        drawTexturedCircle(new ResourceHandle<>("textures/circle.png") {}, 50, 50, 500);
+        drawRect(0, 0, 100, 100);
     }
 
     public void drawTexturedRect(ResourceHandle<Texture> textureHandle, float minX, float minY, float maxX, float maxY) {
@@ -105,7 +102,7 @@ public class RenderEngine {
 
     public void drawRect(float minX, float minY, float maxX, float maxY) {
         Shader shader = resourceManager.getResource(shaderResourceHandle);
-        shader.uniformVec2("scale", new Vector2f(Math.abs(maxX - minX)/window.width(), Math.abs(maxY - minY)/window.height()));
+        shader.uniformVec2("scale", new Vector2f(Math.abs(maxX - minX) / window.width(), Math.abs(maxY - minY) / window.height()));
         shader.uniformVec2("position", new Vector2f(minX / window.width(), minY / window.height()));
 
         glBindVertexArray(vao);
@@ -114,10 +111,11 @@ public class RenderEngine {
     }
 
     public void drawCircle(float x, float y, float radius) {
-        Shader shader = resourceManager.getResource(new ResourceHandle<>("shaders/circle.json") {});
+        Shader shader = resourceManager.getResource(new ResourceHandle<>("shaders/circle.json") {
+        });
         shader.bind();
         shader.uniformMat4("projection", projection);
-        shader.uniformVec2("scale", new Vector2f(radius/window.width(), radius/window.height()));
+        shader.uniformVec2("scale", new Vector2f(radius / window.width(), radius / window.height()));
         shader.uniformVec2("position", new Vector2f(x / window.width(), y / window.height()));
 
         glBindVertexArray(vao);

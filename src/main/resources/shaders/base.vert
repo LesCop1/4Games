@@ -3,18 +3,13 @@
 layout(location = 0) in vec2 vertex;
 
 out vec2 pass_Texture;
-out vec2 VertexCoord;
 
-layout(std140) uniform VS_IN {
-    float partial;
-    mat4 projection;
-    mat4 model;
-};
+uniform mat4 projection;
+uniform vec2 position;
 
 uniform vec2 scale;
 
 void main(void) {
-    gl_Position = projection * model * vec4(vertex, 0.0, 1.0);
-    VertexCoord = vertex;
+    gl_Position = projection * vec4((vertex * scale) + position, 0.0, 1.0);
     pass_Texture = vertex;
 }

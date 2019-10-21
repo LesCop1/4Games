@@ -1,6 +1,5 @@
 #version 330 core
 
-in vec2 VertexCoord;
 in vec2 pass_Texture;
 
 out vec4 FragColor;
@@ -9,7 +8,7 @@ uniform float radius;
 uniform sampler2D textureSampler;
 
 void main(void) {
-    float dist = length(VertexCoord - vec2(0.5, 0.5));
+    float dist = length(pass_Texture - vec2(0.5, 0.5));
 
     if (dist >= 0.5) {
         discard;
