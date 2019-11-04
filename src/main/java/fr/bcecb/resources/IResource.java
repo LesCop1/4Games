@@ -6,4 +6,6 @@ import java.io.InputStream;
 public interface IResource {
     void load(InputStream inputStream) throws IOException;
     void dispose();
+
+    boolean validate();
 }

@@ -1,39 +1,37 @@
 package fr.bcecb.input;
 
-import fr.bcecb.Event;
 import fr.bcecb.Game;
+import fr.bcecb.event.Event;
+import fr.bcecb.event.MouseEvent;
 import fr.bcecb.render.Window;
 
 import static org.lwjgl.glfw.GLFW.*;
 
 public class MouseManager {
-    private static final MouseManager INSTANCE = new MouseManager();
+    private float positionX, lastPositionX;
+    private float positionY, lastPositionY;
 
-    private double positionX, lastPositionX;
-    private double positionY, lastPositionY;
-
-    private MouseManager() {
-        long id = Window.getCurrentWindow().id();
-        glfwSetMouseButtonCallback(id, this::mouseButtonCallback);
-        glfwSetCursorPosCallback(id, this::mouseMoveCallback);
-        glfwSetScrollCallback(id, this::mouseScrollCallback);
-        glfwSetCursorEnterCallback(id, this::mouseEnterCallback);
+    public MouseManager(Window window) {
+        glfwSetMouseButtonCallback(window.getId(), this::mouseButtonCallback);
+        glfwSetCursorPosCallback(window.getId(), this::mouseMoveCallback);
+        glfwSetScrollCallback(window.getId(), this::mouseScrollCallback);
+        glfwSetCursorEnterCallback(window.getId(), this::mouseEnterCallback);
     }
 
-    public static double getPositionX() {
-        return INSTANCE.positionX;
+    public float getPositionX() {
+        return positionX;
     }
 
-    public static double getPositionY() {
-        return INSTANCE.positionY;
+    public float getPositionY() {
+        return positionY;
     }
 
-    public static double getLastPositionX() {
-        return INSTANCE.lastPositionX;
+    public float getLastPositionX() {
+        return lastPositionX;
     }
 
-    public static double getLastPositionY() {
-        return INSTANCE.lastPositionY;
+    public float getLastPositionY() {
+        return lastPositionY;
     }
 
     private void mouseButtonCallback(long window, int button, int action, int mods) {
@@ -47,15 +45,15 @@ public class MouseManager {
         this.lastPositionX = positionX;
         this.lastPositionY = positionY;
 
-        this.positionX = x;
-        this.positionY = y;
+        this.positionX = (float)x;
+        this.positionY = (float)y;
 
-        Event event = new MouseEvent.Move(x, y, lastPositionX - positionX, lastPositionY - positionY);
+        Event event = new MouseEvent.Move(positionX, positionY, lastPositionX - positionX, lastPositionY - positionY);
         Game.getEventBus().post(event);
     }
 
     private void mouseScrollCallback(long window, double x, double y) {
-        Event event = new MouseEvent.Scroll(x, y);
+        Event event = new MouseEvent.Scroll((float)x, (float)y);
         Game.getEventBus().post(event);
     }
 

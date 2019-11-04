@@ -1,57 +1,83 @@
 package fr.bcecb.state.gui;
 
-import com.google.common.eventbus.Subscribe;
-import fr.bcecb.Game;
-import fr.bcecb.input.MouseEvent;
-import fr.bcecb.input.MouseManager;
+import com.google.common.base.MoreObjects;
+import fr.bcecb.event.MouseEvent;
 import fr.bcecb.render.IRenderable;
-import fr.bcecb.util.BoundingBox;
 
-import static fr.bcecb.input.MouseEvent.Click.Type.PRESSED;
+import java.util.function.Consumer;
 
 public abstract class GuiElement implements IRenderable {
+    private final int id;
+    private boolean hovered;
     private boolean visible;
-    private final BoundingBox boundingBox;
 
-    public GuiElement() {
+    private float x, width;
+    private float y, height;
+
+    private Consumer<MouseEvent.Click> clickHandler;
+    private Consumer<MouseEvent.Move> hoverHandler;
+    private Consumer<MouseEvent.Scroll> scrollHandler;
+
+    public GuiElement(int id, float x, float y, float width, float height) {
+        this.id = id;
+        this.x = x;
+        this.y = y;
+        this.width = width;
+        this.height = height;
         this.visible = true;
-        this.boundingBox = null;
-        Game.getEventBus().register(this);
+        this.hovered = false;
+
+        this.clickHandler = this::onClick;
+        this.hoverHandler = this::onHover;
+        this.scrollHandler = this::onScroll;
     }
 
-    public GuiElement(BoundingBox boundingBox) {
-        this.boundingBox = boundingBox;
+    public int getId() {
+        return id;
     }
 
-    @Subscribe
-    private void handleClickEvent(MouseEvent.Click event) {
-        if (!isVisible()) return;
-
-        if (!event.isCancelled()) {
-            if (event.getType() == PRESSED && boundingBox.checkCoordinates(event.getX(), event.getY())) {
-                onClick(event);
-            }
-
-            event.setCancelled(true);
-        }
+    public float getX() {
+        return x;
     }
 
-    @Subscribe
-    private void handleHoverEvent(MouseEvent.Move event) {
-        if (!isVisible()) return;
-
-        if (boundingBox.checkCoordinates(event.getX(), event.getY())) {
-            onHover(event);
-        }
+    public void setX(float x) {
+        this.x = x;
     }
 
-    @Subscribe
-    private void handleScrollEvent(MouseEvent.Scroll event) {
-        if (!isVisible()) return;
+    public float getY() {
+        return y;
+    }
 
-        if (boundingBox.checkCoordinates(MouseManager.getPositionX(), MouseManager.getPositionY())) {
-            onScroll(event);
-        }
+    public void setY(float y) {
+        this.y = y;
+    }
+
+    public float getWidth() {
+        return width;
+    }
+
+    public void setWidth(float width) {
+        this.width = width;
+    }
+
+    public float getHeight() {
+        return height;
+    }
+
+    public void setHeight(float height) {
+        this.height = height;
+    }
+
+    boolean checkBounds(float x, float y) {
+        return x >= getX() && x <= getX() + getWidth() && y >= getY() && y <= getY() + getHeight();
+    }
+
+    public void setHovered(boolean hovered) {
+        this.hovered = hovered;
+    }
+
+    public boolean isHovered() {
+        return hovered;
     }
 
     public boolean isVisible() {
@@ -62,13 +88,42 @@ public abstract class GuiElement implements IRenderable {
         this.visible = visible;
     }
 
-    public BoundingBox getBoundingBox() {
-        return boundingBox;
+    public Consumer<MouseEvent.Click> getClickHandler() {
+        return MoreObjects.firstNonNull(clickHandler, this::onClick);
     }
 
-    protected abstract void onClick(MouseEvent.Click event);
+    public GuiElement setClickHandler(Consumer<MouseEvent.Click> clickHandler) {
+        this.clickHandler = clickHandler;
+        return this;
+    }
 
-    protected abstract void onHover(MouseEvent.Move event);
+    public Consumer<MouseEvent.Move> getHoverHandler() {
+        return MoreObjects.firstNonNull(hoverHandler, this::onHover);
+    }
 
-    protected abstract void onScroll(MouseEvent.Scroll event);
+    public GuiElement setHoverHandler(Consumer<MouseEvent.Move> hoverHandler) {
+        this.hoverHandler = hoverHandler;
+        return this;
+    }
+
+    public Consumer<MouseEvent.Scroll> getScrollHandler() {
+        return MoreObjects.firstNonNull(scrollHandler, this::onScroll);
+    }
+
+    public GuiElement setScrollHandler(Consumer<MouseEvent.Scroll> scrollHandler) {
+        this.scrollHandler = scrollHandler;
+        return this;
+    }
+
+    protected void onClick(MouseEvent.Click event) {
+
+    }
+
+    protected void onHover(MouseEvent.Move event) {
+
+    }
+
+    protected void onScroll(MouseEvent.Scroll event) {
+
+    }
 }

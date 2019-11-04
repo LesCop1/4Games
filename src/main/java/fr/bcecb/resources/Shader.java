@@ -1,14 +1,98 @@
 package fr.bcecb.resources;
 
-import fr.bcecb.util.Log;
+import com.google.gson.Gson;
+import fr.bcecb.util.Resources;
+import fr.bcecb.util.ShaderDescriptor;
+import fr.bcecb.util.Shaders;
+import org.joml.Matrix4f;
+import org.joml.Vector2f;
+import org.joml.Vector3f;
+import org.joml.Vector4f;
+import org.lwjgl.BufferUtils;
+import org.lwjgl.system.MemoryStack;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.FloatBuffer;
 
-import static org.lwjgl.opengl.GL33.*;
+import static org.lwjgl.opengl.GL45.*;
 
 public class Shader extends GLResource {
+    private ShaderDescriptor descriptor;
+
     public Shader() {
+    }
+
+    public ShaderDescriptor getDescriptor() {
+        return descriptor;
+    }
+
+    private int getUniformLocation(String uniformName) {
+        return glGetUniformLocation(getGLId(), uniformName);
+    }
+
+    public int getUniformInt(String name) {
+        return glGetUniformi(getGLId(), getUniformLocation(name));
+    }
+
+    public Vector4f getUniformVec4(String name) {
+        FloatBuffer buffer = BufferUtils.createFloatBuffer(4);
+        glGetUniformfv(getGLId(), getUniformLocation(name), buffer);
+        return new Vector4f(buffer);
+    }
+
+    public void uniformInt(String name, int value) {
+        uniformInt(getUniformLocation(name), value);
+    }
+    private void uniformInt(int location, int value) {
+        glUniform1i(location, value);
+    }
+    public void uniformDouble(String name, double value) {
+        uniformDouble(getUniformLocation(name), value);
+    }
+    private void uniformDouble(int location, double value) {
+        uniformFloat(location, (float)value);
+    }
+    public void uniformFloat(String name, float value) {
+        uniformFloat(getUniformLocation(name), value);
+    }
+    private void uniformFloat(int location, float value) {
+        glUniform1f(location, value);
+    }
+    public void uniformVec4(String name, Vector4f vector) {
+        System.out.println("name = " + name + ", location = " + getUniformLocation(name));
+        uniformVec4(getUniformLocation(name), vector);
+    }
+    private void uniformVec4(int location, Vector4f vector) {
+        glUniform4f(location, vector.x, vector.y, vector.z, vector.w);
+    }
+    public void uniformVec3(String name, Vector3f vector) {
+        uniformVec3(getUniformLocation(name), vector);
+    }
+    private void uniformVec3(int location, Vector3f vector) {
+        glUniform3f(location, vector.x, vector.y, vector.z);
+    }
+    public void uniformVec2(String name, Vector2f vector) {
+        uniformVec2(getUniformLocation(name), vector);
+    }
+    private void uniformVec2(int location, Vector2f vector) {
+        glUniform2f(location, vector.x, vector.y);
+    }
+    public void uniformBoolean(String name, boolean value) {
+        uniformBoolean(getUniformLocation(name), value);
+    }
+    private void uniformBoolean(int location, boolean value) {
+        glUniform1i(location, value ? 1 : 0);
+    }
+    public void uniformMat4(String name, Matrix4f matrix) {
+        uniformMat4(getUniformLocation(name), matrix);
+    }
+    private void uniformMat4(int location, Matrix4f matrix) {
+        try (MemoryStack stack = MemoryStack.stackPush()) {
+            FloatBuffer fb = stack.mallocFloat(16);
+            matrix.get(fb);
+            glUniformMatrix4fv(location, false, fb);
+        }
     }
 
     @Override
@@ -23,82 +107,8 @@ public class Shader extends GLResource {
 
     @Override
     public int create(InputStream inputStream) throws IOException {
-        return create("", "", ""); //TODO
-    }
-
-    private int create(String vertexSource, String fragmentSource, String geometrySource) throws IOException {
-        int vertex = compile(GL_VERTEX_SHADER, vertexSource);
-        int fragment = compile(GL_FRAGMENT_SHADER, fragmentSource);
-        int geometry = compile(GL_GEOMETRY_SHADER, geometrySource);
-
-        if (vertex == 0 || fragment == 0 || (geometry == 0 && geometrySource != null)) {
-            return -1;
-        }
-
-        int program = glCreateProgram();
-        glAttachShader(program, vertex);
-        glAttachShader(program, fragment);
-
-        if (geometry != 0) {
-            glAttachShader(program, geometry);
-        }
-
-        glLinkProgram(program);
-
-        String infoLog = glGetProgramInfoLog(program, glGetProgrami(program, GL_INFO_LOG_LENGTH));
-        if (!infoLog.isBlank()) {
-            Log.warning(Log.RENDER, "Shader program linking returned with warnings : " + infoLog);
-        }
-
-        if (glGetProgrami(program, GL_LINK_STATUS) == GL_FALSE) {
-            Log.severe(Log.RENDER, "Failed to link shader program !");
-            return -1;
-        }
-
-        glDetachShader(program, vertex);
-        glDeleteShader(vertex);
-        glDetachShader(program, fragment);
-        glDeleteShader(fragment);
-        glDetachShader(program, geometry);
-        glDeleteShader(geometry);
-
-        return program;
-    }
-
-    private int compile(int type, String source) {
-        if (source == null || source.length() == 0) {
-            return 0;
-        }
-
-        int id = glCreateShader(type);
-
-        glShaderSource(id, source);
-        glCompileShader(id);
-
-        String infoLog = glGetShaderInfoLog(id, glGetShaderi(id, GL_INFO_LOG_LENGTH));
-        if (!infoLog.isBlank()) {
-            Log.warning(Log.RENDER, "Shader compilation returned with warnings : " + infoLog);
-        }
-
-        if (glGetShaderi(id, GL_COMPILE_STATUS) == GL_FALSE) {
-            Log.severe(Log.RENDER, "Failed to compile " + getShaderName(type) + " shader !");
-            return 0;
-        }
-
-        return id;
-    }
-
-    private static String getShaderName(int type) {
-        switch (type) {
-            case GL_VERTEX_SHADER:
-                return "Vertex";
-            case GL_FRAGMENT_SHADER:
-                return "Fragment";
-            case GL_GEOMETRY_SHADER:
-                return "Geometry";
-            default:
-                return "";
-        }
+        this.descriptor = new Gson().fromJson(Resources.readResource(inputStream), ShaderDescriptor.class);
+        return Shaders.compileProgram(descriptor);
     }
 
     @Override
