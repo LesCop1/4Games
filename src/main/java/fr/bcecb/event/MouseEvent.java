@@ -1,6 +1,4 @@
-package fr.bcecb.input;
-
-import fr.bcecb.Event;
+package fr.bcecb.event;
 
 public abstract class MouseEvent extends Event {
     private MouseEvent() {
@@ -12,7 +10,7 @@ public abstract class MouseEvent extends Event {
         private final float x, y;
         private final Type type;
 
-        Click(Type type, int button, float x, float y) {
+        public Click(Type type, int button, float x, float y) {
             this.type = type;
             this.button = button;
             this.x = x;
@@ -42,7 +40,7 @@ public abstract class MouseEvent extends Event {
         private final float x, dx;
         private final float y, dy;
 
-        Move(float x, float y, float dx, float dy) {
+        public Move(float x, float y, float dx, float dy) {
             this.x = x;
             this.dx = dx;
             this.y = y;
@@ -71,7 +69,7 @@ public abstract class MouseEvent extends Event {
         private final float x;
         private final float y;
 
-        Scroll(float x, float y) {
+        public Scroll(float x, float y) {
             this.x = x;
             this.y = y;
         }
@@ -88,7 +86,7 @@ public abstract class MouseEvent extends Event {
     public static final class Enter extends MouseEvent {
         private final boolean entered;
 
-        Enter(boolean entered) {
+        public Enter(boolean entered) {
             this.entered = entered;
         }
 

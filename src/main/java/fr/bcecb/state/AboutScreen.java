@@ -1,13 +1,17 @@
 package fr.bcecb.state;
 
 import fr.bcecb.Game;
-import fr.bcecb.input.MouseEvent;
+import fr.bcecb.event.MouseEvent;
 import fr.bcecb.state.gui.Button;
 import fr.bcecb.state.gui.ScreenState;
 
 public class AboutScreen extends ScreenState {
     protected AboutScreen() {
         super("about_menu");
+    }
+
+    @Override
+    public void initGui() {
         addGuiElement(new Button(0, 0, 0, 100, 100) {
             @Override
             protected void onClick(MouseEvent.Click event) {

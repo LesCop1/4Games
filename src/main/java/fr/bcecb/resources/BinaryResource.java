@@ -20,6 +20,11 @@ public class BinaryResource implements IResource {
     }
 
     @Override
+    public boolean validate() {
+        return bytes != null && bytes.length > 0;
+    }
+
+    @Override
     public void dispose() {
 
     }

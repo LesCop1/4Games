@@ -1,6 +1,6 @@
 package fr.bcecb.state;
 
-import fr.bcecb.Event;
+import fr.bcecb.event.Event;
 import fr.bcecb.render.IRenderable;
 
 public abstract class State implements IRenderable {

@@ -9,12 +9,12 @@ import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 
+import static org.lwjgl.opengl.GL45.*;
 import static org.lwjgl.stb.STBImage.*;
-import static org.lwjgl.opengl.GL33.*;
 
 public class Texture extends GLResource {
-    private int width;
-    private int height;
+    protected int width;
+    protected int height;
 
     public Texture() {
     }
@@ -45,7 +45,7 @@ public class Texture extends GLResource {
             IntBuffer h = stack.mallocInt(1);
             IntBuffer channels = stack.mallocInt(1);
 
-            ByteBuffer imageBuffer = Resources.readBytes(inputStream).flip();
+            ByteBuffer imageBuffer = Resources.readBytes(inputStream);
             image = stbi_load_from_memory(imageBuffer, w, h, channels, 4);
 
             if (image == null) {
@@ -57,23 +57,18 @@ public class Texture extends GLResource {
             height = h.get();
         }
 
-        int texture = create(image);
-        stbi_image_free(image);
-        return texture;
-    }
-
-    public int create(ByteBuffer textureBuffer) {
         int texture = glGenTextures();
 
         glBindTexture(GL_TEXTURE_2D, texture);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, textureBuffer);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, image);
         glGenerateMipmap(GL_TEXTURE_2D);
 
+        stbi_image_free(image);
         return texture;
     }
 

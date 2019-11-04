@@ -1,52 +1,39 @@
 package fr.bcecb.state;
 
 import fr.bcecb.Game;
-import fr.bcecb.input.MouseEvent;
-import fr.bcecb.state.gui.Button;
+import fr.bcecb.render.Window;
+import fr.bcecb.state.gui.CircleButton;
+import fr.bcecb.state.gui.GuiElement;
 import fr.bcecb.state.gui.ScreenState;
 import fr.bcecb.util.Log;
 
 public class MainMenuScreen extends ScreenState {
     public MainMenuScreen() {
         super("main_menu");
+    }
 
-        addGuiElement(new Button(0, 0, 0, 100, 100) {
-            @Override
-            protected void onClick(MouseEvent.Click event) {
-                Game.instance().getStateEngine().popState();
-            }
-        });
+    @Override
+    public void initGui() {
+        int width = Window.getCurrentWindow().getWidth();
+        int height = Window.getCurrentWindow().getHeight();
 
-        addGuiElement(new Button(1, 150, 150, 500, 100) {
-            @Override
-            protected void onClick(MouseEvent.Click event) {
-                Game.instance().getStateEngine().pushState(new GameSelectScreen());
-            }
-        });
-
-        addGuiElement(new Button(2, 150, 300, 500, 100) {
-            @Override
-            protected void onClick(MouseEvent.Click event) {
-                Game.instance().getStateEngine().pushState(new AboutScreen());
-            }
-        });
+        GuiElement playButton = new CircleButton(0, width / 2.0f, height / 2.0f, 200.0f, true)
+                .setClickHandler(e -> Game.instance().getStateEngine().popState());
+        addGuiElement(playButton);
     }
 
     @Override
     public void onEnter() {
-        super.onEnter();
-        Log.GAME.info("Entered");
+        Log.GAME.debug("Entered");
     }
 
     @Override
     public void onExit() {
-        super.onExit();
-        Log.GAME.info("Exited");
+        Log.GAME.debug("Exited");
     }
 
     @Override
     public void update() {
-        super.update();
     }
 
     @Override

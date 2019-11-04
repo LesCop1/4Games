@@ -1,7 +1,6 @@
-#version 330 core
+#version 440 core
 
-in vec2 VertexCoord;
-in vec2 pass_Texture;
+in vec2 pass_UV;
 
 out vec4 FragColor;
 
@@ -9,13 +8,14 @@ uniform float radius;
 uniform sampler2D textureSampler;
 
 void main(void) {
-    float dist = length(VertexCoord - vec2(0.5, 0.5));
+    float R = 0.5;
 
-    if (dist >= 0.5) {
+    float dist = length(pass_UV - vec2(R));
+    if (dist >= R) {
         discard;
     }
 
-    float sm = smoothstep(radius, radius-0.01, dist);
-
-    FragColor = vec4(1.0, 1.0, 1.0, sm) * texture(textureSampler, pass_Texture);
+    vec4 tex = texture(textureSampler, pass_UV);
+    float alpha = tex.a * smoothstep(R, R - 0.01, dist);
+    FragColor = vec4(tex.rgb, alpha);
 }

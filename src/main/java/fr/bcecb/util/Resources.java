@@ -5,7 +5,10 @@ import fr.bcecb.resources.IResource;
 import fr.bcecb.resources.ResourceHandle;
 import org.lwjgl.BufferUtils;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.nio.ByteBuffer;
 import java.util.stream.Collectors;
 
@@ -18,6 +21,7 @@ public class Resources {
     public static ByteBuffer readBytes(InputStream inputStream) throws IOException {
         ByteBuffer buffer = BufferUtils.createByteBuffer(inputStream.available());
         buffer.put(inputStream.readAllBytes());
+        buffer.flip();
 
         return buffer;
     }

@@ -1,6 +1,9 @@
 package fr.bcecb.render;
 
 import fr.bcecb.Game;
+import fr.bcecb.event.Event;
+import fr.bcecb.event.GameEvent;
+import fr.bcecb.event.WindowEvent;
 import fr.bcecb.input.MouseManager;
 import fr.bcecb.util.Log;
 import org.lwjgl.glfw.GLFWVidMode;
@@ -27,7 +30,7 @@ public class Window {
     public static Window newInstance(String title, int width, int height, boolean fullscreen) {
         glfwDefaultWindowHints();
         glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
-        glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
+        glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
 
         GLFWVidMode vidMode = glfwGetVideoMode(glfwGetPrimaryMonitor());
 
@@ -35,13 +38,17 @@ public class Window {
             glfwWindowHint(GLFW_RED_BITS, vidMode.redBits());
             glfwWindowHint(GLFW_GREEN_BITS, vidMode.greenBits());
             glfwWindowHint(GLFW_BLUE_BITS, vidMode.blueBits());
+            glfwWindowHint(GLFW_REFRESH_RATE, vidMode.refreshRate());
         } else Log.SYSTEM.warning("No video mode available !");
+
+        glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+        glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 4);
 
         Log.SYSTEM.config("Window size is {0}x{1}", width, height);
 
         Window window = new Window(title, width, height, fullscreen);
 
-        if (window.id() == NULL) {
+        if (window.getId() == NULL) {
             return null;
         }
 
@@ -50,17 +57,18 @@ public class Window {
                 IntBuffer pWidth = stack.mallocInt(1);
                 IntBuffer pHeight = stack.mallocInt(1);
 
-                glfwGetWindowSize(window.id(), pWidth, pHeight);
+                glfwGetWindowSize(window.getId(), pWidth, pHeight);
 
                 if (vidMode != null) {
-                    glfwSetWindowPos(window.id(), (vidMode.width() - pWidth.get(0)) / 2, (vidMode.height() - pHeight.get(0)) / 2);
+                    glfwSetWindowPos(window.getId(), (vidMode.width() - pWidth.get(0)) / 2, (vidMode.height() - pHeight.get(0)) / 2);
                 } else Log.SYSTEM.warning("No video mode available !");
             }
         }
 
-        glfwSetFramebufferSizeCallback(window.id(), window::setSize);
+        glfwSetFramebufferSizeCallback(window.getId(), window::setFramebufferSize);
+        glfwSetWindowCloseCallback(window.getId(), window::close);
 
-        glfwMakeContextCurrent(window.id());
+        glfwMakeContextCurrent(window.getId());
         glfwSwapInterval(1);
 
         return window;
@@ -78,15 +86,15 @@ public class Window {
         glfwDestroyWindow(windowId);
     }
 
-    public long id() {
+    public long getId() {
         return windowId;
     }
 
-    public int width() {
+    public int getWidth() {
         return width;
     }
 
-    public int height() {
+    public int getHeight() {
         return height;
     }
 
@@ -108,10 +116,18 @@ public class Window {
         return glfwWindowShouldClose(windowId);
     }
 
-    private void setSize(long window, int width, int height) {
+    private void close(long window) {
+        Event event = new GameEvent.Close();
+        Game.getEventBus().post(event);
+    }
+
+    private void setFramebufferSize(long window, int width, int height) {
         assert window == this.windowId;
 
         this.width = width;
         this.height = height;
+
+        Event event = new WindowEvent.Size(this.width, this.height);
+        Game.getEventBus().post(event);
     }
 }

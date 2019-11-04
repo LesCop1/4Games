@@ -1,7 +1,8 @@
 package fr.bcecb.input;
 
-import fr.bcecb.Event;
 import fr.bcecb.Game;
+import fr.bcecb.event.Event;
+import fr.bcecb.event.MouseEvent;
 import fr.bcecb.render.Window;
 
 import static org.lwjgl.glfw.GLFW.*;
@@ -11,10 +12,10 @@ public class MouseManager {
     private float positionY, lastPositionY;
 
     public MouseManager(Window window) {
-        glfwSetMouseButtonCallback(window.id(), this::mouseButtonCallback);
-        glfwSetCursorPosCallback(window.id(), this::mouseMoveCallback);
-        glfwSetScrollCallback(window.id(), this::mouseScrollCallback);
-        glfwSetCursorEnterCallback(window.id(), this::mouseEnterCallback);
+        glfwSetMouseButtonCallback(window.getId(), this::mouseButtonCallback);
+        glfwSetCursorPosCallback(window.getId(), this::mouseMoveCallback);
+        glfwSetScrollCallback(window.getId(), this::mouseScrollCallback);
+        glfwSetCursorEnterCallback(window.getId(), this::mouseEnterCallback);
     }
 
     public float getPositionX() {

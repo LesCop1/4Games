@@ -1,6 +1,9 @@
 package fr.bcecb.state;
 
+import com.google.common.eventbus.Subscribe;
 import fr.bcecb.Game;
+import fr.bcecb.event.Event;
+import fr.bcecb.event.GameEvent;
 import fr.bcecb.render.RenderManager;
 import fr.bcecb.render.Renderer;
 import fr.bcecb.util.Log;
@@ -15,7 +18,7 @@ public class StateEngine {
     private final Deque<State> stateStack = new ArrayDeque<>();
 
     public void pushState(State state) {
-        StateEvent.Enter event = new StateEvent.Enter(state, getCurrentState());
+        Event event = new StateEvent.Enter(state, getCurrentState());
         Game.getEventBus().post(event);
 
         if (!event.isCancelled()) {
@@ -26,20 +29,22 @@ public class StateEngine {
 
     public void popState() {
         if (!stateStack.isEmpty()) {
-            StateEvent.Exit event = new StateEvent.Exit(stateStack.peek());
+            Event event = new StateEvent.Exit(stateStack.peek());
             Game.getEventBus().post(event);
 
             if (!event.isCancelled()) {
                 stateStack.pop().onExit();
+
+                if (stateStack.isEmpty()) {
+                    Event event1 = new GameEvent.Close();
+                    Game.getEventBus().post(event1);
+                }
             }
         }
     }
 
-    public void update() {
-        if (stateStack.isEmpty()) {
-            Game.instance().stop();
-        }
-
+    @Subscribe
+    public void handleTick(GameEvent.Tick event) {
         for (State state : stateStack) {
             state.update();
 

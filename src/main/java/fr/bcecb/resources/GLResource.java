@@ -15,7 +15,12 @@ public abstract class GLResource implements IResource {
 
     public abstract void bind();
     public abstract void unbind();
-    
+
+    @Override
+    public boolean validate() {
+        return id > 0;
+    }
+
     public int getGLId() {
         return id;
     }

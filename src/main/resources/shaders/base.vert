@@ -1,20 +1,17 @@
-#version 330 core
+#version 440 core
 
-layout(location = 0) in vec2 vertex;
+layout(location = 0) in vec2 position;
+layout(location = 1) in vec2 uv;
+layout(location = 2) in vec4 color;
 
-out vec2 pass_Texture;
-out vec2 VertexCoord;
+out vec2 pass_UV;
+out vec4 pass_Color;
 
-layout(std140) uniform VS_IN {
-    float partial;
-    mat4 projection;
-    mat4 model;
-};
-
-uniform vec2 scale;
+uniform mat4 projection = mat4(1.0);
+uniform mat4 model = mat4(1.0);
 
 void main(void) {
-    gl_Position = projection * model * vec4(vertex, 0.0, 1.0);
-    VertexCoord = vertex;
-    pass_Texture = vertex;
+    gl_Position = projection * model * vec4(position, 0.0, 1.0);
+    pass_UV = uv;
+    pass_Color = color;
 }

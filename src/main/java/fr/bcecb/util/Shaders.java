@@ -5,13 +5,9 @@ import fr.bcecb.Game;
 import fr.bcecb.resources.ResourceHandle;
 import fr.bcecb.resources.StringResource;
 
-import static org.lwjgl.opengl.GL11.GL_FALSE;
-import static org.lwjgl.opengl.GL20.*;
-import static org.lwjgl.opengl.GL20.GL_COMPILE_STATUS;
-import static org.lwjgl.opengl.GL32.GL_GEOMETRY_SHADER;
+import static org.lwjgl.opengl.GL45.*;
 
 public class Shaders {
-
     public static int compileProgram(ShaderDescriptor descriptor) {
         int vertex = compileShader(GL_VERTEX_SHADER, descriptor.getVertexResource());
         int fragment = compileShader(GL_FRAGMENT_SHADER, descriptor.getFragmentResource());
@@ -38,20 +34,24 @@ public class Shaders {
             return 0;
         }
 
-        glDetachShader(program, vertex);
+        if (vertex != 0) glDetachShader(program, vertex);
         glDeleteShader(vertex);
-        glDetachShader(program, fragment);
+        if (fragment != 0) glDetachShader(program, fragment);
         glDeleteShader(fragment);
-        glDetachShader(program, geometry);
+        if (geometry != 0) glDetachShader(program, geometry);
         glDeleteShader(geometry);
 
         return program;
     }
 
     private static int compileShader(int type, ResourceHandle<StringResource> resourceHandle) {
-        StringResource resource = Game.instance().getResourceManager().getResource(resourceHandle);
+        if (resourceHandle == null) {
+            return 0;
+        }
 
-        if (resourceHandle == null || resource == null) {
+        StringResource resource = Game.instance().getResourceManager().loadResource(resourceHandle);
+
+        if (resource == null) {
             return 0;
         }
 
@@ -73,7 +73,7 @@ public class Shaders {
         return id;
     }
 
-    public static String getShaderName(int type) {
+    private static String getShaderName(int type) {
         switch (type) {
             case GL_VERTEX_SHADER:
                 return "Vertex";

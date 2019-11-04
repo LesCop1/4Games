@@ -3,21 +3,37 @@ package fr.bcecb.state.gui;
 import com.google.common.collect.Sets;
 import com.google.common.eventbus.Subscribe;
 import fr.bcecb.Game;
-import fr.bcecb.input.MouseEvent;
+import fr.bcecb.event.MouseEvent;
+import fr.bcecb.event.WindowEvent;
 import fr.bcecb.state.State;
 
 import java.util.Collection;
 import java.util.Set;
 
-import static fr.bcecb.input.MouseEvent.Click.Type.PRESSED;
+import static fr.bcecb.event.MouseEvent.Click.Type.RELEASED;
 
-public class ScreenState extends State {
+public abstract class ScreenState extends State {
     private final Set<GuiElement> guiElements = Sets.newHashSet();
 
     protected ScreenState(String name) {
         super(name);
+        initGui();
         Game.getEventBus().register(this);
     }
+
+    @Override
+    public void onEnter() {
+    }
+
+    @Override
+    public void onExit() {
+    }
+
+    @Override
+    public void update() {
+    }
+
+    public abstract void initGui();
 
     protected final void addGuiElement(GuiElement element) {
         guiElements.add(element);
@@ -29,21 +45,6 @@ public class ScreenState extends State {
 
     public final Collection<GuiElement> getGuiElements() {
         return guiElements;
-    }
-
-    @Override
-    public void onEnter() {
-
-    }
-
-    @Override
-    public void onExit() {
-
-    }
-
-    @Override
-    public void update() {
-
     }
 
     @Override
@@ -63,8 +64,8 @@ public class ScreenState extends State {
         for (GuiElement element : getGuiElements()) {
             if (!element.isVisible()) continue;
 
-            if (!event.isCancelled() && event.getType() == PRESSED && element.getBoundingBox().checkCoordinates(event.getX(), event.getY())) {
-                element.onClick(event);
+            if (!event.isCancelled() && event.getType() == RELEASED && element.checkBounds(event.getX(), event.getY())) {
+                element.getClickHandler().accept(event);
 
                 event.setCancelled(true);
             }
@@ -79,10 +80,10 @@ public class ScreenState extends State {
         for (GuiElement element : getGuiElements()) {
             if (!element.isVisible()) continue;
 
-            element.setHovered(element.getBoundingBox().checkCoordinates(event.getX(), event.getY()));
+            element.setHovered(element.checkBounds(event.getX(), event.getY()));
 
             if (element.isHovered()) {
-                element.onHover(event);
+                element.getHoverHandler().accept(event);
             }
         }
     }
@@ -95,8 +96,14 @@ public class ScreenState extends State {
             if (!element.isVisible()) continue;
 
             if (element.isHovered()) {
-                element.onScroll(event);
+                element.getScrollHandler().accept(event);
             }
         }
+    }
+
+    @Subscribe
+    private void handleWindowResizeEvent(WindowEvent.Size event) {
+        this.guiElements.clear();
+        initGui();
     }
 }
