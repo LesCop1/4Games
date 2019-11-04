@@ -77,49 +77,9 @@ public class Sudoku {
         }
     }
 
-    private void generateTopMiddle() {
-        Random random = new Random();
-
-        // Top Row
-        ArrayList<Integer> topRow = availableInRow(this.correctGrid, 0);
-        if (topRow.size() < 3) {
-            return;
-        } else {
-            for (int i = 0; i < 3; i++) {
-                int value = topRow.get(random.nextInt(topRow.size()));
-                correctGrid[0][3 + i] = value;
-                topRow.remove(Integer.valueOf(value));
-            }
-        }
-
-        // Middle Row
-        // Add available number in rows.
-        ArrayList<Integer> middleRow = availableInRow(this.correctGrid, 1);
-        // Only keep the value that are possible in the Square and the row.
-        middleRow.retainAll(availableInSquare(this.correctGrid, 0, 3));
-        if (middleRow.size() < 3) {
-            return;
-        } else {
-            for (int i = 0; i < 3; i++) {
-                int value = middleRow.get(random.nextInt(middleRow.size()));
-                correctGrid[1][3 + i] = value;
-                middleRow.remove(Integer.valueOf(value));
-            }
-        }
-
-        // Bottom Row
-        // Same as before
-        ArrayList<Integer> bottomRow = availableInRow(this.correctGrid, 2);
-        bottomRow.retainAll(availableInSquare(this.correctGrid, 0, 3));
-        if (bottomRow.size() < 3) {
-            return;
-        } else {
-            for (int i = 0; i < 3; i++) {
-                int value = bottomRow.get(random.nextInt(bottomRow.size()));
-                correctGrid[2][3 + i] = value;
-                bottomRow.remove(Integer.valueOf(value));
-            }
-        }
+    public static void main(String[] args) {
+        Sudoku sudoku = new Sudoku();
+        sudoku.init();
     }
 
     private void generateTopRight() {
@@ -381,6 +341,45 @@ public class Sudoku {
                 System.out.print(grid[i][j]);
             }
             System.out.println("");
+        }
+    }
+
+    private void generateTopMiddle() {
+        Random random = new Random();
+
+        // Top Row
+        ArrayList<Integer> topRow = availableInRow(this.correctGrid, 0);
+        if (topRow.size() > 2) {
+            for (int i = 0; i < 3; i++) {
+                int value = topRow.get(random.nextInt(topRow.size()));
+                correctGrid[0][3 + i] = value;
+                topRow.remove(Integer.valueOf(value));
+            }
+        }
+
+        // Middle Row
+        // Add available number in rows.
+        ArrayList<Integer> middleRow = availableInRow(this.correctGrid, 1);
+        // Only keep the value that are possible in the Square and the row.
+        middleRow.retainAll(availableInSquare(this.correctGrid, 0, 3));
+        if (middleRow.size() > 2) {
+            for (int i = 0; i < 3; i++) {
+                int value = middleRow.get(random.nextInt(middleRow.size()));
+                correctGrid[1][3 + i] = value;
+                middleRow.remove(Integer.valueOf(value));
+            }
+        }
+
+        // Bottom Row
+        // Same as before
+        ArrayList<Integer> bottomRow = availableInRow(this.correctGrid, 2);
+        bottomRow.retainAll(availableInSquare(this.correctGrid, 0, 3));
+        if (bottomRow.size() > 2) {
+            for (int i = 0; i < 3; i++) {
+                int value = bottomRow.get(random.nextInt(bottomRow.size()));
+                correctGrid[2][3 + i] = value;
+                bottomRow.remove(Integer.valueOf(value));
+            }
         }
     }
 }
