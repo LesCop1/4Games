@@ -56,6 +56,11 @@ public class BingoState extends ScreenState {
         dropball();
     }
 
+    @Override
+    public void initGui() {
+
+    }
+
     private void dropball(){
         Random rand = new Random();
         int randInt = rand.nextInt(numberList.size() - 1 + 1) + 1;
