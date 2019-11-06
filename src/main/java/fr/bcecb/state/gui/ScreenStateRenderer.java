@@ -14,7 +14,7 @@ public class ScreenStateRenderer extends Renderer<ScreenState> {
 
     @Override
     public ResourceHandle<Texture> getTexture(ScreenState state) {
-        return null;
+        return state.getBackgroundTexture();
     }
 
     @Override

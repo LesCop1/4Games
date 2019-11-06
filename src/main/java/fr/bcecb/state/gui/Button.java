@@ -11,22 +11,36 @@ import org.joml.Vector4f;
 
 public class Button extends GuiElement {
     private String title;
+    private ResourceHandle<Texture> textureResourceHandle;
 
     public Button(int id, float x, float y, float width, float height) {
         this(id, x, y, width, height, false);
     }
 
     public Button(int id, float x, float y, float width, float height, boolean centered) {
-        this(id, x, y, width, height, centered, null);
+        this(id, x, y, width, height, centered, ResourceManager.DEFAULT_TEXTURE);
     }
 
     public Button(int id, float x, float y, float width, float height, String title) {
-        this(id, x, y, width, height, false, title);
+        this(id, x, y, width, height, false, title, ResourceManager.DEFAULT_TEXTURE);
     }
 
-    public Button(int id, float x, float y, float width, float height, boolean centered, String title) {
+    public Button(int id, float x, float y, float width, float height, ResourceHandle<Texture> textureResourceHandle) {
+        this(id, x, y, width, height, false, null, textureResourceHandle);
+    }
+
+    public Button(int id, float x, float y, float width, float height, String title, ResourceHandle<Texture> textureResourceHandle) {
+        this(id, x, y, width, height, false, title, textureResourceHandle);
+    }
+
+    public Button(int id, float x, float y, float width, float height, boolean centered, ResourceHandle<Texture> textureResourceHandle) {
+        this(id, x, y, width, height, centered, null, textureResourceHandle);
+    }
+
+    public Button(int id, float x, float y, float width, float height, boolean centered, String title, ResourceHandle<Texture> textureResourceHandle) {
         super(id, x - (centered ? (width / 2) : 0), y - (centered ? (height / 2) : 0), width, height);
         this.title = title;
+        this.textureResourceHandle = textureResourceHandle;
     }
 
     public String getTitle() {
@@ -37,6 +51,14 @@ public class Button extends GuiElement {
         this.title = title;
     }
 
+    public ResourceHandle<Texture> getTextureResourceHandle() {
+        return textureResourceHandle;
+    }
+
+    public void setTextureResourceHandle(ResourceHandle<Texture> textureResourceHandle) {
+        this.textureResourceHandle = textureResourceHandle;
+    }
+
     public static class ButtonRenderer extends Renderer<Button> {
 
         public ButtonRenderer(RenderManager renderManager) {
@@ -45,7 +67,7 @@ public class Button extends GuiElement {
 
         @Override
         public ResourceHandle<Texture> getTexture(Button button) {
-            return new ResourceHandle<>("textures/btn.png") {};
+            return button.getTextureResourceHandle();
         }
 
         @Override
