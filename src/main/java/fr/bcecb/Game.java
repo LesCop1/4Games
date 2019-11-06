@@ -1,20 +1,32 @@
 package fr.bcecb;
 
+import com.google.common.eventbus.AsyncEventBus;
 import com.google.common.eventbus.EventBus;
+import com.google.common.eventbus.Subscribe;
+import fr.bcecb.event.Event;
+import fr.bcecb.event.EventExceptionHandler;
+import fr.bcecb.event.GameEvent;
 import fr.bcecb.render.RenderEngine;
 import fr.bcecb.resources.ResourceManager;
-import fr.bcecb.state.MainMenuState;
+import fr.bcecb.state.MainMenuScreen;
 import fr.bcecb.state.StateEngine;
 import fr.bcecb.util.Log;
 
-import static org.lwjgl.glfw.GLFW.glfwGetTime;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.SynchronousQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
+
+import static org.lwjgl.glfw.GLFW.*;
 
 public final class Game {
     private static final Game INSTANCE = new Game();
 
-    private static final EventBus EVENT_BUS = new EventBus();
-
     private static final int ticksPerSecond = 60;
+
+    private static final ExecutorService EVENT_EXECUTOR = new ThreadPoolExecutor(0, 5, 60L, TimeUnit.SECONDS, new SynchronousQueue<>(), (r, executor) -> {
+    });
+    private static final EventBus EVENT_BUS = new AsyncEventBus(EVENT_EXECUTOR, EventExceptionHandler.getInstance());
 
     private final RenderEngine renderEngine;
     private final StateEngine stateEngine;
@@ -24,67 +36,60 @@ public final class Game {
     private boolean running = false;
 
     private Game() {
+        if (!glfwInit()) {
+            Log.SYSTEM.severe("Couldn't initialize GLFW");
+        }
+
+        glfwSetErrorCallback(Log.createErrorCallback());
+
         this.resourceManager = new ResourceManager();
 
         this.renderEngine = new RenderEngine(resourceManager);
         this.stateEngine = new StateEngine();
     }
 
-    private boolean init() {
-        Log.info("Initializing the game");
-
-        Log.config("Tick rate is set to " + ticksPerSecond + " ticks/s");
-
-        if (!renderEngine.init()) {
-            Log.severe(Log.RENDER, "Couldn't initialize renderer");
-            return false;
-        }
-
-        return true;
-    }
-
     private void start() {
-        if (!init()) {
-            return;
-        }
+        glfwShowWindow(renderEngine.getWindow().getId());
 
-        Log.info("Starting the game");
+        Log.SYSTEM.debug("Starting the game");
         running = true;
 
-        stateEngine.pushState(new MainMenuState());
+        stateEngine.pushState(new MainMenuScreen());
 
-        double ticks = 1.0D / ticksPerSecond;
-        double currentTime;
-        double lastTime = 0.0D;
-        double delta = 0.0D;
+        float ticks = 1.0f / ticksPerSecond;
+        float currentTime;
+        float lastTime = 0.0f;
+        float delta = 0.0f;
 
         while (this.isRunning()) {
-            currentTime = glfwGetTime();
+            currentTime = (float) glfwGetTime();
             delta += (currentTime - lastTime) / ticks;
             lastTime = currentTime;
 
             while (delta >= 1.0) {
-                stateEngine.update();
+                Event event = new GameEvent.Tick();
+                Game.getEventBus().post(event);
 
                 --delta;
             }
 
-            renderEngine.render(delta);
-            stateEngine.render(renderEngine, delta);
+            renderEngine.render(stateEngine, delta);
 
-            renderEngine.update();
+            glfwSwapBuffers(renderEngine.getWindow().getId());
+            glfwPollEvents();
         }
-    }
 
-    public void stop() {
-        Log.info("Stopping the game");
-        running = false;
-
-        renderEngine.cleanUp();
         resourceManager.cleanUp();
+        renderEngine.cleanUp();
     }
 
-    public boolean isRunning() {
+    @Subscribe
+    public void stop(GameEvent.Close event) {
+        EVENT_EXECUTOR.shutdown();
+        running = false;
+    }
+
+    private boolean isRunning() {
         return running;
     }
 
@@ -106,6 +111,12 @@ public final class Game {
 
     public static Game instance() {
         return INSTANCE;
+    }
+
+    static {
+        Game.getEventBus().register(INSTANCE);
+        Game.getEventBus().register(INSTANCE.getStateEngine());
+        Game.getEventBus().register(INSTANCE.getRenderEngine());
     }
 
     public static void main(String[] args) {

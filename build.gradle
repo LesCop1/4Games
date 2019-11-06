@@ -5,7 +5,7 @@ apply plugin: 'application'
 group 'fr.bcecb'
 version '1.0-SNAPSHOT'
 
-sourceCompatibility = JavaVersion.VERSION_11
+sourceCompatibility = 13
 
 switch (OperatingSystem.current()) {
     case OperatingSystem.MAC_OS:
@@ -32,9 +32,11 @@ dependencies {
     runtimeOnly "org.lwjgl:lwjgl-glfw::$lwjglNatives"
     runtimeOnly "org.lwjgl:lwjgl-openal::$lwjglNatives"
     runtimeOnly "org.lwjgl:lwjgl-opengl::$lwjglNatives"
+    runtimeOnly "org.lwjgl:lwjgl-stb::$lwjglNatives"
 
     implementation "org.joml:joml:1.9.17"
     implementation "com.google.guava:guava:28.1-jre"
+    implementation "com.google.code.gson:gson:2.8.6"
 }
 
 mainClassName = "fr.bcecb.Game"

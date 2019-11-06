@@ -1,10 +1,13 @@
-package fr.bcecb;
+package fr.bcecb.event;
+
+import fr.bcecb.util.Log;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+@Event.Logging
 public abstract class Event {
     private boolean cancelled;
 
@@ -23,5 +26,11 @@ public abstract class Event {
     @Retention(RetentionPolicy.RUNTIME)
     @Target(ElementType.TYPE)
     public @interface Cancellable {
+    }
+
+    @Retention(RetentionPolicy.RUNTIME)
+    @Target(ElementType.TYPE)
+    public @interface Logging {
+        public Log value() default Log.SYSTEM;
     }
 }

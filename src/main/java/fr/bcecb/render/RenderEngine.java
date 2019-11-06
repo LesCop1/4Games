@@ -1,66 +1,207 @@
 package fr.bcecb.render;
 
-import fr.bcecb.Game;
+import fr.bcecb.resources.*;
+import fr.bcecb.state.StateEngine;
 import fr.bcecb.util.Log;
-import org.lwjgl.glfw.GLFWErrorCallback;
+import org.joml.Matrix4f;
+import org.joml.Vector4f;
 import org.lwjgl.opengl.GL;
+import org.lwjgl.stb.STBTTAlignedQuad;
+import org.lwjgl.system.MemoryStack;
 
-import static org.lwjgl.glfw.GLFW.*;
-import static org.lwjgl.opengl.GL33.*;
+import java.nio.FloatBuffer;
+import java.nio.IntBuffer;
+
+import static org.lwjgl.glfw.GLFW.glfwTerminate;
+import static org.lwjgl.opengl.GL45.*;
+import static org.lwjgl.stb.STBTruetype.*;
 
 public class RenderEngine {
     private Window window;
 
-    public RenderEngine() {
-    }
+    private final ResourceManager resourceManager;
 
-    public boolean init() {
-        glfwSetErrorCallback(GLFWErrorCallback.createPrint(System.err));
+    private final RenderManager renderManager;
 
-        if (!glfwInit()) {
-            Log.severe(Log.RENDER, "Couldn't initialize GLFW");
-            return false;
-        }
+    private final Tessellator tessellator;
 
+    private final Matrix4f projection;
+
+    public RenderEngine(ResourceManager resourceManager) {
+        this.resourceManager = resourceManager;
+        this.renderManager = new RenderManager(this, resourceManager);
         this.window = Window.newInstance("Game", 800, 600, false);
 
-        if (this.window == null) {
-            Log.severe(Log.RENDER, "Couldn't create window");
-            return false;
-        }
-
         GL.createCapabilities();
+        Log.RENDER.config("Using OpenGL Version {0}", glGetString(GL_VERSION));
 
-        RenderManager.init();
-        glfwShowWindow(window.id());
+        glEnable(GL_TEXTURE_2D);
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-        return true;
+        this.tessellator = new Tessellator();
+        tessellator.begin(GL_TRIANGLE_FAN);
+        tessellator.uv(0.0f, 0.0f).vertex(0.0f, 0.0f);
+        tessellator.uv(1.0f, 0.0f).vertex(1.0f, 0.0f);
+        tessellator.uv(1.0f, 1.0f).vertex(1.0f, 1.0f);
+        tessellator.uv(0.0f, 1.0f).vertex(0.0f, 1.0f);
+        tessellator.finish();
+
+        this.projection = new Matrix4f();
     }
 
     public void cleanUp() {
-        if (this.window != null) {
-            this.window.destroy();
-            this.window = null;
-        }
-
+        window.destroy();
         glfwTerminate();
     }
 
-    public void update() {
-        if (window.shouldClose()) {
-            Game.getInstance().stop();
-            return;
-        }
-
-        glfwSwapBuffers(window.id());
-        glfwPollEvents();
-    }
-
-    public void render(double partialTick) {
-        glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+    public void render(StateEngine stateEngine, float partialTick) {
+        glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        glViewport(0, 0, window.width(), window.height());
+        glViewport(0, 0, window.getWidth(), window.getHeight());
+        projection.setOrtho2D(0, window.getWidth(), window.getHeight(), 0);
+
+        stateEngine.render(renderManager, partialTick);
+    }
+
+    public void drawTexturedRect(ResourceHandle<Texture> textureHandle, float minX, float minY, float maxX, float maxY) {
+        drawTexturedRect(textureHandle, minX, minY, maxX, maxY, false);
+    }
+
+    public void drawTexturedRect(ResourceHandle<Texture> textureHandle, float minX, float minY, float maxX, float maxY, boolean centered) {
+        Texture texture = resourceManager.getResourceOrDefault(textureHandle, ResourceManager.DEFAULT_TEXTURE);
+
+        float width = Math.abs(maxX - minX);
+        float height = Math.abs(maxY - minY);
+
+        texture.bind();
+        {
+            drawRect(minX - (centered ? (width / 2) : 0), minY - (centered ? (height / 2) : 0), maxX - (centered ? (width / 2) : 0), maxY - (centered ? (height / 2) : 0));
+        }
+        texture.unbind();
+    }
+
+    public void drawRect(float minX, float minY, float maxX, float maxY) {
+        Matrix4f model = new Matrix4f().translate(minX, minY, 0.0f).scaleXY(maxX - minX, maxY - minY);
+
+        draw(ResourceManager.DEFAULT_SHADER, model);
+    }
+
+    public void drawCircle(float x, float y, float radius) {
+        Shader shader = resourceManager.getResource(ResourceManager.CIRCLE_SHADER);
+        shader.bind();
+        {
+            shader.uniformFloat("radius", radius);
+        }
+        shader.unbind();
+
+        Matrix4f model = new Matrix4f().translate(x, y, 0.0f).scaleXY(radius * 2, radius * 2);
+        draw(ResourceManager.CIRCLE_SHADER, model);
+    }
+
+    public void drawTexturedCircle(ResourceHandle<Texture> textureHandle, float x, float y, float scale) {
+        Texture texture = resourceManager.getResourceOrDefault(textureHandle, ResourceManager.DEFAULT_TEXTURE);
+
+        texture.bind();
+        {
+            drawCircle(x, y, scale);
+        }
+        texture.unbind();
+    }
+
+    public void drawCenteredText(ResourceHandle<Font> fontHandle, String text, float x, float y, float scale, Vector4f color) {
+        Font font = resourceManager.getResourceOrDefault(fontHandle, ResourceManager.DEFAULT_FONT);
+
+        float width = 0.0f;
+        float height = -32.0f;
+
+        if (font != null) {
+            width = getStringWidth(font, text, scale);
+        }
+
+        drawText(fontHandle, text, x - (width / 2), y - (height / 2), scale, color);
+    }
+
+    public void drawText(ResourceHandle<Font> fontHandle, String text, float x, float y, float scale, Vector4f color) {
+        Shader shader = resourceManager.getResource(ResourceManager.FONT_SHADER);
+        Font font = resourceManager.getResourceOrDefault(fontHandle, ResourceManager.DEFAULT_FONT);
+
+        Tessellator textTessellator = new Tessellator();
+
+        if (font != null) {
+            shader.bind();
+            {
+                shader.uniformMat4("projection", projection);
+                shader.uniformMat4("model", new Matrix4f().translate(x, y, 0.0f).scaleXY(scale, scale));
+                font.bind();
+                {
+                    try (MemoryStack stack = MemoryStack.stackPush()) {
+                        FloatBuffer xBuffer = stack.mallocFloat(1);
+                        FloatBuffer yBuffer = stack.mallocFloat(1);
+                        STBTTAlignedQuad quad = STBTTAlignedQuad.malloc();
+
+                        for (int i = 0; i < text.length(); ++i) {
+                            int cp = text.codePointAt(i);
+                            if (cp == '\n') {
+                                yBuffer.put(0, yBuffer.get(0) + (font.getAscent() - font.getDescent() + font.getLineGap()) * stbtt_ScaleForPixelHeight(font.getInfo(), 64));
+                                xBuffer.put(0, 0.0f);
+                                continue;
+                            }
+
+                            stbtt_GetBakedQuad(font.getCData(), font.getWidth(), font.getHeight(), cp - 32, xBuffer, yBuffer, quad, true);
+
+                            if (i < text.length() - 1) {
+                                xBuffer.put(0, xBuffer.get(0) + stbtt_GetCodepointKernAdvance(font.getInfo(), cp, text.codePointAt(i + 1)) * stbtt_ScaleForPixelHeight(font.getInfo(), 64));
+                            }
+
+                            textTessellator.begin(GL_TRIANGLE_FAN);
+                            textTessellator.color(color.x, color.y, color.z, color.w);
+                            textTessellator.uv(quad.s0(), quad.t0()).vertex(quad.x0(), quad.y0());
+                            textTessellator.uv(quad.s1(), quad.t0()).vertex(quad.x1(), quad.y0());
+                            textTessellator.uv(quad.s1(), quad.t1()).vertex(quad.x1(), quad.y1());
+                            textTessellator.uv(quad.s0(), quad.t1()).vertex(quad.x0(), quad.y1());
+                            textTessellator.draw();
+                        }
+                    }
+                }
+                font.unbind();
+            }
+            shader.unbind();
+        }
+    }
+
+    private float getStringWidth(Font font, String text, float scale) {
+        int width = 0;
+
+        try (MemoryStack stack = MemoryStack.stackPush()) {
+            IntBuffer pAdvancedWidth = stack.mallocInt(1);
+            IntBuffer pLeftSideBearing = stack.mallocInt(1);
+
+            for (int i = 0; i < text.length(); ++i) {
+                int cp = text.codePointAt(i);
+
+                stbtt_GetCodepointHMetrics(font.getInfo(), cp, pAdvancedWidth, pLeftSideBearing);
+                width += pAdvancedWidth.get(0);
+
+                if (i < text.length() - 1) {
+                    width += stbtt_GetCodepointKernAdvance(font.getInfo(), cp, text.codePointAt(i + 1));
+                }
+            }
+        }
+
+        return width * scale * stbtt_ScaleForPixelHeight(font.getInfo(), 64);
+    }
+
+    private void draw(ResourceHandle<Shader> shaderResourceHandle, Matrix4f model) {
+        Shader shader = resourceManager.getResource(shaderResourceHandle);
+        shader.bind();
+        {
+            shader.uniformMat4("projection", projection);
+            shader.uniformMat4("model", model);
+            tessellator.draw();
+        }
+        shader.unbind();
     }
 
     public Window getWindow() {

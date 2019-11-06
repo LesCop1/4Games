@@ -1,33 +1,51 @@
 package fr.bcecb.render;
 
+import fr.bcecb.resources.ResourceManager;
 import fr.bcecb.state.gui.Button;
-import fr.bcecb.state.gui.GuiRenderer;
-import fr.bcecb.state.gui.GuiState;
+import fr.bcecb.state.gui.CircleButton;
+import fr.bcecb.state.gui.ScreenState;
+import fr.bcecb.state.gui.ScreenStateRenderer;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class RenderManager {
-    private static final Map<Class<?>, Renderer<? extends IRenderable>> RENDERERS = new HashMap<>();
+    private final RenderEngine renderEngine;
+    private final ResourceManager resourceManager;
+    private final Map<Class<? extends IRenderable>, Renderer<? extends IRenderable>> renderers = new HashMap<>();
 
-    public static void init() {
-        register(GuiState.class, new GuiRenderer());
-        register(Button.class, new Button.ButtonRenderer());
+    public RenderManager(RenderEngine renderEngine, ResourceManager resourceManager) {
+        this.renderEngine = renderEngine;
+        this.resourceManager = resourceManager;
+
+        register(ScreenState.class, new ScreenStateRenderer(this));
+        register(Button.class, new Button.ButtonRenderer(this));
+        register(CircleButton.class, new CircleButton.CircleButtonRenderer(this));
     }
 
-    @SuppressWarnings("unchecked")
-    public static <T extends IRenderable> Renderer<T> getRendererFor(T object) {
-        return (Renderer<T>) RENDERERS.entrySet().stream()
-                .filter(e -> e.getKey().isAssignableFrom(object.getClass()))
-                .map(Map.Entry::getValue)
-                .findFirst().orElse(null);
+    private <T extends IRenderable> void register(Class<T> clazz, Renderer<T> renderer) {
+        renderers.put(clazz, renderer);
     }
 
-    private static <T extends IRenderable> void register(Class<T> clazz, Renderer<T> renderer) {
-        RENDERERS.put(clazz, renderer);
+    public <T extends IRenderable, R extends Renderer<T>> R getRendererFor(T object) {
+        return (R) getRendererFor(object.getClass());
     }
 
-    private static <T extends IRenderable> void unregister(Class<T> clazz) {
-        RENDERERS.remove(clazz);
+    private <T extends IRenderable, R extends Renderer<T>> R getRendererFor(Class<? extends IRenderable> clazz) {
+        R renderer = (R) this.renderers.get(clazz);
+        if (renderer == null && clazz != IRenderable.class) {
+            renderer = this.getRendererFor((Class<? extends IRenderable>) clazz.getSuperclass());
+            this.renderers.put(clazz, renderer);
+        }
+
+        return renderer;
+    }
+
+    public RenderEngine getRenderEngine() {
+        return renderEngine;
+    }
+
+    public ResourceManager getResourceManager() {
+        return resourceManager;
     }
 }
