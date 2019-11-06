@@ -17,6 +17,16 @@ public class CircleButton extends Button {
         this.radius = radius;
     }
 
+    public CircleButton(int id, float x, float y, float radius, ResourceHandle<Texture> textureResourceHandle) {
+        super(id, x, y, radius * 2, radius * 2, textureResourceHandle);
+        this.radius = radius;
+    }
+
+    public CircleButton(int id, float x, float y, float radius, boolean centered, ResourceHandle<Texture> textureResourceHandle) {
+        super(id, x, y, radius * 2, radius * 2, centered, textureResourceHandle);
+        this.radius = radius;
+    }
+
     @Override
     boolean checkBounds(float x, float y) {
         return super.checkBounds(x, y) && Math.pow((getX() + getRadius()) - x, 2) + Math.pow((getY() + getRadius()) - y, 2) < Math.pow(getRadius(), 2);
@@ -38,8 +48,7 @@ public class CircleButton extends Button {
 
         @Override
         public ResourceHandle<Texture> getTexture(CircleButton button) {
-            return new ResourceHandle<>("textures/person.png") {
-            };
+            return button.getTextureResourceHandle();
         }
 
         @Override
