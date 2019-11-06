@@ -1,4 +1,4 @@
-package fr.bcecb.batailleNavale.pkgBatailleNavale;
+package fr.bcecb.batailleNavale;
 
 import java.util.stream.Stream;
 

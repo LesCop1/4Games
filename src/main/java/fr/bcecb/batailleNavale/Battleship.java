@@ -1,14 +1,10 @@
-package fr.bcecb.batailleNavale.pkgBatailleNavale;
+package fr.bcecb.batailleNavale;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class Battleship { //Gère tous les aspects d'une partie, création de la grille, changer l'orientation d'un bateau, le placer, touché/coulé, win condition
-
-    List<String> board = new ArrayList<>();
-    List<Boat> listBoat = new ArrayList<>();
-
-    public void initBoard() { //Initialisation de la (liste) grille avec des "o"
+    public void initBoard(List<String> board) { //Initialisation de la (liste) grille avec des "o"
         for (int i = 0; i < 100; i++) {
             board.add("o");
         }
@@ -37,10 +33,10 @@ public class Battleship { //Gère tous les aspects d'une partie, création de la
      * i varie de 0 à 99
      */
 
-    public void putBoat(Boat boat, int i) { //Place les bateaux
+    public void putBoat(Boat boat, List<String> board, List<Boat> listBoat, int i) { //Place les bateaux
         int j = i, cpt = 0; //Compte le nombre de case du bateau déjà posé
         if (boat.isOrientation()) { //Si le bateau est horizontal
-            if (verification(j, boat)) { //Vérification du placement
+            if (verification(j, board, boat)) { //Vérification du placement
                 while (j < boat.getSizeBoat() + i) {
                     board.set(j, boat.getName()); //On change la lettre dans la liste
                     j++;
@@ -48,7 +44,7 @@ public class Battleship { //Gère tous les aspects d'une partie, création de la
                 listBoat.add(boat); //Une fois placé, on ajoute le bateau à la liste des bateaux
             }
         } else { //Si le bateau est vertical
-            if (verification(j, boat)) {
+            if (verification(j, board, boat)) {
                 while (cpt < boat.getSizeBoat()) {
                     board.set(j, boat.getName());
                     cpt++;
@@ -59,12 +55,10 @@ public class Battleship { //Gère tous les aspects d'une partie, création de la
         }
     }
 
-    public boolean verification(int j, Boat boat) {
-        if (board.get(j) == "o") { //Si il y a de " l'eau "
-            if (boat.isOrientation() && boat.getSizeBoat() <= tooDeepRight(j)) { //Bateau Horizontal et ne dépasse pas à droite
-                return true;
-            }
-            if (!boat.isOrientation() && boat.getSizeBoat() <= ((90 - j) / 10)+2) { //Bateau Vertical et ne dépasse pas en bas
+    public boolean verification(int j, List<String>board, Boat boat) {
+        if (board.get(j).equals("o")) { //Si il y a de " l'eau "
+            if (boat.isOrientation() && (boat.getSizeBoat() <= tooDeepRight(j)) || (!boat.isOrientation() && boat.getSizeBoat() <= ((90 - j) / 10)+2)) {
+                //Bateau Horizontal et ne dépasse pas à droite || Bateau Vertical et ne dépasse pas en bas
                 return true;
             }
         }
@@ -84,9 +78,9 @@ public class Battleship { //Gère tous les aspects d'une partie, création de la
         }
     }
 
-    public boolean isTouch(int i) { //On réduit la taille du bateau de 1 quand il est touché
+    public boolean isTouch(int i, List<String> board, List<Boat> listBoat) { //On réduit la taille du bateau de 1 quand il est touché
         if(board.get(i) != "o"){ //Touché
-            touch(board.get(i));
+            touch(board.get(i), listBoat);
             board.set(i,"x");
             return true;
         }else{ //Loupé
@@ -95,16 +89,16 @@ public class Battleship { //Gère tous les aspects d'une partie, création de la
         }
     }
 
-    public void touch(String boatTouch){
+    public void touch(String boatTouch, List<Boat> listBoat){
         for (Boat boat: listBoat) {
             if (boat.getName()==boatTouch){
                 boat.setSizeBoat(-1);
-                sink(boat); //On check si il est coulé
+                sink(boat, listBoat); //On check si il est coulé
             }
         }
     }
 
-    public boolean sink(Boat boat) { //Si la taille du bateau est nulle, il est retiré de la liste puis on check si c'est win
+    public boolean sink(Boat boat, List<Boat> listBoat) { //Si la taille du bateau est nulle, il est retiré de la liste puis on check si c'est win
         if (boat.getSizeBoat() == 0) { //Bateau coulé
             boat.setAlive(false);
             for (Boat boat2: listBoat) {
@@ -120,7 +114,7 @@ public class Battleship { //Gère tous les aspects d'une partie, création de la
 
     /////////////////////////////////////
 
-    public void affichage() { //A retirer
+    public void affichage(List<String> board) { //A retirer
         for (int i = 0; i < board.size(); i++) {
             if (i % 10 == 0) System.out.println();
             System.out.print(board.get(i));
