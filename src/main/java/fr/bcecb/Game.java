@@ -3,6 +3,7 @@ package fr.bcecb;
 import com.google.common.eventbus.AsyncEventBus;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
+import fr.bcecb.batailleNavale.BattleshipScreen;
 import fr.bcecb.event.Event;
 import fr.bcecb.event.EventExceptionHandler;
 import fr.bcecb.event.GameEvent;
@@ -54,7 +55,7 @@ public final class Game {
         Log.SYSTEM.debug("Starting the game");
         running = true;
 
-        stateEngine.pushState(new MainMenuScreen());
+        stateEngine.pushState(new BattleshipScreen());
 
         float ticks = 1.0f / ticksPerSecond;
         float currentTime;

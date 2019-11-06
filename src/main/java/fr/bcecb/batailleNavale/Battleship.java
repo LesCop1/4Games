@@ -1,130 +1,96 @@
 package fr.bcecb.batailleNavale;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class Battleship { //Gère tous les aspects d'une partie, création de la grille, changer l'orientation d'un bateau, le placer, touché/coulé, win condition
-    public void initBoard(List<String> board) { //Initialisation de la (liste) grille avec des "o"
-        for (int i = 0; i < 100; i++) {
-            board.add("o");
+    private final Boat[][][] boards = new Boat[2][10][10];
+    private int currentPlayer = 0;
+
+    public Boat[][] getCurrentPlayerBoard() {
+        return boards[getCurrentPlayer()];
+    }
+
+    public Boat[][] getNextPlayerBoard() {
+        return boards[getNextPlayer()];
+    }
+
+    public int getCurrentPlayer() {
+        return currentPlayer;
+    }
+
+    public void nextPlayer() {
+        this.currentPlayer = getNextPlayer();
+    }
+
+    public int getNextPlayer() {
+        return (this.currentPlayer + 1) % 2;
+    }
+
+    public void putBoat(Boat boat, int x, int y) { //Place les bateaux
+        if (!verification(boat, x, y)) {
+            return;
         }
-    }
 
-    /*
-     * @param i
-     *
-     * Place la premiere lettre du bateau a l'index i dans la liste du bateau en fonction de l'orientation du bateau
-     * Exemple pour un bateau A de 3 cases verticales avec un i = 2 :
-     *   y
-     * x O O A O O O O     - Le premier A est en (2;0)
-     *   O O A O O O O
-     *   O O A O O O O
-     *   O O O O O O O
-     *   O O O O O O O
-     *
-     * Exemple pour un boat B de 3 cases horizontales avec un i = 15 :
-     *   y
-     * x O O O O O O O
-     *   O O O O O O O
-     *   O B B B O O O     - Le premier B est en (1;2)
-     *   O O O O O O O
-     *   O O O O O O O
-     *
-     * i varie de 0 à 99
-     */
+        boat.setPosition(x, y);
 
-    public void putBoat(Boat boat, List<String> board, List<Boat> listBoat, int i) { //Place les bateaux
-        int j = i, cpt = 0; //Compte le nombre de case du bateau déjà posé
-        if (boat.isOrientation()) { //Si le bateau est horizontal
-            if (verification(j, board, boat)) { //Vérification du placement
-                while (j < boat.getSizeBoat() + i) {
-                    board.set(j, boat.getName()); //On change la lettre dans la liste
-                    j++;
-                }
-                listBoat.add(boat); //Une fois placé, on ajoute le bateau à la liste des bateaux
+        if (boat.isHorizontal()) {
+            while (x + boat.getSize() >= 10) { //Si on veut placer un bateau sur une case qui fait que le bateau dépasse à gauche
+                --x; //On le décale vers la droite
             }
-        } else { //Si le bateau est vertical
-            if (verification(j, board, boat)) {
-                while (cpt < boat.getSizeBoat()) {
-                    board.set(j, boat.getName());
-                    cpt++;
-                    j += 10;
-                }
-                listBoat.add(boat);
+
+            for (int i = 0; i < boat.getSize(); i++) {
+                getCurrentPlayerBoard()[x + i][y] = boat;
             }
-        }
-    }
-
-    public boolean verification(int j, List<String>board, Boat boat) {
-        if (board.get(j).equals("o")) { //Si il y a de " l'eau "
-            if (boat.isOrientation() && (boat.getSizeBoat() <= tooDeepRight(j)) || (!boat.isOrientation() && boat.getSizeBoat() <= ((90 - j) / 10)+2)) {
-                //Bateau Horizontal et ne dépasse pas à droite || Bateau Vertical et ne dépasse pas en bas
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public int tooDeepRight(int val) {  //Pour ne pas avoir un bateau qui dépasse de la grille à droite
-        double temp = (Math.ceil((double) val / 10) * 10);
-        return (int) temp;
-    }
-
-    public void swapOrientation(Boat boat) { //Change l'orientation du bateau passé en adresse
-        if (boat.isOrientation()) {
-            boat.setOrientation(false);
         } else {
-            boat.setOrientation(true);
-        }
-    }
+            while (y + boat.getSize() >= 10) { //Pareil que pour x mais en vertical
+                --y;
+            }
 
-    public boolean isTouch(int i, List<String> board, List<Boat> listBoat) { //On réduit la taille du bateau de 1 quand il est touché
-        if(board.get(i) != "o"){ //Touché
-            touch(board.get(i), listBoat);
-            board.set(i,"x");
-            return true;
-        }else{ //Loupé
-            board.set(i,"z");
-            return false;
-        }
-    }
-
-    public void touch(String boatTouch, List<Boat> listBoat){
-        for (Boat boat: listBoat) {
-            if (boat.getName()==boatTouch){
-                boat.setSizeBoat(-1);
-                sink(boat, listBoat); //On check si il est coulé
+            for (int i = 0; i < boat.getSize(); i++) {
+                getCurrentPlayerBoard()[x][y + i] = boat;
             }
         }
     }
 
-    public boolean sink(Boat boat, List<Boat> listBoat) { //Si la taille du bateau est nulle, il est retiré de la liste puis on check si c'est win
-        if (boat.getSizeBoat() == 0) { //Bateau coulé
-            boat.setAlive(false);
-            for (Boat boat2: listBoat) {
-                if (boat2.isAlive()){
+    public boolean verification(Boat boat, int x, int y) {
+        if (boat.isHorizontal()) {
+            for (int i = 0; i < boat.getSize(); i++) {
+                if (x + i >= 10 || getCurrentPlayerBoard()[x + i][y] != null) {
                     return false;
                 }
             }
-            dead();
-            return true;
+        } else {
+            for (int i = 0; i < boat.getSize(); i++) {
+                if (y + i >= 10 || getCurrentPlayerBoard()[x][y + i] != null) {
+                    return false;
+                }
+            }
         }
-        return false;
+        return true;
     }
 
-    /////////////////////////////////////
-
-    public void affichage(List<String> board) { //A retirer
-        for (int i = 0; i < board.size(); i++) {
-            if (i % 10 == 0) System.out.println();
-            System.out.print(board.get(i));
+    public void swapOrientation(Boat boat) { //Change l'orientation du bateau passé en adresse
+        if (boat.isHorizontal()) {
+            boat.setHorizontal(false);
+        } else {
+            boat.setHorizontal(true);
         }
     }
 
-    public void dead() { //A retirer
-        Boat.stream() // Affiche tous les bateaux coulés
-                .filter(d -> d.isAlive() == false)
-                .forEach(System.out::println);
-        System.out.println("gg");
+    public boolean shoot(int x, int y) {
+        Boat boat = getNextPlayerBoard()[x][y];
+
+        if (boat == null) {
+            return false;
+        } else {
+            int hitPosition = boat.isHorizontal() ? boat.getX() - x : boat.getY() - y;
+
+            if (boat.getHits()[hitPosition]) {
+                return false;
+            } else boat.hit(hitPosition);
+        }
+
+        return true;
     }
 }

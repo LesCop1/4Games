@@ -1,56 +1,84 @@
 package fr.bcecb.batailleNavale;
 
-import java.util.stream.Stream;
+public class Boat {
+    private final Boat.Type type;
+    private final boolean[] hits;
+    private boolean horizontal;
 
-public enum Boat { //Définit une énumération des différents bateaux du jeu
+    private int x, y;
 
-    A("A", 5, false, true), //AircraftCarrier
-    C("C", 4, true, true), //Cruiser
-    F("F", 3, true, true), //Frigate
-    S("S", 3, true, true), //Submarine
-    T("T", 2, false, true); //Torpedo
-
-    private final String name;
-    private int sizeBoat;
-    private boolean orientation; // True = Horizontal, False = Vertical
-    private boolean alive;
-
-    Boat(String name, int sizeBoat, boolean orientation, boolean alive) {
-        this.name = name;
-        this.sizeBoat = sizeBoat;
-        this.orientation = orientation;
-        this.alive = alive;
+    public Boat(Boat.Type type) {
+        this.type = type;
+        this.hits = new boolean[type.getSize()];
+        this.horizontal = true;
     }
 
-    public static Stream<Boat> stream() {
-        return Stream.of(Boat.values());
+    public void setPosition(int x, int y) {
+        this.x = x;
+        this.y = y;
     }
 
-    public String getName() {
-        return name;
+    public int getX() {
+        return x;
     }
 
-    public int getSizeBoat() {
-        return sizeBoat;
+    public int getY() {
+        return y;
     }
 
-    public void setSizeBoat(int sizeBoat) {
-        this.sizeBoat += sizeBoat;
+    public boolean[] getHits() {
+        return hits;
     }
 
-    public boolean isOrientation() {
-        return orientation;
-    }
-
-    public void setOrientation(boolean orientation) {
-        this.orientation = orientation;
+    public void hit(int i) {
+        hits[i] = true;
     }
 
     public boolean isAlive() {
-        return alive;
+        for (boolean hit : hits) {
+            if (!hit) return true; //Le bateau n'a pas été touché à cet endroit, il est encore vivant
+        }
+
+        return false;
     }
 
-    public void setAlive(boolean alive) {
-        this.alive = alive;
+    public boolean isHorizontal() {
+        return horizontal;
+    }
+
+    public void setHorizontal(boolean horizontal) {
+        this.horizontal = horizontal;
+    }
+
+    public int getSize() {
+        return type.getSize();
+    }
+
+    public Type getType() {
+        return type;
+    }
+
+    enum Type { //Définit une énumération des différents bateaux du jeu
+        AIRCRAFT_CARRIER("A", 5), //AircraftCarrier
+        CRUISER("C", 4), //Cruiser
+        FRIGATE("F", 3), //Frigate
+        SUBMARINE("S", 3), //Submarine
+        TORPEDO("T", 2); //Torpedo
+
+        private final String name;
+        private final int sizeBoat;
+
+        Type(String name, int sizeBoat) {
+            this.name = name;
+            this.sizeBoat = sizeBoat;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public int getSize() {
+            return sizeBoat;
+        }
     }
 }
