@@ -1,10 +1,7 @@
 package fr.bcecb.render;
 
 import fr.bcecb.resources.ResourceManager;
-import fr.bcecb.state.gui.Button;
-import fr.bcecb.state.gui.CircleButton;
-import fr.bcecb.state.gui.ScreenState;
-import fr.bcecb.state.gui.ScreenStateRenderer;
+import fr.bcecb.state.gui.*;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -21,6 +18,7 @@ public class RenderManager {
         register(ScreenState.class, new ScreenStateRenderer(this));
         register(Button.class, new Button.ButtonRenderer(this));
         register(CircleButton.class, new CircleButton.CircleButtonRenderer(this));
+        register(Image.class, new Image.ImageRenderer(this));
     }
 
     private <T extends IRenderable> void register(Class<T> clazz, Renderer<T> renderer) {

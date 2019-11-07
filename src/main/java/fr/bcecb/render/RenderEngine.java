@@ -17,20 +17,16 @@ import static org.lwjgl.opengl.GL45.*;
 import static org.lwjgl.stb.STBTruetype.*;
 
 public class RenderEngine {
-    private Window window;
-
     private final ResourceManager resourceManager;
-
     private final RenderManager renderManager;
-
     private final Tessellator tessellator;
-
     private final Matrix4f projection;
+    private Window window;
 
     public RenderEngine(ResourceManager resourceManager) {
         this.resourceManager = resourceManager;
         this.renderManager = new RenderManager(this, resourceManager);
-        this.window = Window.newInstance("Game", 800, 600, false);
+        this.window = Window.newInstance("4Games", 800, 600, false);
 
         GL.createCapabilities();
         Log.RENDER.config("Using OpenGL Version {0}", glGetString(GL_VERSION));
@@ -65,6 +61,25 @@ public class RenderEngine {
         stateEngine.render(renderManager, partialTick);
     }
 
+    public void drawTexturedRectBasedOnRatio(ResourceHandle<Texture> textureHandle) {
+        float width = Window.getCurrentWindow().getWidth();
+        float height = Window.getCurrentWindow().getHeight();
+        float imageHeight = resourceManager.getResource(textureHandle).getHeight();
+        float imageWidth = resourceManager.getResource(textureHandle).getWidth();
+
+        float hR = height / imageHeight;
+        float wR = width / imageWidth;
+        if (Math.abs(1 - hR) < Math.abs(1 - wR)) {
+            float offset = ((hR * imageWidth) - width) / 2;
+            renderManager.getRenderEngine().drawTexturedRect(textureHandle, -offset, 0,
+                    width + offset, hR * imageHeight);
+        } else {
+            float offset = ((wR * imageHeight) - height) / 2;
+            renderManager.getRenderEngine().drawTexturedRect(textureHandle, 0, -offset,
+                    wR * imageWidth, height + offset);
+        }
+    }
+
     public void drawTexturedRect(ResourceHandle<Texture> textureHandle, float minX, float minY, float maxX, float maxY) {
         drawTexturedRect(textureHandle, minX, minY, maxX, maxY, false);
     }
@@ -81,6 +96,7 @@ public class RenderEngine {
         }
         texture.unbind();
     }
+
 
     public void drawRect(float minX, float minY, float maxX, float maxY) {
         Matrix4f model = new Matrix4f().translate(minX, minY, 0.0f).scaleXY(maxX - minX, maxY - minY);

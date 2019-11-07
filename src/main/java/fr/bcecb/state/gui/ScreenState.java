@@ -5,6 +5,9 @@ import com.google.common.eventbus.Subscribe;
 import fr.bcecb.Game;
 import fr.bcecb.event.MouseEvent;
 import fr.bcecb.event.WindowEvent;
+import fr.bcecb.resources.ResourceHandle;
+import fr.bcecb.resources.ResourceManager;
+import fr.bcecb.resources.Texture;
 import fr.bcecb.state.State;
 
 import java.util.Collection;
@@ -14,6 +17,7 @@ import static fr.bcecb.event.MouseEvent.Click.Type.RELEASED;
 
 public abstract class ScreenState extends State {
     private final Set<GuiElement> guiElements = Sets.newHashSet();
+    private ResourceHandle<Texture> backgroundTexture = ResourceManager.DEFAULT_TEXTURE;
 
     protected ScreenState(String name) {
         super(name);
@@ -27,6 +31,7 @@ public abstract class ScreenState extends State {
 
     @Override
     public void onExit() {
+        Game.getEventBus().unregister(this);
     }
 
     @Override
@@ -41,6 +46,14 @@ public abstract class ScreenState extends State {
 
     protected final void removeGuiElement(GuiElement element) {
         guiElements.remove(element);
+    }
+
+    public ResourceHandle<Texture> getBackgroundTexture() {
+        return backgroundTexture;
+    }
+
+    public void setBackgroundTexture(ResourceHandle<Texture> backgroundTexture) {
+        this.backgroundTexture = backgroundTexture;
     }
 
     public final Collection<GuiElement> getGuiElements() {

@@ -42,7 +42,7 @@ public class Window {
         } else Log.SYSTEM.warning("No video mode available !");
 
         glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
-        glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 4);
+        glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
 
         Log.SYSTEM.config("Window size is {0}x{1}", width, height);
 
