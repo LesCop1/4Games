@@ -55,7 +55,7 @@ public class RenderEngine {
         stateEngine.render(renderManager, partialTick);
     }
 
-    public void drawTexturedRectBasedOnRatio(ResourceHandle<Texture> textureHandle) {
+    public void drawBackground(ResourceHandle<Texture> textureHandle) {
         float width = Window.getCurrentWindow().getWidth();
         float height = Window.getCurrentWindow().getHeight();
         float imageHeight = resourceManager.getResource(textureHandle).getHeight();
