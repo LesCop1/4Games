@@ -28,17 +28,12 @@ public class Battleship { //Gère tous les aspects d'une partie, création de la
     }
 
     public void putBoat(Boat boat, int x, int y) { //Place les bateaux
-        if (!verification(boat, x, y)) {
-            return;
-        }
-
+        if (!verification(boat, x, y)) return;
         boat.setPosition(x, y);
-
         if (boat.isHorizontal()) {
             while (x + boat.getSize() >= 10) { //Si on veut placer un bateau sur une case qui fait que le bateau dépasse à gauche
                 --x; //On le décale vers la droite
             }
-
             for (int i = 0; i < boat.getSize(); i++) {
                 getCurrentPlayerBoard()[x + i][y] = boat;
             }
@@ -46,7 +41,6 @@ public class Battleship { //Gère tous les aspects d'une partie, création de la
             while (y + boat.getSize() >= 10) { //Pareil que pour x mais en vertical
                 --y;
             }
-
             for (int i = 0; i < boat.getSize(); i++) {
                 getCurrentPlayerBoard()[x][y + i] = boat;
             }
@@ -56,41 +50,29 @@ public class Battleship { //Gère tous les aspects d'une partie, création de la
     public boolean verification(Boat boat, int x, int y) {
         if (boat.isHorizontal()) {
             for (int i = 0; i < boat.getSize(); i++) {
-                if (x + i >= 10 || getCurrentPlayerBoard()[x + i][y] != null) {
-                    return false;
-                }
+                if (x + i >= 10 || getCurrentPlayerBoard()[x + i][y] != null) return false;
             }
         } else {
             for (int i = 0; i < boat.getSize(); i++) {
-                if (y + i >= 10 || getCurrentPlayerBoard()[x][y + i] != null) {
-                    return false;
-                }
+                if (y + i >= 10 || getCurrentPlayerBoard()[x][y + i] != null) return false;
             }
         }
         return true;
     }
 
     public void swapOrientation(Boat boat) { //Change l'orientation du bateau passé en adresse
-        if (boat.isHorizontal()) {
-            boat.setHorizontal(false);
-        } else {
-            boat.setHorizontal(true);
-        }
+        if (boat.isHorizontal()) boat.setHorizontal(false);
+        else boat.setHorizontal(true);
     }
 
     public boolean shoot(int x, int y) {
         Boat boat = getNextPlayerBoard()[x][y];
-
-        if (boat == null) {
-            return false;
-        } else {
+        if (boat == null) return false;
+        else {
             int hitPosition = boat.isHorizontal() ? boat.getX() - x : boat.getY() - y;
-
-            if (boat.getHits()[hitPosition]) {
-                return false;
-            } else boat.hit(hitPosition);
+            if (boat.getHits()[hitPosition]) return false;
+            else boat.hit(hitPosition);
         }
-
         return true;
     }
 }

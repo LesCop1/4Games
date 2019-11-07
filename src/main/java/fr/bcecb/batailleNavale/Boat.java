@@ -58,7 +58,7 @@ public class Boat {
         return type;
     }
 
-    enum Type { //Définit une énumération des différents bateaux du jeu
+    enum Type {
         AIRCRAFT_CARRIER("A", 5), //AircraftCarrier
         CRUISER("C", 4), //Cruiser
         FRIGATE("F", 3), //Frigate
