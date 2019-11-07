@@ -1,5 +1,6 @@
 package fr.bcecb.state.gui;
 
+import fr.bcecb.event.MouseEvent;
 import fr.bcecb.render.RenderEngine;
 import fr.bcecb.render.RenderManager;
 import fr.bcecb.render.Renderer;
@@ -31,6 +32,21 @@ public class Image extends GuiElement {
 
     public void setKeepRatio(boolean keepRatio) {
         this.keepRatio = keepRatio;
+    }
+
+    @Override
+    public void onClick(MouseEvent.Click event) {
+
+    }
+
+    @Override
+    public void onHover(MouseEvent.Move event) {
+
+    }
+
+    @Override
+    public void onScroll(MouseEvent.Scroll event) {
+
     }
 
     public static class ImageRenderer extends Renderer<Image> {
