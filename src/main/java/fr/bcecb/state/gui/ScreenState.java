@@ -9,6 +9,7 @@ import fr.bcecb.resources.ResourceHandle;
 import fr.bcecb.resources.ResourceManager;
 import fr.bcecb.resources.Texture;
 import fr.bcecb.state.State;
+import fr.bcecb.util.Log;
 
 import java.util.Collection;
 import java.util.Set;
@@ -22,16 +23,16 @@ public abstract class ScreenState extends State {
     protected ScreenState(String name) {
         super(name);
         initGui();
-        Game.getEventBus().register(this);
     }
 
     @Override
     public void onEnter() {
+        Game.EVENT_BUS.register(this);
     }
 
     @Override
     public void onExit() {
-        Game.getEventBus().unregister(this);
+        Game.EVENT_BUS.unregister(this);
     }
 
     @Override

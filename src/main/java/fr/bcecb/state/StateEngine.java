@@ -16,9 +16,13 @@ import static fr.bcecb.state.State.StateEvent;
 public class StateEngine {
     private final Deque<State> stateStack = new ArrayDeque<>();
 
+    public StateEngine() {
+        Game.EVENT_BUS.register(this);
+    }
+
     public void pushState(State state) {
         Event event = new StateEvent.Enter(state, getCurrentState());
-        Game.getEventBus().post(event);
+        Game.EVENT_BUS.post(event);
 
         if (!event.isCancelled()) {
             stateStack.push(state);
@@ -29,14 +33,14 @@ public class StateEngine {
     public void popState() {
         if (!stateStack.isEmpty()) {
             Event event = new StateEvent.Exit(stateStack.peek());
-            Game.getEventBus().post(event);
+            Game.EVENT_BUS.post(event);
 
             if (!event.isCancelled()) {
                 stateStack.pop().onExit();
 
                 if (stateStack.isEmpty()) {
                     Event event1 = new GameEvent.Close();
-                    Game.getEventBus().post(event1);
+                    Game.EVENT_BUS.post(event1);
                 }
             }
         }

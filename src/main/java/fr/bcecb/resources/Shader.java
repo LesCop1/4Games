@@ -60,7 +60,6 @@ public class Shader extends GLResource {
         glUniform1f(location, value);
     }
     public void uniformVec4(String name, Vector4f vector) {
-        System.out.println("name = " + name + ", location = " + getUniformLocation(name));
         uniformVec4(getUniformLocation(name), vector);
     }
     private void uniformVec4(int location, Vector4f vector) {

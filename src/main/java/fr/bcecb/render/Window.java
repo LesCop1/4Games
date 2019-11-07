@@ -6,12 +6,16 @@ import fr.bcecb.event.GameEvent;
 import fr.bcecb.event.WindowEvent;
 import fr.bcecb.input.MouseManager;
 import fr.bcecb.util.Log;
+import org.joml.Matrix4f;
 import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.system.MemoryStack;
+import org.lwjgl.system.Platform;
 
-import java.nio.IntBuffer;
+import java.nio.FloatBuffer;
 
+import static fr.bcecb.util.GLFWUtil.glfwInvoke;
 import static org.lwjgl.glfw.GLFW.*;
+import static org.lwjgl.opengl.GL11.glViewport;
 import static org.lwjgl.system.MemoryUtil.NULL;
 
 public class Window {
@@ -19,11 +23,18 @@ public class Window {
 
     private final MouseManager mouseManager;
 
-    private int width, minWidth;
-    private int height, minHeight;
+    private int width;
+    private int height;
 
-    private Window(String title, int width, int height, boolean fullscreen) {
+    private float contentScaleX, contentScaleY;
+
+    private final Matrix4f projection = new Matrix4f();
+
+    private Window(String title, int width, int height, float contentScaleX, float contentScaleY, boolean fullscreen) {
         this.windowId = glfwCreateWindow(width, height, title, fullscreen ? glfwGetPrimaryMonitor() : NULL, NULL);
+        this.contentScaleX = contentScaleX;
+        this.contentScaleY = contentScaleY;
+
         this.mouseManager = new MouseManager(this);
     }
 
@@ -32,7 +43,8 @@ public class Window {
         glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
         glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
 
-        GLFWVidMode vidMode = glfwGetVideoMode(glfwGetPrimaryMonitor());
+        long monitor = glfwGetPrimaryMonitor();
+        GLFWVidMode vidMode = glfwGetVideoMode(monitor);
 
         if (vidMode != null) {
             glfwWindowHint(GLFW_RED_BITS, vidMode.redBits());
@@ -46,25 +58,40 @@ public class Window {
 
         Log.SYSTEM.config("Window size is {0}x{1}", width, height);
 
-        Window window = new Window(title, width, height, fullscreen);
+
+        float contentScaleX;
+        float contentScaleY;
+
+        try (MemoryStack s = MemoryStack.stackPush()) {
+            FloatBuffer px = s.mallocFloat(1);
+            FloatBuffer py = s.mallocFloat(1);
+
+            glfwGetMonitorContentScale(monitor, px, py);
+
+            contentScaleX = px.get(0);
+            contentScaleY = py.get(0);
+
+            if (Platform.get() != Platform.MACOSX) {
+                width = Math.round(width * contentScaleX);
+                height = Math.round(height * contentScaleY);
+            }
+        }
+
+        Log.SYSTEM.config("Framebuffer content scaling is ({0}, {1})", contentScaleX, contentScaleY);
+
+        Window window = new Window(title, width, height, contentScaleX, contentScaleY, fullscreen);
 
         if (window.getId() == NULL) {
             return null;
         }
 
         if (!fullscreen) {
-            try (MemoryStack stack = MemoryStack.stackPush()) {
-                IntBuffer pWidth = stack.mallocInt(1);
-                IntBuffer pHeight = stack.mallocInt(1);
-
-                glfwGetWindowSize(window.getId(), pWidth, pHeight);
-
-                if (vidMode != null) {
-                    glfwSetWindowPos(window.getId(), (vidMode.width() - pWidth.get(0)) / 2, (vidMode.height() - pHeight.get(0)) / 2);
-                } else Log.SYSTEM.warning("No video mode available !");
-            }
+            if (vidMode != null) {
+                glfwSetWindowPos(window.getId(), (vidMode.width() - width) / 2, (vidMode.height() - height) / 2);
+            } else Log.SYSTEM.warning("No video mode available !");
         }
 
+        glfwSetWindowSizeCallback(window.getId(), window::setWindowSize);
         glfwSetFramebufferSizeCallback(window.getId(), window::setFramebufferSize);
         glfwSetWindowCloseCallback(window.getId(), window::close);
 
@@ -72,6 +99,19 @@ public class Window {
         glfwSwapInterval(1);
 
         return window;
+    }
+
+    public void show() {
+        glfwShowWindow(getId());
+        glfwInvoke(getId(), this::setWindowSize, this::setFramebufferSize);
+    }
+
+    public float getContentScaleX() {
+        return contentScaleX;
+    }
+
+    public float getContentScaleY() {
+        return contentScaleY;
     }
 
     public static Window getCurrentWindow() {
@@ -90,6 +130,10 @@ public class Window {
         return windowId;
     }
 
+    public Matrix4f getProjection() {
+        return projection;
+    }
+
     public int getWidth() {
         return width;
     }
@@ -98,36 +142,37 @@ public class Window {
         return height;
     }
 
-    public void setFullscreen(boolean fullscreen) {
-        GLFWVidMode vidMode = glfwGetVideoMode(glfwGetPrimaryMonitor());
-
-        if (vidMode != null) {
-            if (fullscreen) {
-                this.minWidth = this.width;
-                this.minHeight = this.height;
-                glfwSetWindowMonitor(windowId, glfwGetPrimaryMonitor(), 0, 0, vidMode.width(), vidMode.height(), GLFW_DONT_CARE);
-            } else {
-                glfwSetWindowMonitor(windowId, NULL, (vidMode.width() - this.minWidth) / 2, (vidMode.height() - this.minHeight) / 2, minWidth, minHeight, GLFW_DONT_CARE);
-            }
-        } else Log.SYSTEM.warning("No video mode available !");
-    }
-
     public boolean shouldClose() {
         return glfwWindowShouldClose(windowId);
     }
 
     private void close(long window) {
+        assert window == this.windowId;
+
         Event event = new GameEvent.Close();
-        Game.getEventBus().post(event);
+        Game.EVENT_BUS.post(event);
+    }
+
+    private void setWindowSize(long window, int width, int height) {
+        assert window == this.windowId;
+
+        if (Platform.get() != Platform.MACOSX) {
+            width /= getContentScaleX();
+            height /= getContentScaleY();
+        }
+
+        this.width = width;
+        this.height = height;
+
+        this.projection.setOrtho2D(0, width, height, 0);
+
+        Event event = new WindowEvent.Size(this.width, this.height);
+        Game.EVENT_BUS.post(event);
     }
 
     private void setFramebufferSize(long window, int width, int height) {
         assert window == this.windowId;
 
-        this.width = width;
-        this.height = height;
-
-        Event event = new WindowEvent.Size(this.width, this.height);
-        Game.getEventBus().post(event);
+        glViewport(0, 0, width, height);
     }
 }
