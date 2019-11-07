@@ -9,6 +9,7 @@ import fr.bcecb.resources.ResourceHandle;
 import fr.bcecb.resources.ResourceManager;
 import fr.bcecb.resources.Texture;
 import fr.bcecb.state.State;
+import fr.bcecb.util.Log;
 
 import java.util.Collection;
 import java.util.Set;
@@ -72,7 +73,6 @@ public abstract class ScreenState extends State {
 
     @Subscribe
     private void handleClickEvent(MouseEvent.Click event) {
-
         if (!Game.instance().getStateEngine().isCurrentState(this)) return;
 
         for (GuiElement element : getGuiElements()) {

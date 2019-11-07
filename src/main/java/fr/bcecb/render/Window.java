@@ -77,6 +77,8 @@ public class Window {
             }
         }
 
+        Log.SYSTEM.config("Framebuffer content scaling is ({0}, {1})", contentScaleX, contentScaleY);
+
         Window window = new Window(title, width, height, contentScaleX, contentScaleY, fullscreen);
 
         if (window.getId() == NULL) {
