@@ -1,6 +1,7 @@
 package fr.bcecb.state.gui;
 
 import com.google.common.base.Strings;
+import fr.bcecb.event.MouseEvent;
 import fr.bcecb.render.RenderEngine;
 import fr.bcecb.render.RenderManager;
 import fr.bcecb.render.Renderer;
@@ -41,6 +42,21 @@ public class Button extends GuiElement {
         super(id, x - (centered ? (width / 2) : 0), y - (centered ? (height / 2) : 0), width, height);
         this.title = title;
         this.textureResourceHandle = textureResourceHandle;
+    }
+
+    @Override
+    public void onClick(MouseEvent.Click event) {
+
+    }
+
+    @Override
+    public void onHover(MouseEvent.Move event) {
+
+    }
+
+    @Override
+    public void onScroll(MouseEvent.Scroll event) {
+
     }
 
     public String getTitle() {

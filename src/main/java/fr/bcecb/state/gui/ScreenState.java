@@ -78,7 +78,11 @@ public abstract class ScreenState extends State {
             if (!element.isVisible()) continue;
 
             if (!event.isCancelled() && event.getType() == RELEASED && element.checkBounds(event.getX(), event.getY())) {
-                element.getClickHandler().accept(event);
+                element.onClick(event);
+
+                if (element.getClickHandler() != null) {
+                    element.getClickHandler().accept(event);
+                }
 
                 event.setCancelled(true);
             }
@@ -96,7 +100,11 @@ public abstract class ScreenState extends State {
             element.setHovered(element.checkBounds(event.getX(), event.getY()));
 
             if (element.isHovered()) {
-                element.getHoverHandler().accept(event);
+                element.onHover(event);
+
+                if (element.getHoverHandler() != null) {
+                    element.getHoverHandler().accept(event);
+                }
             }
         }
     }
@@ -109,7 +117,11 @@ public abstract class ScreenState extends State {
             if (!element.isVisible()) continue;
 
             if (element.isHovered()) {
-                element.getScrollHandler().accept(event);
+                element.onScroll(event);
+
+                if (element.getScrollHandler() != null) {
+                    element.getScrollHandler().accept(event);
+                }
             }
         }
     }

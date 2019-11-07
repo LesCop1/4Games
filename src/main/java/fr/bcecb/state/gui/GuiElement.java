@@ -1,6 +1,5 @@
 package fr.bcecb.state.gui;
 
-import com.google.common.base.MoreObjects;
 import fr.bcecb.event.MouseEvent;
 import fr.bcecb.render.IRenderable;
 
@@ -26,10 +25,6 @@ public abstract class GuiElement implements IRenderable {
         this.height = height;
         this.visible = true;
         this.hovered = false;
-
-        this.clickHandler = this::onClick;
-        this.hoverHandler = this::onHover;
-        this.scrollHandler = this::onScroll;
     }
 
     public int getId() {
@@ -89,7 +84,7 @@ public abstract class GuiElement implements IRenderable {
     }
 
     public Consumer<MouseEvent.Click> getClickHandler() {
-        return MoreObjects.firstNonNull(clickHandler, this::onClick);
+        return clickHandler;
     }
 
     public GuiElement setClickHandler(Consumer<MouseEvent.Click> clickHandler) {
@@ -98,7 +93,7 @@ public abstract class GuiElement implements IRenderable {
     }
 
     public Consumer<MouseEvent.Move> getHoverHandler() {
-        return MoreObjects.firstNonNull(hoverHandler, this::onHover);
+        return hoverHandler;
     }
 
     public GuiElement setHoverHandler(Consumer<MouseEvent.Move> hoverHandler) {
@@ -107,7 +102,7 @@ public abstract class GuiElement implements IRenderable {
     }
 
     public Consumer<MouseEvent.Scroll> getScrollHandler() {
-        return MoreObjects.firstNonNull(scrollHandler, this::onScroll);
+        return scrollHandler;
     }
 
     public GuiElement setScrollHandler(Consumer<MouseEvent.Scroll> scrollHandler) {
@@ -115,15 +110,9 @@ public abstract class GuiElement implements IRenderable {
         return this;
     }
 
-    protected void onClick(MouseEvent.Click event) {
+    public abstract void onClick(MouseEvent.Click event);
 
-    }
+    public abstract void onHover(MouseEvent.Move event);
 
-    protected void onHover(MouseEvent.Move event) {
-
-    }
-
-    protected void onScroll(MouseEvent.Scroll event) {
-
-    }
+    public abstract void onScroll(MouseEvent.Scroll event);
 }
