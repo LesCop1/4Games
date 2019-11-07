@@ -156,7 +156,13 @@ public class Window {
     }
 
     private void setWindowSize(long window, int width, int height) {
+        if (Platform.get() != Platform.MACOSX) {
+            width /= contentScaleX;
+            height /= contentScaleY;
+        }
 
+        this.width = width;
+        this.height = height;
     }
 
     private void setFramebufferSize(long window, int width, int height) {
