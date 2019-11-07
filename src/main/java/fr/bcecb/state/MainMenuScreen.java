@@ -4,10 +4,7 @@ import fr.bcecb.Game;
 import fr.bcecb.render.Window;
 import fr.bcecb.resources.ResourceHandle;
 import fr.bcecb.resources.Texture;
-import fr.bcecb.state.gui.Button;
-import fr.bcecb.state.gui.CircleButton;
-import fr.bcecb.state.gui.GuiElement;
-import fr.bcecb.state.gui.ScreenState;
+import fr.bcecb.state.gui.*;
 import fr.bcecb.util.Log;
 
 public class MainMenuScreen extends ScreenState {
