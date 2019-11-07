@@ -19,6 +19,7 @@ public class RenderManager {
         register(Button.class, new Button.ButtonRenderer(this));
         register(CircleButton.class, new CircleButton.CircleButtonRenderer(this));
         register(Image.class, new Image.ImageRenderer(this));
+        register(CircleImage.class, new CircleImage.CircleImageRenderer(this));
     }
 
     private <T extends IRenderable> void register(Class<T> clazz, Renderer<T> renderer) {
