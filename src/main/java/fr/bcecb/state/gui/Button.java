@@ -76,7 +76,7 @@ public class Button extends GuiElement {
             renderEngine.drawTexturedRect(getTexture(button), button.getX(), button.getY(), button.getX() + button.getWidth(), button.getY() + button.getHeight());
 
             if (!Strings.isNullOrEmpty(button.getTitle())) {
-                renderEngine.drawCenteredText(ResourceManager.DEFAULT_FONT, button.getTitle(), button.getX() + (button.getWidth() / 2.0f), button.getY() + (button.getHeight() / 2.0f), 1.0f, new Vector4f(0.0f, 0.0f, 0.0f, 1.0f));
+                renderEngine.drawCenteredText(ResourceManager.DEFAULT_FONT, button.getTitle(), button.getX() + (button.getWidth() / 2.0f), button.getY() + (button.getHeight() / 2.0f), 64, new Vector4f(0.0f, 0.0f, 0.0f, 1.0f));
             }
         }
     }

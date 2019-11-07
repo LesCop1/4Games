@@ -22,8 +22,8 @@ public class Window {
 
     private final MouseManager mouseManager;
 
-    private int width, minWidth;
-    private int height, minHeight;
+    private int width;
+    private int height;
 
     private float contentScaleX, contentScaleY;
 
@@ -133,20 +133,6 @@ public class Window {
         return height;
     }
 
-    public void setFullscreen(boolean fullscreen) {
-        GLFWVidMode vidMode = glfwGetVideoMode(glfwGetPrimaryMonitor());
-
-        if (vidMode != null) {
-            if (fullscreen) {
-                this.minWidth = this.width;
-                this.minHeight = this.height;
-                glfwSetWindowMonitor(windowId, glfwGetPrimaryMonitor(), 0, 0, vidMode.width(), vidMode.height(), GLFW_DONT_CARE);
-            } else {
-                glfwSetWindowMonitor(windowId, NULL, (vidMode.width() - this.minWidth) / 2, (vidMode.height() - this.minHeight) / 2, minWidth, minHeight, GLFW_DONT_CARE);
-            }
-        } else Log.SYSTEM.warning("No video mode available !");
-    }
-
     public boolean shouldClose() {
         return glfwWindowShouldClose(windowId);
     }
@@ -162,8 +148,8 @@ public class Window {
         assert window == this.windowId;
 
         if (Platform.get() != Platform.MACOSX) {
-            width /= contentScaleX;
-            height /= contentScaleY;
+            width /= getContentScaleX();
+            height /= getContentScaleY();
         }
 
         this.width = width;
