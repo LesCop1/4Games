@@ -4,6 +4,7 @@ import fr.bcecb.Game;
 import fr.bcecb.event.Event;
 import fr.bcecb.event.GameEvent;
 import fr.bcecb.event.WindowEvent;
+import fr.bcecb.input.KeyboardManager;
 import fr.bcecb.input.MouseManager;
 import fr.bcecb.util.Log;
 import org.joml.Matrix4f;
@@ -22,6 +23,7 @@ public class Window {
     private final long windowId;
 
     private final MouseManager mouseManager;
+    private final KeyboardManager keyboardManager;
 
     private int width;
     private int height;
@@ -36,6 +38,7 @@ public class Window {
         this.contentScaleY = contentScaleY;
 
         this.mouseManager = new MouseManager(this);
+        this.keyboardManager = new KeyboardManager(this);
     }
 
     public static Window newInstance(String title, int width, int height, boolean fullscreen) {
@@ -120,6 +123,10 @@ public class Window {
 
     public MouseManager getMouseManager() {
         return mouseManager;
+    }
+
+    public KeyboardManager getKeyboardManager() {
+        return keyboardManager;
     }
 
     public void destroy() {
