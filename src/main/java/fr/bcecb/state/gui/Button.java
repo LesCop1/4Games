@@ -60,7 +60,6 @@ public class Button extends GuiElement {
 
     @Override
     public void onClick(MouseEvent.Click event) {
-
     }
 
     @Override
