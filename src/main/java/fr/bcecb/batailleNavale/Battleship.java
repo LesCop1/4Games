@@ -59,11 +59,6 @@ public class Battleship { //Gère tous les aspects d'une partie, création de la
         } else {
             for (int i = 0; i < boat.getSize(); i++) {
                 if (y + i >= 10 || getCurrentPlayerBoard()[x][y + i] != null) return false;
-                if (x + i >= 10 || getCurrentPlayerBoard()[x + i][y] != null) return false;              
-            }
-        } else {
-            for (int i = 0; i < boat.getSize(); i++) {
-                if (y + i >= 10 || getCurrentPlayerBoard()[x][y + i] != null) return false;
             }
         }
         return true;
@@ -85,7 +80,7 @@ public class Battleship { //Gère tous les aspects d'une partie, création de la
             else boat.hit(hitPosition);
         }
         if (boat == null) return false;
-        } else {
+        else {
             int hitPosition = boat.isHorizontal() ? boat.getX() - x : boat.getY() - y;
             if (boat.getHits()[hitPosition]) return false;
             else boat.hit(hitPosition);

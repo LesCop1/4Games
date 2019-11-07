@@ -55,7 +55,7 @@ public final class Game {
         Log.SYSTEM.debug("Starting the game");
         running = true;
 
-        stateEngine.pushState(new BattleshipScreen());
+        stateEngine.pushState(new MainMenuScreen());
 
         float ticks = 1.0f / ticksPerSecond;
         float currentTime;

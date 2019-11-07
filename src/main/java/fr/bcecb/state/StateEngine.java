@@ -21,8 +21,8 @@ public class StateEngine {
         Game.getEventBus().post(event);
 
         if (!event.isCancelled()) {
-            state.onEnter();
             stateStack.push(state);
+            state.onEnter();
         }
     }
 

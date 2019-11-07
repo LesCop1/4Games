@@ -1,7 +1,13 @@
 package fr.bcecb.batailleNavale;
 
 import fr.bcecb.Game;
+import fr.bcecb.resources.ResourceHandle;
+import fr.bcecb.resources.Texture;
+import fr.bcecb.state.gui.Button;
+import fr.bcecb.state.gui.GuiElement;
 import fr.bcecb.state.gui.ScreenState;
+import fr.bcecb.Game;
+
 
 public class BattleshipScreen extends ScreenState {
     private Battleship battleship = new Battleship();
@@ -32,6 +38,7 @@ public class BattleshipScreen extends ScreenState {
 
     @Override
     public void initGui() {
+        setBackgroundTexture(new ResourceHandle<Texture>("textures/mainMenuBG.png") {});
     }
 
     @Override

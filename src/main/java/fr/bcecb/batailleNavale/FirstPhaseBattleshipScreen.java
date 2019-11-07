@@ -22,9 +22,10 @@ public class FirstPhaseBattleshipScreen extends ScreenState {
 
     @Override
     public void initGui() {
+        setBackgroundTexture(new ResourceHandle<Texture>("textures/mainMenuBG.png") {});
         for (int i = 0; i < 10; i++) {
             for (int j = 0; j < 10; j++) {
-                final GuiElement button = new Button((10 * i) + j, i, j, 10, 10, "" + (10 * i) + j);
+                final GuiElement button = new Button((10 * i) + j, i*65 + 5, j*65 + 5, 10, 10,"" + (10 * i) + j);
                 button.setClickHandler(e -> clickButton(e, button.getId()));
                 addGuiElement(button);
             }
