@@ -12,6 +12,7 @@ import fr.bcecb.state.gui.ScreenState;
 
 public class FirstPhaseBattleshipScreen extends ScreenState {
     private Battleship battleship;
+
     private Boat boat;
 
     protected FirstPhaseBattleshipScreen(Battleship battleship) {
