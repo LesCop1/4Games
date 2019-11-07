@@ -6,6 +6,7 @@ import fr.bcecb.resources.ResourceHandle;
 import fr.bcecb.resources.Texture;
 import fr.bcecb.state.gui.Button;
 import fr.bcecb.state.gui.GuiElement;
+import fr.bcecb.state.gui.Image;
 import fr.bcecb.state.gui.ScreenState;
 
 import java.util.ArrayList;
@@ -87,6 +88,13 @@ public class BingoState extends ScreenState {
         int height = Window.getCurrentWindow().getHeight();
         setBackgroundTexture(new ResourceHandle<Texture>("textures/bingo/bingoBG.png") {
         });
+
+        final GuiElement grid = new Image(1,new ResourceHandle<>("textures/bingo/gridBG.png"){},
+                (width/3f),(height /2f),
+                (width/2f),(height/5f),
+                true,true);
+
+        addGuiElement(grid);
 
         GuiElement backButton = new Button(1,
                 (width / 20f), (height - (height / 20f) - (height / 10f)),
