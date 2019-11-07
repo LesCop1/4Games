@@ -20,7 +20,6 @@ public class RenderEngine {
     private final ResourceManager resourceManager;
     private final RenderManager renderManager;
     private final Tessellator tessellator;
-    private final Matrix4f projection = new Matrix4f();
     private Window window;
 
     public RenderEngine(ResourceManager resourceManager) {
@@ -52,8 +51,6 @@ public class RenderEngine {
     public void render(StateEngine stateEngine, float partialTick) {
         glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-        projection.setOrtho2D(0, window.getWidth(), window.getHeight(), 0);
 
         stateEngine.render(renderManager, partialTick);
     }
@@ -147,8 +144,8 @@ public class RenderEngine {
             {
                 float scale = stbtt_ScaleForPixelHeight(font.getInfo(), fontHeight);
 
-                shader.uniformMat4("projection", projection);
-                shader.uniformMat4("model", new Matrix4f().translate(x, y, 0.0f).scaleXY(1.0f, 1.0f));
+                shader.uniformMat4("projection", window.getProjection());
+                shader.uniformMat4("model", new Matrix4f().translate(x, y, 0.0f).scaleXY(1.0f / window.getContentScaleX(), 1.0f / window.getContentScaleY()));
                 font.bind();
                 {
                     try (MemoryStack stack = MemoryStack.stackPush()) {
@@ -212,7 +209,7 @@ public class RenderEngine {
         Shader shader = resourceManager.getResource(shaderResourceHandle);
         shader.bind();
         {
-            shader.uniformMat4("projection", projection);
+            shader.uniformMat4("projection", window.getProjection());
             shader.uniformMat4("model", model);
             tessellator.draw();
         }

@@ -6,6 +6,7 @@ import fr.bcecb.event.GameEvent;
 import fr.bcecb.event.WindowEvent;
 import fr.bcecb.input.MouseManager;
 import fr.bcecb.util.Log;
+import org.joml.Matrix4f;
 import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.system.MemoryStack;
 import org.lwjgl.system.Platform;
@@ -26,6 +27,8 @@ public class Window {
     private int height;
 
     private float contentScaleX, contentScaleY;
+
+    private final Matrix4f projection = new Matrix4f();
 
     private Window(String title, int width, int height, float contentScaleX, float contentScaleY, boolean fullscreen) {
         this.windowId = glfwCreateWindow(width, height, title, fullscreen ? glfwGetPrimaryMonitor() : NULL, NULL);
@@ -125,6 +128,10 @@ public class Window {
         return windowId;
     }
 
+    public Matrix4f getProjection() {
+        return projection;
+    }
+
     public int getWidth() {
         return width;
     }
@@ -154,6 +161,8 @@ public class Window {
 
         this.width = width;
         this.height = height;
+
+        this.projection.setOrtho2D(0, width, height, 0);
 
         Event event = new WindowEvent.Size(this.width, this.height);
         Game.EVENT_BUS.post(event);
