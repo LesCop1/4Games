@@ -48,7 +48,7 @@ public class CircleButton extends Button {
 
         @Override
         public ResourceHandle<Texture> getTexture(CircleButton button) {
-            return button.getTextureResourceHandle();
+            return button.getTexture();
         }
 
         @Override

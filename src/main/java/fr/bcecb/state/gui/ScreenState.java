@@ -5,10 +5,12 @@ import com.google.common.eventbus.Subscribe;
 import fr.bcecb.Game;
 import fr.bcecb.event.MouseEvent;
 import fr.bcecb.event.WindowEvent;
+import fr.bcecb.render.Window;
 import fr.bcecb.resources.ResourceHandle;
 import fr.bcecb.resources.ResourceManager;
 import fr.bcecb.resources.Texture;
 import fr.bcecb.state.State;
+import fr.bcecb.util.Log;
 
 import java.util.Collection;
 import java.util.Set;
@@ -22,16 +24,16 @@ public abstract class ScreenState extends State {
     protected ScreenState(String name) {
         super(name);
         initGui();
-        Game.getEventBus().register(this);
     }
 
     @Override
     public void onEnter() {
+        Game.EVENT_BUS.register(this);
     }
 
     @Override
     public void onExit() {
-        Game.getEventBus().unregister(this);
+        Game.EVENT_BUS.unregister(this);
     }
 
     @Override
@@ -48,12 +50,12 @@ public abstract class ScreenState extends State {
         guiElements.remove(element);
     }
 
-    public ResourceHandle<Texture> getBackgroundTexture() {
-        return backgroundTexture;
-    }
-
     public void setBackgroundTexture(ResourceHandle<Texture> backgroundTexture) {
         this.backgroundTexture = backgroundTexture;
+    }
+
+    public ResourceHandle<Texture> getBackgroundTexture() {
+        return backgroundTexture;
     }
 
     public final Collection<GuiElement> getGuiElements() {
@@ -78,7 +80,11 @@ public abstract class ScreenState extends State {
             if (!element.isVisible()) continue;
 
             if (!event.isCancelled() && event.getType() == RELEASED && element.checkBounds(event.getX(), event.getY())) {
-                element.getClickHandler().accept(event);
+                element.onClick(event);
+
+                if (element.getClickHandler() != null) {
+                    element.getClickHandler().accept(event);
+                }
 
                 event.setCancelled(true);
             }
@@ -96,7 +102,11 @@ public abstract class ScreenState extends State {
             element.setHovered(element.checkBounds(event.getX(), event.getY()));
 
             if (element.isHovered()) {
-                element.getHoverHandler().accept(event);
+                element.onHover(event);
+
+                if (element.getHoverHandler() != null) {
+                    element.getHoverHandler().accept(event);
+                }
             }
         }
     }
@@ -109,7 +119,11 @@ public abstract class ScreenState extends State {
             if (!element.isVisible()) continue;
 
             if (element.isHovered()) {
-                element.getScrollHandler().accept(event);
+                element.onScroll(event);
+
+                if (element.getScrollHandler() != null) {
+                    element.getScrollHandler().accept(event);
+                }
             }
         }
     }

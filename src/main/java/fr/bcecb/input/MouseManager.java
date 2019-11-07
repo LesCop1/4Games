@@ -38,27 +38,27 @@ public class MouseManager {
         MouseEvent.Click.Type type = action == GLFW_PRESS ? MouseEvent.Click.Type.PRESSED : MouseEvent.Click.Type.RELEASED;
 
         Event event = new MouseEvent.Click(type, button, positionX, positionY);
-        Game.getEventBus().post(event);
+        Game.EVENT_BUS.post(event);
     }
 
     private void mouseMoveCallback(long window, double x, double y) {
         this.lastPositionX = positionX;
         this.lastPositionY = positionY;
 
-        this.positionX = (float)x;
-        this.positionY = (float)y;
+        this.positionX = (float) x;
+        this.positionY = (float) y;
 
         Event event = new MouseEvent.Move(positionX, positionY, lastPositionX - positionX, lastPositionY - positionY);
-        Game.getEventBus().post(event);
+        Game.EVENT_BUS.post(event);
     }
 
     private void mouseScrollCallback(long window, double x, double y) {
         Event event = new MouseEvent.Scroll((float)x, (float)y);
-        Game.getEventBus().post(event);
+        Game.EVENT_BUS.post(event);
     }
 
     private void mouseEnterCallback(long window, boolean entered) {
         Event event = new MouseEvent.Enter(entered);
-        Game.getEventBus().post(event);
+        Game.EVENT_BUS.post(event);
     }
 }

@@ -1,5 +1,6 @@
 package fr.bcecb.resources;
 
+import fr.bcecb.render.Window;
 import fr.bcecb.util.Resources;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.stb.STBTTBakedChar;
@@ -25,8 +26,8 @@ public class Font extends Texture {
     private int lineGap;
 
     public Font() {
-        this.width = 512;
-        this.height = 512;
+        this.width = Math.round(512 * Window.getCurrentWindow().getContentScaleX());
+        this.height = Math.round(512 * Window.getCurrentWindow().getContentScaleY());
     }
 
     public ByteBuffer getTTF() {
@@ -73,15 +74,15 @@ public class Font extends Texture {
             this.lineGap = pLineGap.get(0);
         }
 
-        ByteBuffer bitmap = BufferUtils.createByteBuffer(512 * 512);
-        stbtt_BakeFontBitmap(ttf, 64, bitmap, 512, 512, 32, cdata);
+        ByteBuffer bitmap = BufferUtils.createByteBuffer(width * height);
+        stbtt_BakeFontBitmap(ttf, 64 * Window.getCurrentWindow().getContentScaleY(), bitmap, width, height, 32, cdata);
 
         int texture = glGenTextures();
         glBindTexture(GL_TEXTURE_2D, texture);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, 512, 512, 0, GL_RED, GL_UNSIGNED_BYTE, bitmap);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, width, height, 0, GL_RED, GL_UNSIGNED_BYTE, bitmap);
 
         return texture;
     }
