@@ -1,6 +1,5 @@
 package fr.bcecb.state;
 
-import com.google.common.eventbus.Subscribe;
 import fr.bcecb.Game;
 import fr.bcecb.event.Event;
 import fr.bcecb.event.GameEvent;
@@ -43,8 +42,7 @@ public class StateEngine {
         }
     }
 
-    @Subscribe
-    public void handleTick(GameEvent.Tick event) {
+    public void update() {
         for (State state : stateStack) {
             state.update();
 

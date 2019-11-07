@@ -15,6 +15,7 @@ import static org.lwjgl.opengl.GL45.*;
 import static org.lwjgl.stb.STBTruetype.*;
 
 public class Font extends Texture {
+    private ByteBuffer ttf;
     private STBTTFontinfo info = STBTTFontinfo.create();
 
     private final STBTTBakedChar.Buffer cdata = STBTTBakedChar.malloc(256);
@@ -26,6 +27,10 @@ public class Font extends Texture {
     public Font() {
         this.width = 512;
         this.height = 512;
+    }
+
+    public ByteBuffer getTTF() {
+        return ttf;
     }
 
     public STBTTFontinfo getInfo() {
@@ -50,7 +55,7 @@ public class Font extends Texture {
 
     @Override
     public int create(InputStream inputStream) throws IOException {
-        ByteBuffer ttf = Resources.readBytes(inputStream);
+        this.ttf = Resources.readBytes(inputStream);
 
         if (!stbtt_InitFont(info, ttf)) {
             return 0;
@@ -79,5 +84,11 @@ public class Font extends Texture {
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, 512, 512, 0, GL_RED, GL_UNSIGNED_BYTE, bitmap);
 
         return texture;
+    }
+
+    @Override
+    public void dispose() {
+        super.dispose();
+        this.cdata.free();
     }
 }
