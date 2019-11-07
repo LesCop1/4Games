@@ -4,13 +4,10 @@ import com.google.common.collect.Sets;
 import com.google.common.eventbus.Subscribe;
 import fr.bcecb.Game;
 import fr.bcecb.event.MouseEvent;
-import fr.bcecb.event.WindowEvent;
-import fr.bcecb.render.Window;
 import fr.bcecb.resources.ResourceHandle;
 import fr.bcecb.resources.ResourceManager;
 import fr.bcecb.resources.Texture;
 import fr.bcecb.state.State;
-import fr.bcecb.util.Log;
 
 import java.util.Collection;
 import java.util.Set;
@@ -48,6 +45,10 @@ public abstract class ScreenState extends State {
 
     protected final void removeGuiElement(GuiElement element) {
         guiElements.remove(element);
+    }
+
+    public final void clearGuiElements() {
+        guiElements.clear();
     }
 
     public void setBackgroundTexture(ResourceHandle<Texture> backgroundTexture) {
@@ -126,11 +127,5 @@ public abstract class ScreenState extends State {
                 }
             }
         }
-    }
-
-    @Subscribe
-    private void handleWindowResizeEvent(WindowEvent.Size event) {
-        this.guiElements.clear();
-        initGui();
     }
 }
