@@ -5,6 +5,7 @@ import com.google.common.eventbus.Subscribe;
 import fr.bcecb.Game;
 import fr.bcecb.event.MouseEvent;
 import fr.bcecb.event.WindowEvent;
+import fr.bcecb.render.Window;
 import fr.bcecb.resources.ResourceHandle;
 import fr.bcecb.resources.ResourceManager;
 import fr.bcecb.resources.Texture;
@@ -49,12 +50,12 @@ public abstract class ScreenState extends State {
         guiElements.remove(element);
     }
 
-    public ResourceHandle<Texture> getBackgroundTexture() {
-        return backgroundTexture;
-    }
-
     public void setBackgroundTexture(ResourceHandle<Texture> backgroundTexture) {
         this.backgroundTexture = backgroundTexture;
+    }
+
+    public ResourceHandle<Texture> getBackgroundTexture() {
+        return backgroundTexture;
     }
 
     public final Collection<GuiElement> getGuiElements() {
