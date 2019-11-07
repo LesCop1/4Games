@@ -4,7 +4,7 @@ import org.lwjgl.BufferUtils;
 
 import java.nio.FloatBuffer;
 
-import static org.lwjgl.opengl.GL45.*;
+import static org.lwjgl.opengl.GL41.*;
 
 public final class Tessellator {
     private boolean building = false;
@@ -118,7 +118,9 @@ public final class Tessellator {
 
             glBindVertexArray(vao);
             {
-                glNamedBufferSubData(vbo, 0, vertexBuffer);
+                glBindBuffer(GL_ARRAY_BUFFER, vbo);
+                glBufferSubData(GL_ARRAY_BUFFER, 0, vertexBuffer);
+                glBindBuffer(GL_ARRAY_BUFFER, 0);
             }
             glBindVertexArray(0);
 
