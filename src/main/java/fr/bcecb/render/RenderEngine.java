@@ -53,8 +53,7 @@ public class RenderEngine {
         glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        glViewport(0, 0, window.getWidth(), window.getHeight());
-        projection.setOrtho2D(0, window.getWidth() / window.getContentScaleX(), window.getHeight() / window.getContentScaleY(), 0);
+        projection.setOrtho2D(0, window.getWidth(), window.getHeight(), 0);
 
         stateEngine.render(renderManager, partialTick);
     }

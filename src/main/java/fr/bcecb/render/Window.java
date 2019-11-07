@@ -14,6 +14,7 @@ import java.nio.FloatBuffer;
 
 import static fr.bcecb.util.GLFWUtil.glfwInvoke;
 import static org.lwjgl.glfw.GLFW.*;
+import static org.lwjgl.opengl.GL11.glViewport;
 import static org.lwjgl.system.MemoryUtil.NULL;
 
 public class Window {
@@ -151,11 +152,15 @@ public class Window {
     }
 
     private void close(long window) {
+        assert window == this.windowId;
+
         Event event = new GameEvent.Close();
         Game.EVENT_BUS.post(event);
     }
 
     private void setWindowSize(long window, int width, int height) {
+        assert window == this.windowId;
+
         if (Platform.get() != Platform.MACOSX) {
             width /= contentScaleX;
             height /= contentScaleY;
@@ -163,15 +168,14 @@ public class Window {
 
         this.width = width;
         this.height = height;
+
+        Event event = new WindowEvent.Size(this.width, this.height);
+        Game.EVENT_BUS.post(event);
     }
 
     private void setFramebufferSize(long window, int width, int height) {
         assert window == this.windowId;
 
-        this.width = width;
-        this.height = height;
-
-        Event event = new WindowEvent.Size(this.width, this.height);
-        Game.EVENT_BUS.post(event);
+        glViewport(0, 0, width, height);
     }
 }
