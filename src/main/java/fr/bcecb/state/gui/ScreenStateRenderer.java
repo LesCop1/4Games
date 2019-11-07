@@ -21,7 +21,7 @@ public class ScreenStateRenderer extends Renderer<ScreenState> {
     public void render(ScreenState state, float partialTick) {
         ResourceHandle<Texture> textureResourceHandle = getTexture(state);
 
-        renderManager.getRenderEngine().drawTexturedRectBasedOnRatio(textureResourceHandle);
+        renderManager.getRenderEngine().drawTexturedRect(textureResourceHandle, 0, 0, Window.getCurrentWindow().getWidth(), Window.getCurrentWindow().getHeight());
 
         for (GuiElement element : state.getGuiElements()) {
             Renderer<GuiElement> guiElementRenderer = renderManager.getRendererFor(element);

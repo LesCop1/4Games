@@ -3,7 +3,6 @@ package fr.bcecb;
 import com.google.common.eventbus.AsyncEventBus;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
-import fr.bcecb.bingo.BingoState;
 import fr.bcecb.event.Event;
 import fr.bcecb.event.EventExceptionHandler;
 import fr.bcecb.event.GameEvent;
@@ -55,7 +54,7 @@ public final class Game {
         Log.SYSTEM.debug("Starting the game");
         running = true;
 
-        stateEngine.pushState(new BingoState(3));
+        stateEngine.pushState(new MainMenuScreen());
 
         float ticks = 1.0f / ticksPerSecond;
         float currentTime;
@@ -70,6 +69,8 @@ public final class Game {
             while (delta >= 1.0) {
                 Event event = new GameEvent.Tick();
                 Game.getEventBus().post(event);
+
+                stateEngine.update();
 
                 --delta;
             }

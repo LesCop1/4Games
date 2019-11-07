@@ -1,7 +1,7 @@
 package fr.bcecb.state;
 
 import fr.bcecb.Game;
-import fr.bcecb.event.MouseEvent;
+import fr.bcecb.bingo.SettingsBingoState;
 import fr.bcecb.render.Window;
 import fr.bcecb.resources.ResourceHandle;
 import fr.bcecb.resources.Texture;
@@ -27,7 +27,7 @@ public class GameSelectScreen extends ScreenState {
 
         GuiElement bingoGameButton = new Button(1, (width / 4f), (height / 2f) + (height / 10f), (width / 8f), (height / 10f),
                 true, "Bingo", new ResourceHandle<Texture>("textures/defaultButton.png") {
-        });
+        }).setClickHandler(e -> Game.instance().getStateEngine().pushState(new SettingsBingoState()));
 
         GuiElement profileButton = new CircleButton(2, width / 2.0f, height / 2.0f, (height / 10f), true,
                 new ResourceHandle<Texture>("textures/defaultProfile.png") {

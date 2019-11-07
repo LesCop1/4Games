@@ -1,6 +1,7 @@
 package fr.bcecb.state.gui;
 
 import com.google.common.base.Strings;
+import fr.bcecb.event.MouseEvent;
 import fr.bcecb.render.RenderEngine;
 import fr.bcecb.render.RenderManager;
 import fr.bcecb.render.Renderer;
@@ -8,6 +9,8 @@ import fr.bcecb.resources.ResourceHandle;
 import fr.bcecb.resources.ResourceManager;
 import fr.bcecb.resources.Texture;
 import org.joml.Vector4f;
+
+import java.util.function.Consumer;
 
 public class Button extends GuiElement {
     private String title;
@@ -49,6 +52,11 @@ public class Button extends GuiElement {
 
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    @Override
+    public GuiElement setClickHandler(Consumer<MouseEvent.Click> clickHandler) {
+        return super.setClickHandler(clickHandler);
     }
 
     public ResourceHandle<Texture> getTextureResourceHandle() {
