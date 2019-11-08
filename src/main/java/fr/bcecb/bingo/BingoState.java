@@ -4,10 +4,8 @@ import fr.bcecb.Game;
 import fr.bcecb.render.Window;
 import fr.bcecb.resources.ResourceHandle;
 import fr.bcecb.resources.Texture;
-import fr.bcecb.state.gui.Button;
-import fr.bcecb.state.gui.GuiElement;
-import fr.bcecb.state.gui.Image;
-import fr.bcecb.state.gui.ScreenState;
+import fr.bcecb.state.gui.*;
+import org.joml.Vector4f;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -88,15 +86,33 @@ public class BingoState extends ScreenState {
         int height = Window.getCurrentWindow().getHeight();
         setBackgroundTexture(new ResourceHandle<Texture>("textures/bingo/bingoBG.png") {
         });
+// nbGrids n'est pas encore récupéré, redimensionner la fenetre pour rentrer dans le if
+        if(nbGrids == 1){
+            float gridX = 1*(width/20f),gridY = 1* (height /2.5f);
+            float gridW = (width/3f),gridH =(height/5f);
 
-        final GuiElement grid = new Image(1,new ResourceHandle<>("textures/bingo/gridBG.png"){},
-                (width/3f),(height /2f),
-                (width/2f),(height/5f),
-                true,true);
+            final GuiElement grid = new Image(1,new ResourceHandle<>("textures/bingo/gridBG.png"){},
+                    gridX,gridY,
+                    gridW,gridH,
+                    false,false);
+            int[][] playerGrid = player.getGrids().get(0).getGrid();
 
-        addGuiElement(grid);
+            System.out.println("playercase1"+ playerGrid[0][1]);
+            GuiElement case1 = new Button(10,
+                    (1*gridX),(1*gridY),
+                    (gridW/10),(gridH/3),
+                    false,Integer.toString(playerGrid[0][0]),new ResourceHandle<>("textures/bingo/caseBG.png"){});
+            addGuiElement(case1);
 
-        GuiElement backButton = new Button(1,
+            addGuiElement(grid);
+        }
+
+
+
+
+       // GuiElement gridCase = new Button (10,);
+
+        GuiElement backButton = new Button(3,
                 (width / 20f), (height - (height / 20f) - (height / 10f)),
                 (height / 10f), (height / 10f),
                 false, "Back", new ResourceHandle<Texture>("textures/btn.png") {
@@ -106,9 +122,17 @@ public class BingoState extends ScreenState {
     }
 
 
+
     private void dropball() {
+
+        int width = Window.getCurrentWindow().getWidth();
+        int height = Window.getCurrentWindow().getHeight();
         Random rand = new Random();
         int randInt = rand.nextInt(numberList.size()); // random de la taille de la liste
+
+        Vector4f black = new Vector4f(0.0f, 0.0f, 0.0f, 1.0f);
+        GuiElement ball = new Text(20,15*(width/20f),(height/15f),Integer.toString(numberList.get(randInt)),5f,black,false);
+        addGuiElement(ball);
 
         this.lastDrop = numberList.get(randInt);
         numberList.remove(randInt);

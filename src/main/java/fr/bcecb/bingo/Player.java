@@ -25,4 +25,12 @@ public class Player {
         Grid g = new Grid();
         this.grids.add(g);
     }
+
+    public List<Grid> getGrids() {
+        return grids;
+    }
+
+    public void setGrids(List<Grid> grids) {
+        this.grids = grids;
+    }
 }

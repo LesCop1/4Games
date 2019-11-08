@@ -81,12 +81,9 @@ public class Grid {
                         compteur++;
                     }
                 }
-
             }
             compteur = 0;
         }
-
-
     }
 
     public void removeValue(int i, int j) {
@@ -123,5 +120,11 @@ public class Grid {
         }
     }
 
+    public int[][] getGrid() {
+        return grid;
+    }
 
+    public void setGrid(int[][] grid) {
+        this.grid = grid;
+    }
 }

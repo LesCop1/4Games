@@ -128,7 +128,10 @@ public class SettingsBingoState extends ScreenState {
                 (width / 20f), (height - (height / 20f) - (height / 10f)),
                 (height / 10f), (height / 10f),
                 false, "Back", new ResourceHandle<Texture>("textures/btn.png") {
-        }).setClickHandler(e -> Game.instance().getStateEngine().popState());
+        }).setClickHandler(e -> {
+            Game.instance().getStateEngine().popState();
+            Game.instance().getStateEngine().popState();
+        });
 
         addGuiElement(option1Button1);
         addGuiElement(option1Button2);
