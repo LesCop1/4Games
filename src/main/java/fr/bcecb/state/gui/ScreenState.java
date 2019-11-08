@@ -9,18 +9,19 @@ import fr.bcecb.resources.ResourceManager;
 import fr.bcecb.resources.Texture;
 import fr.bcecb.state.State;
 
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.Set;
 
 import static fr.bcecb.event.MouseEvent.Click.Type.RELEASED;
 
 public abstract class ScreenState extends State {
-    private final Set<GuiElement> guiElements = Sets.newHashSet();
+    private final Set<GuiElement> guiElements = Sets.newTreeSet(Comparator.comparingInt(GuiElement::getId));
     private ResourceHandle<Texture> backgroundTexture = ResourceManager.DEFAULT_TEXTURE;
 
     protected ScreenState(String name) {
         super(name);
-        initGui();
     }
 
     @Override
@@ -41,6 +42,10 @@ public abstract class ScreenState extends State {
 
     protected final void addGuiElement(GuiElement element) {
         guiElements.add(element);
+    }
+
+    protected final void addGuiElements(GuiElement... elements) {
+        guiElements.addAll(Arrays.asList(elements));
     }
 
     protected final void removeGuiElement(GuiElement element) {
