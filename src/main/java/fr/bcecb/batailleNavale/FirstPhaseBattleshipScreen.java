@@ -6,7 +6,6 @@ import fr.bcecb.render.Window;
 import fr.bcecb.resources.ResourceHandle;
 import fr.bcecb.resources.Texture;
 import fr.bcecb.state.gui.Button;
-import fr.bcecb.state.gui.CircleButton;
 import fr.bcecb.state.gui.GuiElement;
 import fr.bcecb.state.gui.ScreenState;
 
@@ -22,15 +21,38 @@ public class FirstPhaseBattleshipScreen extends ScreenState {
 
     @Override
     public void initGui() {
-        setBackgroundTexture(new ResourceHandle<Texture>("textures/mainMenuBG.png") {});
+        int width = Window.getCurrentWindow().getWidth();
+        int height = Window.getCurrentWindow().getHeight();
+        setBackgroundTexture(new ResourceHandle<Texture>("textures/battleshipScreen.png") {});
         for (int i = 0; i < 10; i++) {
             for (int j = 0; j < 10; j++) {
-                final GuiElement button = new Button((10 * i) + j, i*65 + 5, j*65 + 5, 10, 10,"" + (10 * i) + j);
-                button.setClickHandler(e -> clickButton(e, button.getId()));
-                addGuiElement(button);
+                GuiElement cases = new Button((10 * i) + j, i * 80 + (width / 3.43f), j * 80 + 100, 80, 80,
+                        false, "" + j + i, new ResourceHandle<Texture>("textures/caseBattleship.png") {
+                });
+                cases.setClickHandler(e -> clickButton(e, cases.getId()));
+                addGuiElement(cases);
             }
         }
+        final GuiElement swap = new Button(101, 2.9f*(width/4), (height - (height / 20f) - (height / 10f)), 500,
+                100,
+                false, "Changer l'orientation", new ResourceHandle<Texture>("textures/defaultButton.png") {});
+        swap.setClickHandler(e -> clickButton(e, swap.getId()));
+        addGuiElement(swap);
+        final GuiElement backButton = new Button(102, (width / 20f), (height - (height / 20f) - (height / 10f)), (height / 10f),
+                (height / 10f), false, "Back", new ResourceHandle<Texture>("textures/defaultButton.png") {
+        }).setClickHandler(e -> doubleBack());
+        addGuiElement(backButton);
     }
 
-    public void clickButton(MouseEvent.Click event, int id) {}
+    public void clickCases(MouseEvent.Click event, int id) {
+    }
+
+    public void clickButton(MouseEvent.Click event, int id) {
+//        battleship.swapOrientation();
+    }
+
+    public void doubleBack() {
+        Game.instance().getStateEngine().popState();
+        Game.instance().getStateEngine().popState();
+    }
 }

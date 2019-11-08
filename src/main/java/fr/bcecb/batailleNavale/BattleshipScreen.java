@@ -1,6 +1,7 @@
 package fr.bcecb.batailleNavale;
 
 import fr.bcecb.Game;
+import fr.bcecb.render.Window;
 import fr.bcecb.resources.ResourceHandle;
 import fr.bcecb.resources.Texture;
 import fr.bcecb.state.gui.Button;
@@ -39,6 +40,13 @@ public class BattleshipScreen extends ScreenState {
     @Override
     public void initGui() {
         setBackgroundTexture(new ResourceHandle<Texture>("textures/mainMenuBG.png") {});
+        int width = Window.getCurrentWindow().getWidth();
+        int height = Window.getCurrentWindow().getHeight();
+        GuiElement backButton = new Button(5, (width / 20f), (height - (height / 20f) - (height / 10f)), (height / 10f),
+                (height / 10f), false, "Back", new ResourceHandle<Texture>("textures/defaultButton.png") {
+        }).setClickHandler(e -> Game.instance().getStateEngine().popState());
+
+        addGuiElement(backButton);
     }
 
     @Override

@@ -27,6 +27,7 @@ public class Shaders {
         String infoLog = glGetProgramInfoLog(program, glGetProgrami(program, GL_INFO_LOG_LENGTH));
         if (!Strings.isNullOrEmpty(infoLog)) {
             Log.SYSTEM.warning("Shader program linking returned with warnings : {0}", infoLog);
+            Log.SYSTEM.debug("Shader descriptor : {0}", descriptor);
         }
 
         if (glGetProgrami(program, GL_LINK_STATUS) == GL_FALSE) {
