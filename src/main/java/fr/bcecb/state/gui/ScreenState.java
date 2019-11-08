@@ -9,6 +9,7 @@ import fr.bcecb.resources.ResourceManager;
 import fr.bcecb.resources.Texture;
 import fr.bcecb.state.State;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Set;
 
@@ -41,6 +42,10 @@ public abstract class ScreenState extends State {
 
     protected final void addGuiElement(GuiElement element) {
         guiElements.add(element);
+    }
+
+    protected final void addGuiElements(GuiElement... elements) {
+        guiElements.addAll(Arrays.asList(elements));
     }
 
     protected final void removeGuiElement(GuiElement element) {
