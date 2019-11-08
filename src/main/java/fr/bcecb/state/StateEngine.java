@@ -30,6 +30,12 @@ public class StateEngine {
         Game.EVENT_BUS.post(event);
 
         if (!event.isCancelled()) {
+            if (state instanceof ScreenState) {
+                ScreenState screenState = (ScreenState) state;
+                screenState.clearGuiElements();
+                screenState.initGui();
+            }
+
             stateStack.push(state);
             state.onEnter();
         }
