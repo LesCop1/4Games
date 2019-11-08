@@ -7,7 +7,9 @@ import fr.bcecb.resources.Texture;
 import fr.bcecb.state.gui.*;
 import org.joml.Vector4f;
 
+import java.beans.IntrospectionException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Random;
 
@@ -76,8 +78,7 @@ public class BingoState extends ScreenState {
                 System.out.println(this.lastDrop);
                 this.ticks = 0;
             }
-
-        }else System.out.println("boulier vide");
+        } else System.out.println("boulier vide");
     }
 
     @Override
@@ -87,30 +88,60 @@ public class BingoState extends ScreenState {
         setBackgroundTexture(new ResourceHandle<Texture>("textures/bingo/bingoBG.png") {
         });
 // nbGrids n'est pas encore récupéré, redimensionner la fenetre pour rentrer dans le if
-        if(nbGrids == 1){
-            float gridX = 1*(width/20f),gridY = 1* (height /2.5f);
-            float gridW = (width/3f),gridH =(height/5f);
+// System.out.println("nbgrids : "+ nbGrids);
+        switch (nbGrids) {
 
-            final GuiElement grid = new Image(1,new ResourceHandle<>("textures/bingo/gridBG.png"){},
-                    gridX,gridY,
-                    gridW,gridH,
-                    false,false);
-            int[][] playerGrid = player.getGrids().get(0).getGrid();
+            case 1:
+                float gridX = 1 * (width / 20f), gridY = 1 * (height / 2.5f);
+                float gridW = (width / 3f), gridH = (height / 5f);
 
-            System.out.println("playercase1"+ playerGrid[0][1]);
-            GuiElement case1 = new Button(10,
-                    (1*gridX),(1*gridY),
-                    (gridW/10),(gridH/3),
-                    false,Integer.toString(playerGrid[0][0]),new ResourceHandle<>("textures/bingo/caseBG.png"){});
-            addGuiElement(case1);
+//                final GuiElement grid = new Image(1, new ResourceHandle<>("textures/bingo/gridBG.png") {
+//                },
+//                        gridX, gridY,
+//                        gridW, gridH,
+//                        false, false);
 
-            addGuiElement(grid);
+
+                int[][] playerGrid = player.getGrids().get(0).getGrid();
+                int id=0;
+
+                for( int i = 0 ; i < 3 ; i++){
+                    for (int j = 0; j < 9; j++ , j++) {
+                        GuiElement caseX = new Button(id,
+                                (gridX + j*(gridW/5)),(gridY + i*(gridH/3)),
+                                (gridW / 10), (gridH / 3),
+                                false, Integer.toString(playerGrid[i][j]),new ResourceHandle<>("textures/bingo/caseBG.png") {
+                        });
+                        addGuiElement(caseX);
+                    }
+            }
+
+               // addGuiElement(grid);
+                break;
+
+
+            case 2:
+                break;
+
+            case 3:
+                break;
+
+            case 4:
+                break;
+
+            case 5:
+                break;
+
+            case 6:
+                break;
+
+            default:
+                Game.instance().getStateEngine().popState();
+                break;
         }
 
 
-
-
-       // GuiElement gridCase = new Button (10,);
+        // GuiElement gridCase = new Button (10,);
 
         GuiElement backButton = new Button(3,
                 (width / 20f), (height - (height / 20f) - (height / 10f)),
@@ -122,7 +153,6 @@ public class BingoState extends ScreenState {
     }
 
 
-
     private void dropball() {
 
         int width = Window.getCurrentWindow().getWidth();
@@ -131,7 +161,7 @@ public class BingoState extends ScreenState {
         int randInt = rand.nextInt(numberList.size()); // random de la taille de la liste
 
         Vector4f black = new Vector4f(0.0f, 0.0f, 0.0f, 1.0f);
-        GuiElement ball = new Text(20,15*(width/20f),(height/15f),Integer.toString(numberList.get(randInt)),5f,black,false);
+        GuiElement ball = new Text(20, 15 * (width / 20f), (height / 15f), Integer.toString(numberList.get(randInt)), 5f, black, false);
         addGuiElement(ball);
 
         this.lastDrop = numberList.get(randInt);

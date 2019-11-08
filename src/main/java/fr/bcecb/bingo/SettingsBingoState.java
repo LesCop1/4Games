@@ -120,7 +120,7 @@ public class SettingsBingoState extends ScreenState {
                 true, "Start", new ResourceHandle<>("textures/btn.png") {
         }).setClickHandler(e -> {
             if (this.difficulty != 0 && this.nbGrids != 0) {
-                Game.instance().getStateEngine().popState();
+              Game.instance().getStateEngine().popState();
             }
         });
 
