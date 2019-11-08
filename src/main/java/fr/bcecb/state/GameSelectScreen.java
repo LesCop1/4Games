@@ -10,6 +10,7 @@ import fr.bcecb.state.gui.Button;
 import fr.bcecb.state.gui.CircleButton;
 import fr.bcecb.state.gui.GuiElement;
 import fr.bcecb.state.gui.ScreenState;
+import fr.bcecb.sudoku.SudokuState;
 
 public class GameSelectScreen extends ScreenState {
     protected GameSelectScreen() {
@@ -24,7 +25,7 @@ public class GameSelectScreen extends ScreenState {
 
         GuiElement sudokuGameButton = new Button(0, (width / 4f), (height / 2f) - (height / 10f), (width / 8f), (height / 10f),
                 true, "Sudoku", new ResourceHandle<Texture>("textures/defaultButton.png") {
-        });
+        }).setClickHandler(e -> Game.instance().getStateEngine().pushState(new SudokuState(SudokuState.Difficulty.NORMAL)));
 
         GuiElement bingoGameButton = new Button(1, (width / 4f), (height / 2f) + (height / 10f), (width / 8f), (height / 10f),
                 true, "Bingo", new ResourceHandle<Texture>("textures/defaultButton.png") {

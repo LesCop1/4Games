@@ -1,11 +1,21 @@
 package fr.bcecb.sudoku;
 
+import fr.bcecb.Game;
+import fr.bcecb.render.Window;
+import fr.bcecb.resources.ResourceHandle;
+import fr.bcecb.resources.ResourceManager;
+import fr.bcecb.resources.Texture;
+import fr.bcecb.state.gui.Button;
+import fr.bcecb.state.gui.GuiElement;
+import fr.bcecb.state.gui.Image;
+import fr.bcecb.state.gui.ScreenState;
+
 import java.util.*;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-public class Sudoku {
+public class SudokuState extends ScreenState {
     private static final int SIZE = 9;
     private static final int SIZE_BOX = (int) Math.floor(Math.sqrt(SIZE));
     private static final Random RANDOM = new Random();
@@ -22,7 +32,8 @@ public class Sudoku {
      */
     private final int[][] grid = new int[SIZE][SIZE];
 
-    public Sudoku(Difficulty difficulty) {
+    public SudokuState(Difficulty difficulty) {
+        super("sudoku_game");
         for (int i = 0; i < SIZE; i += SIZE_BOX) {
             fillBox(i, i);
         }
@@ -306,6 +317,27 @@ public class Sudoku {
         return true;
     }
 
+    @Override
+    public void initGui() {
+        int width = Window.getCurrentWindow().getWidth();
+        int height = Window.getCurrentWindow().getHeight();
+        setBackgroundTexture(new ResourceHandle<Texture>("textures/background_sudoku.jpg") {
+        });
+        GuiElement backButton = new Button(100, 0, 0, 50, 50, false, new ResourceHandle<Texture>("textures/back_button.png") {
+        }).setClickHandler(e -> Game.instance().getStateEngine().popState());
+        addGuiElement(backButton);
+        for (int i = 0; i < 9; i++) {
+            for (int j = 0; j < 9; j++) {
+                final GuiElement button = new Button((9 * i) + j, i * 80 + (width / 3.43f), j * 80 + 100, 80, 80, false, "" + j + i, new ResourceHandle<Texture>("textures/case_button.png") {
+                });
+                addGuiElement(button);
+            }
+        }
+        // GuiElement image= new Image(2, new ResourceHandle<Texture>("textures/grille_sudoku.jpg") {}, 2*width/7, height/6, 2*width/3, 2*height/3, true);
+        //addGuiElement(image);
+
+    }
+
     public enum Difficulty {
         EASY(16),
         NORMAL(32),
@@ -324,4 +356,6 @@ public class Sudoku {
             return missingValueCount;
         }
     }
+
 }
+
