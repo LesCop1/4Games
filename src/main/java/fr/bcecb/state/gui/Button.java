@@ -147,7 +147,7 @@ public class Button extends GuiElement {
 
         private float bouncyEffect(Button button, int offset, int bouncePower, int bounceSpeed) {
             boolean bounce = true;
-            if (button.isHovered()) {
+            if (button.isEnabled() && button.isHovered()) {
                 if (button.getHoveredTicks() < (180 / ((float) bounceSpeed)) + offset) {
                     button.incHoveredTicks();
                 } else {
