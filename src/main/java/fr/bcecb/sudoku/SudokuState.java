@@ -3,12 +3,8 @@ package fr.bcecb.sudoku;
 import fr.bcecb.Game;
 import fr.bcecb.render.Window;
 import fr.bcecb.resources.ResourceHandle;
-import fr.bcecb.resources.ResourceManager;
 import fr.bcecb.resources.Texture;
-import fr.bcecb.state.gui.Button;
-import fr.bcecb.state.gui.GuiElement;
-import fr.bcecb.state.gui.Image;
-import fr.bcecb.state.gui.ScreenState;
+import fr.bcecb.state.gui.*;
 
 import java.util.*;
 import java.util.stream.Collector;
@@ -49,6 +45,24 @@ public class SudokuState extends ScreenState {
 
             this.grid[x][y] = 0;
         }
+        printSudoku();
+    }
+
+    public void printSudoku() {
+        for (int i = 0; i < SIZE; i++) {
+            if (i % SIZE_BOX == 0) {
+                System.out.println();
+            }
+
+            for (int j = 0; j < SIZE; j++) {
+                if (j % SIZE_BOX == 0) {
+                    System.out.print(" ");
+                }
+                System.out.print(this.grid[i][j] + " ");
+            }
+            System.out.println();
+        }
+        System.out.println();
     }
 
     /**
@@ -318,6 +332,11 @@ public class SudokuState extends ScreenState {
     }
 
     @Override
+    public void update() {
+        super.update();
+    }
+
+    @Override
     public void initGui() {
         int width = Window.getCurrentWindow().getWidth();
         int height = Window.getCurrentWindow().getHeight();
@@ -328,8 +347,9 @@ public class SudokuState extends ScreenState {
         addGuiElement(backButton);
         for (int i = 0; i < 9; i++) {
             for (int j = 0; j < 9; j++) {
-                final GuiElement button = new Button((9 * i) + j, i * 80 + (width / 3.43f), j * 80 + 100, 80, 80, false, "" + j + i, new ResourceHandle<Texture>("textures/case_button.png") {
+                final GuiElement button = new Button((9 * i) + j, i * 80 + (width / 3.43f), j * 80 + 100, 80, 80, false, "" + grid[j][i], new ResourceHandle<Texture>("textures/case_button.png") {
                 });
+                //buttonList.add(button);
                 addGuiElement(button);
             }
         }

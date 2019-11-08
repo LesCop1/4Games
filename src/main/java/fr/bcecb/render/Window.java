@@ -163,7 +163,7 @@ public class Window {
     private void setWindowSize(long window, int width, int height) {
         assert window == this.windowId;
 
-        if (Platform.get() != Platform.MACOSX) {
+        if (getContentScaleY() == 1 && getContentScaleX() == 1) {
             width /= getContentScaleX();
             height /= getContentScaleY();
         }
