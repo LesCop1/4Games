@@ -1,10 +1,13 @@
 package fr.bcecb.state;
 
+import com.google.common.eventbus.Subscribe;
 import fr.bcecb.Game;
 import fr.bcecb.event.Event;
 import fr.bcecb.event.GameEvent;
+import fr.bcecb.event.WindowEvent;
 import fr.bcecb.render.RenderManager;
 import fr.bcecb.render.Renderer;
+import fr.bcecb.state.gui.ScreenState;
 import fr.bcecb.util.Log;
 
 import java.util.ArrayDeque;
@@ -15,6 +18,8 @@ import static fr.bcecb.state.State.StateEvent;
 
 public class StateEngine {
     private final Deque<State> stateStack = new ArrayDeque<>();
+
+    private boolean shouldRebuildGUI = false;
 
     public StateEngine() {
         Game.EVENT_BUS.register(this);
@@ -47,11 +52,29 @@ public class StateEngine {
     }
 
     public void update() {
+        if (shouldRebuildGUI) {
+            ScreenState screenState;
+            for (State state : stateStack) {
+                if (state instanceof ScreenState) {
+                    screenState = (ScreenState) state;
+                    screenState.clearGuiElements();
+                    screenState.initGui();
+                }
+            }
+
+            this.shouldRebuildGUI = false;
+        }
+
         for (State state : stateStack) {
             state.update();
 
             if (!state.shouldUpdateBelow()) break;
         }
+    }
+
+    @Subscribe
+    private void handleWindowResizeEvent(WindowEvent.Size event) {
+        this.shouldRebuildGUI = true;
     }
 
     public void render(RenderManager renderManager, float partialTick) {

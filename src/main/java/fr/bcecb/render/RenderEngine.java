@@ -120,20 +120,20 @@ public class RenderEngine {
         texture.unbind();
     }
 
-    public void drawCenteredText(ResourceHandle<Font> fontHandle, String text, float x, float y, int fontHeight, Vector4f color) {
+    public void drawCenteredText(ResourceHandle<Font> fontHandle, String text, float x, float y, float scale, Vector4f color) {
         Font font = resourceManager.getResourceOrDefault(fontHandle, ResourceManager.DEFAULT_FONT);
 
         float width = 0.0f;
-        float height = -32.0f;
+        float height = -32.0f * scale;
 
         if (font != null) {
-            width = getStringWidth(font, text, fontHeight);
+            width = getStringWidth(font, text, scale);
         }
 
-        drawText(fontHandle, text, x - (width / 2), y - (height / 2), fontHeight, color);
+        drawText(fontHandle, text, x - (width / 2), y - (height / 2), scale, color);
     }
 
-    public void drawText(ResourceHandle<Font> fontHandle, String text, float x, float y, int fontHeight, Vector4f color) {
+    public void drawText(ResourceHandle<Font> fontHandle, String text, float x, float y, float scale, Vector4f color) {
         Shader shader = resourceManager.getResource(ResourceManager.FONT_SHADER);
         Font font = resourceManager.getResourceOrDefault(fontHandle, ResourceManager.DEFAULT_FONT);
 
@@ -142,10 +142,10 @@ public class RenderEngine {
         if (font != null) {
             shader.bind();
             {
-                float scale = stbtt_ScaleForPixelHeight(font.getInfo(), fontHeight);
+                float pixelScale = stbtt_ScaleForPixelHeight(font.getInfo(), 64 * window.getContentScaleY());
 
                 shader.uniformMat4("projection", window.getProjection());
-                shader.uniformMat4("model", new Matrix4f().translate(x, y, 0.0f).scaleXY(1.0f / window.getContentScaleX(), 1.0f / window.getContentScaleY()));
+                shader.uniformMat4("model", new Matrix4f().translate(x, y, 0.0f).scaleXY(scale / window.getContentScaleX(), scale / window.getContentScaleY()));
                 font.bind();
                 {
                     try (MemoryStack stack = MemoryStack.stackPush()) {
@@ -156,7 +156,7 @@ public class RenderEngine {
                         for (int i = 0; i < text.length(); ++i) {
                             int cp = text.codePointAt(i);
                             if (cp == '\n') {
-                                yBuffer.put(0, yBuffer.get(0) + (font.getAscent() - font.getDescent() + font.getLineGap()) * scale);
+                                yBuffer.put(0, yBuffer.get(0) + (font.getAscent() - font.getDescent() + font.getLineGap()) * pixelScale);
                                 xBuffer.put(0, 0.0f);
                                 continue;
                             }
@@ -164,7 +164,7 @@ public class RenderEngine {
                             stbtt_GetBakedQuad(font.getCData(), font.getWidth(), font.getHeight(), cp - 32, xBuffer, yBuffer, quad, true);
 
                             if (i < text.length() - 1) {
-                                xBuffer.put(0, xBuffer.get(0) + stbtt_GetCodepointKernAdvance(font.getInfo(), cp, text.codePointAt(i + 1)) * scale);
+                                xBuffer.put(0, xBuffer.get(0) + stbtt_GetCodepointKernAdvance(font.getInfo(), cp, text.codePointAt(i + 1)) * pixelScale);
                             }
 
                             textTessellator.begin(GL_TRIANGLE_FAN);
@@ -183,7 +183,7 @@ public class RenderEngine {
         }
     }
 
-    private float getStringWidth(Font font, String text, int fontHeight) {
+    private float getStringWidth(Font font, String text, float scale) {
         int width = 0;
 
         try (MemoryStack stack = MemoryStack.stackPush()) {
@@ -202,7 +202,7 @@ public class RenderEngine {
             }
         }
 
-        return width * stbtt_ScaleForPixelHeight(font.getInfo(), fontHeight);
+        return width * scale * stbtt_ScaleForPixelHeight(font.getInfo(), 64 * window.getContentScaleY());
     }
 
     private void draw(ResourceHandle<Shader> shaderResourceHandle, Matrix4f model) {

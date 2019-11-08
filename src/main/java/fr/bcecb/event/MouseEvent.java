@@ -1,5 +1,8 @@
 package fr.bcecb.event;
 
+import fr.bcecb.util.Log;
+
+@Event.Logging(Log.UI)
 public abstract class MouseEvent extends Event {
     private MouseEvent() {
     }
