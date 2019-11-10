@@ -40,11 +40,7 @@ public abstract class ScreenState extends State {
 
     public abstract void initGui();
 
-    protected final void addGuiElement(GuiElement element) {
-        guiElements.add(element);
-    }
-
-    protected final void addGuiElements(GuiElement... elements) {
+    protected final void addGuiElement(GuiElement... elements) {
         guiElements.addAll(Arrays.asList(elements));
     }
 

@@ -3,13 +3,14 @@ package fr.bcecb.sudoku;
 import fr.bcecb.Game;
 import fr.bcecb.render.Window;
 import fr.bcecb.resources.ResourceHandle;
-import fr.bcecb.resources.Texture;
 import fr.bcecb.state.gui.*;
 
 import java.util.*;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+
+import static org.lwjgl.glfw.GLFW.GLFW_MOUSE_BUTTON_RIGHT;
 
 public class SudokuState extends ScreenState {
     private static final int SIZE = 9;
@@ -27,6 +28,7 @@ public class SudokuState extends ScreenState {
      * The sudoku grid
      */
     private final int[][] grid = new int[SIZE][SIZE];
+    private final int[][] generateGrid;
 
     public SudokuState(Difficulty difficulty) {
         super("sudoku_game");
@@ -45,24 +47,8 @@ public class SudokuState extends ScreenState {
 
             this.grid[x][y] = 0;
         }
-        printSudoku();
-    }
 
-    public void printSudoku() {
-        for (int i = 0; i < SIZE; i++) {
-            if (i % SIZE_BOX == 0) {
-                System.out.println();
-            }
-
-            for (int j = 0; j < SIZE; j++) {
-                if (j % SIZE_BOX == 0) {
-                    System.out.print(" ");
-                }
-                System.out.print(this.grid[i][j] + " ");
-            }
-            System.out.println();
-        }
-        System.out.println();
+        this.generateGrid = Arrays.stream(this.grid).map(int[]::clone).toArray(int[][]::new);
     }
 
     /**
@@ -331,37 +317,70 @@ public class SudokuState extends ScreenState {
         return true;
     }
 
-    @Override
-    public void update() {
-        super.update();
+    public boolean winCondition() {
+        for (int i = 0; i < SIZE; i++) {
+            for (int j = 0; j < SIZE; j++) {
+                if (grid[i][j] == 0) return false;
+
+            }
+        }
+        return true;
     }
 
     @Override
     public void initGui() {
         int width = Window.getCurrentWindow().getWidth();
         int height = Window.getCurrentWindow().getHeight();
-        setBackgroundTexture(new ResourceHandle<Texture>("textures/background_sudoku.jpg") {
+        Button[] buttonsCandidateValues = new Button[SIZE];
+        setBackgroundTexture(new ResourceHandle<>("textures/arche.jpg") {
         });
-        GuiElement backButton = new Button(100, 0, 0, 50, 50, false, new ResourceHandle<Texture>("textures/back_button.png") {
+        GuiElement backButton = new Button(999, 0, 0, 50, 50, false, new ResourceHandle<>("textures/back_button.png") {
         }).setClickHandler(e -> Game.instance().getStateEngine().popState());
         addGuiElement(backButton);
-        for (int i = 0; i < 9; i++) {
+        for (int i = 0; i < SIZE; i++) {
+            buttonsCandidateValues[i] = new Button(100 + i, 80 * i + (width / 3.43f), height - 80, 80, 80, false, String.valueOf(i + 1), new ResourceHandle<>("textures/candidateValuesTextures.png") {
+            });
+            buttonsCandidateValues[i].setVisible(false);
             for (int j = 0; j < 9; j++) {
-                final GuiElement button = new Button((9 * i) + j, i * 80 + (width / 3.43f), j * 80 + 100, 80, 80, false, "" + grid[j][i], new ResourceHandle<Texture>("textures/case_button.png") {
+                final Button button = new Button((9 * i) + j, i * 80 + (width / 3.43f), j * 80 + 100, 80, 80, false, String.valueOf(grid[j][i] != 0 ? grid[j][i] : ""), new ResourceHandle<>("textures/case_button.png") {
                 });
-                //buttonList.add(button);
+
+                if (generateGrid[j][i] == 0) {
+                    button.setClickHandler(e -> {
+                        int x = button.getId() % 9;
+                        int y = button.getId() / 9;
+                        if (grid[x][y] == 0) {
+                            int[] candidatesValues = computeCandidates(x, y);
+                            for (int k = 0; k < candidatesValues.length; k++) {
+                                int value = candidatesValues[k];
+                                buttonsCandidateValues[k].setTitle(String.valueOf(value));
+                                buttonsCandidateValues[k].setVisible(true);
+                                buttonsCandidateValues[k].setClickHandler(f -> {
+                                    button.setTitle(String.valueOf(value));
+                                    grid[x][y] = value;
+                                    for (GuiElement buttonsCandidateValue : buttonsCandidateValues) {
+                                        buttonsCandidateValue.setVisible(false);
+                                    }
+                                });
+                            }
+                        } else if (e.getButton() == GLFW_MOUSE_BUTTON_RIGHT) {
+                            button.setTitle("");
+                            grid[x][y] = 0;
+                        }
+                    });
+                }
+
                 addGuiElement(button);
             }
         }
-        // GuiElement image= new Image(2, new ResourceHandle<Texture>("textures/grille_sudoku.jpg") {}, 2*width/7, height/6, 2*width/3, 2*height/3, true);
-        //addGuiElement(image);
 
+        addGuiElement(buttonsCandidateValues);
     }
 
     public enum Difficulty {
-        EASY(16),
-        NORMAL(32),
-        HARD(64);
+        EASY(15),
+        NORMAL(35),
+        HARD(55);
 
         private final int missingValueCount;
 
