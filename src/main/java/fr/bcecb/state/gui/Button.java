@@ -23,7 +23,7 @@ public class Button extends GuiElement {
     }
 
     public Button(int id, float x, float y, float width, float height, boolean centered) {
-        this(id, x, y, width, height, centered, null);
+        this(id, x, y, width, height, centered, (String) null);
     }
 
     public Button(int id, float x, float y, float width, float height, String title) {
@@ -38,16 +38,20 @@ public class Button extends GuiElement {
         this(id, x, y, width, height, false, null, 1.0f, texture);
     }
 
+    public Button(int id, float x, float y, float width, float height, boolean centered, String title) {
+        this(id, x, y, width, height, centered, title, 1.0f, null);
+    }
+
     public Button(int id, float x, float y, float width, float height, boolean centered, String title, float titleScale) {
         this(id, x, y, width, height, centered, title, titleScale, null);
     }
 
-    public Button(int id, float x, float y, float width, float height, String title, float titleScale, ResourceHandle<Texture> texture) {
-        this(id, x, y, width, height, false, title, titleScale, texture);
-    }
-
     public Button(int id, float x, float y, float width, float height, boolean centered, ResourceHandle<Texture> texture) {
         this(id, x, y, width, height, centered, null, 1.0f, texture);
+    }
+
+    public Button(int id, float x, float y, float width, float height, boolean centered, String title, ResourceHandle<Texture> texture) {
+        this(id, x, y, width, height, centered, title, 1.0f, texture, texture);
     }
 
     public Button(int id, float x, float y, float width, float height, boolean centered, String title, float titleScale, ResourceHandle<Texture> texture) {
