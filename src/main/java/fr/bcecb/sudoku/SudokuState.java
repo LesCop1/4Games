@@ -334,28 +334,31 @@ public class SudokuState extends ScreenState {
         Button[] buttonsCandidateValues = new Button[SIZE];
         setBackgroundTexture(new ResourceHandle<>("textures/arche.jpg") {
         });
-        GuiElement backButton = new Button(999, 0, 0, 50, 50, false, new ResourceHandle<>("textures/back_button.png") {
+        GuiElement backButton = new Button(999, 0, 0, 50 / ((float) 1920 / width), 50 / ((float) 1920 / width), false, new ResourceHandle<>("textures/back_button.png") {
         }).setClickHandler(e -> Game.instance().getStateEngine().popState());
         addGuiElement(backButton);
         for (int i = 0; i < SIZE; i++) {
-            buttonsCandidateValues[i] = new Button(100 + i, 80 * i + (width / 3.43f), height - 80, 80, 80, false, String.valueOf(i + 1), new ResourceHandle<>("textures/candidateValuesTextures.png") {
+            buttonsCandidateValues[i] = new Button(100 + i, ((float) width - 80 / ((float) 1920 / width) * SIZE) / 2 + i * 80 / ((float) 1920 / width), height - 80 / ((float) 1920 / width), 80 / ((float) 1920 / width), 80 / ((float) 1920 / width), false, String.valueOf(i + 1), new ResourceHandle<>("textures/candidateValuesTextures.png") {
             });
             buttonsCandidateValues[i].setVisible(false);
             for (int j = 0; j < 9; j++) {
-                final Button button = new Button((9 * i) + j, i * 80 + (width / 3.43f), j * 80 + 100, 80, 80, false, String.valueOf(grid[j][i] != 0 ? grid[j][i] : ""), new ResourceHandle<>("textures/case_button.png") {
+                final Button button = new Button((9 * i) + j, ((float) width - 80 / ((float) 1920 / width) * SIZE) / 2 + i * 80 / ((float) 1920 / width), ((float) height - 80 / ((float) 1920 / width) * SIZE) / 2 + j * 80 / ((float) 1920 / width), (80 / ((float) 1920 / width)), (80 / ((float) 1920 / width)), false, String.valueOf(grid[j][i] != 0 ? grid[j][i] : ""), new ResourceHandle<>("textures/case_button.png") {
                 });
 
                 if (generateGrid[j][i] == 0) {
                     button.setClickHandler(e -> {
+                        for (int k = 0; k < buttonsCandidateValues.length; k++) {
+                            buttonsCandidateValues[k].setVisible(false);
+                        }
                         int x = button.getId() % 9;
                         int y = button.getId() / 9;
                         if (grid[x][y] == 0) {
                             int[] candidatesValues = computeCandidates(x, y);
-                            for (int k = 0; k < candidatesValues.length; k++) {
-                                int value = candidatesValues[k];
-                                buttonsCandidateValues[k].setTitle(String.valueOf(value));
-                                buttonsCandidateValues[k].setVisible(true);
-                                buttonsCandidateValues[k].setClickHandler(f -> {
+                            for (int l = 0; l < candidatesValues.length; l++) {
+                                int value = candidatesValues[l];
+                                buttonsCandidateValues[l].setTitle(String.valueOf(value));
+                                buttonsCandidateValues[l].setVisible(true);
+                                buttonsCandidateValues[l].setClickHandler(f -> {
                                     button.setTitle(String.valueOf(value));
                                     grid[x][y] = value;
                                     for (GuiElement buttonsCandidateValue : buttonsCandidateValues) {
@@ -378,9 +381,9 @@ public class SudokuState extends ScreenState {
     }
 
     public enum Difficulty {
-        EASY(15),
-        NORMAL(35),
-        HARD(55);
+        EASY(20),
+        NORMAL(40),
+        HARD(60);
 
         private final int missingValueCount;
 
