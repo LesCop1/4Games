@@ -4,7 +4,6 @@ import fr.bcecb.Game;
 import fr.bcecb.event.Event;
 import fr.bcecb.event.MouseEvent;
 import fr.bcecb.render.Window;
-import org.lwjgl.system.Platform;
 
 import static org.lwjgl.glfw.GLFW.*;
 
@@ -46,13 +45,8 @@ public class MouseManager {
         this.lastPositionX = positionX;
         this.lastPositionY = positionY;
 
-        if (Platform.get() != Platform.MACOSX) {
-            this.positionX = (float) x / Window.getCurrentWindow().getContentScaleX();
-            this.positionY = (float) y / Window.getCurrentWindow().getContentScaleY();
-        } else {
-            this.positionX = (float) x;
-            this.positionY = (float) y;
-        }
+        this.positionX = (float) x / Window.getCurrentWindow().getContentScaleX();
+        this.positionY = (float) y / Window.getCurrentWindow().getContentScaleY();
 
         Event event = new MouseEvent.Move(positionX, positionY, lastPositionX - positionX, lastPositionY - positionY);
         Game.EVENT_BUS.post(event);

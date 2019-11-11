@@ -19,13 +19,17 @@ import static org.lwjgl.stb.STBTruetype.*;
 public class RenderEngine {
     private final ResourceManager resourceManager;
     private final RenderManager renderManager;
+
+    private final Window window;
+
+    private final Matrix4f projection;
     private final Tessellator tessellator;
-    private Window window;
 
     public RenderEngine(ResourceManager resourceManager) {
         this.resourceManager = resourceManager;
         this.renderManager = new RenderManager(this, resourceManager);
         this.window = Window.newInstance("4Games", 800, 600, false);
+        this.projection = new Matrix4f();
 
         GL.createCapabilities();
         Log.RENDER.config("Using OpenGL Version {0}", glGetString(GL_VERSION));
@@ -51,6 +55,8 @@ public class RenderEngine {
     public void render(StateEngine stateEngine, float partialTick) {
         glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+        projection.setOrtho2D(0, window.getWidth(), window.getHeight(), 0);
 
         stateEngine.render(renderManager, partialTick);
     }
@@ -123,14 +129,12 @@ public class RenderEngine {
     public void drawCenteredText(ResourceHandle<Font> fontHandle, String text, float x, float y, float scale, Vector4f color) {
         Font font = resourceManager.getResourceOrDefault(fontHandle, ResourceManager.DEFAULT_FONT);
 
-        float width = 0.0f;
-        float height = -32.0f * scale;
-
         if (font != null) {
-            width = getStringWidth(font, text, scale);
-        }
+            float height = ((font.getDescent() - font.getAscent()) / 2.0f) * stbtt_ScaleForPixelHeight(font.getInfo(), 32 * window.getContentScaleY()) * scale;
+            float width = getStringWidth(font, text) * scale;
 
-        drawText(fontHandle, text, x - (width / 2), y - (height / 2), scale, color);
+            drawText(fontHandle, text, x - (width / 2) / window.getContentScaleX(), y - (height / 2) / window.getContentScaleY(), scale, color);
+        }
     }
 
     public void drawText(ResourceHandle<Font> fontHandle, String text, float x, float y, float scale, Vector4f color) {
@@ -142,9 +146,9 @@ public class RenderEngine {
         if (font != null) {
             shader.bind();
             {
-                float pixelScale = stbtt_ScaleForPixelHeight(font.getInfo(), 64 * window.getContentScaleY());
+                float pixelScale = stbtt_ScaleForPixelHeight(font.getInfo(), 32 * scale * window.getContentScaleY());
 
-                shader.uniformMat4("projection", window.getProjection());
+                shader.uniformMat4("projection", projection);
                 shader.uniformMat4("model", new Matrix4f().translate(x, y, 0.0f).scaleXY(scale / window.getContentScaleX(), scale / window.getContentScaleY()));
                 font.bind();
                 {
@@ -183,7 +187,7 @@ public class RenderEngine {
         }
     }
 
-    private float getStringWidth(Font font, String text, float scale) {
+    private float getStringWidth(Font font, String text) {
         int width = 0;
 
         try (MemoryStack stack = MemoryStack.stackPush()) {
@@ -202,14 +206,14 @@ public class RenderEngine {
             }
         }
 
-        return width * scale * stbtt_ScaleForPixelHeight(font.getInfo(), 64 * window.getContentScaleY());
+        return width * stbtt_ScaleForPixelHeight(font.getInfo(), 32 * window.getContentScaleY());
     }
 
     private void draw(ResourceHandle<Shader> shaderResourceHandle, Matrix4f model) {
         Shader shader = resourceManager.getResource(shaderResourceHandle);
         shader.bind();
         {
-            shader.uniformMat4("projection", window.getProjection());
+            shader.uniformMat4("projection", projection);
             shader.uniformMat4("model", model);
             tessellator.draw();
         }
