@@ -40,20 +40,4 @@ public class CircleButton extends Button {
         this.radius = radius;
     }
 
-    public static class CircleButtonRenderer extends Renderer<CircleButton> {
-
-        public CircleButtonRenderer(RenderManager renderManager) {
-            super(renderManager);
-        }
-
-        @Override
-        public ResourceHandle<Texture> getTexture(CircleButton button) {
-            return button.getTexture();
-        }
-
-        @Override
-        public void render(CircleButton button, float partialTick) {
-            renderManager.getRenderEngine().drawTexturedCircle(getTexture(button), button.getX(), button.getY(), button.getRadius());
-        }
-    }
 }

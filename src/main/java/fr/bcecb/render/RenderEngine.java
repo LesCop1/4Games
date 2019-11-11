@@ -20,7 +20,9 @@ public class RenderEngine {
     private final ResourceManager resourceManager;
     private final RenderManager renderManager;
     private final Tessellator tessellator;
-    private Window window;
+    private final Window window;
+
+    private Matrix4f currentTransform;
 
     public RenderEngine(ResourceManager resourceManager) {
         this.resourceManager = resourceManager;
@@ -46,6 +48,14 @@ public class RenderEngine {
     public void cleanUp() {
         window.destroy();
         glfwTerminate();
+    }
+
+    public void applyTransform(Matrix4f transform) {
+        this.currentTransform.mul(transform);
+    }
+
+    public void resetTransform() {
+        this.currentTransform.identity();
     }
 
     public void render(StateEngine stateEngine, float partialTick) {
@@ -210,7 +220,7 @@ public class RenderEngine {
         shader.bind();
         {
             shader.uniformMat4("projection", window.getProjection());
-            shader.uniformMat4("model", model);
+            shader.uniformMat4("model", model.mul(this.currentTransform));
             tessellator.draw();
         }
         shader.unbind();

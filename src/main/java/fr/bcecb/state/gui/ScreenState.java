@@ -8,6 +8,7 @@ import fr.bcecb.resources.ResourceHandle;
 import fr.bcecb.resources.ResourceManager;
 import fr.bcecb.resources.Texture;
 import fr.bcecb.state.State;
+import fr.bcecb.util.Log;
 
 import java.util.Arrays;
 import java.util.Collection;

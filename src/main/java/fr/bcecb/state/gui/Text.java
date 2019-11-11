@@ -83,24 +83,4 @@ public class Text extends GuiElement {
 
     }
 
-    public static class TextRenderer extends Renderer<Text> {
-
-        public TextRenderer(RenderManager renderManager) {
-            super(renderManager);
-        }
-
-        @Override
-        public ResourceHandle<Texture> getTexture(Text text) {
-            return null;
-        }
-
-        @Override
-        public void render(Text text, float partialTick) {
-            if (text.isCentered()) {
-                renderManager.getRenderEngine().drawCenteredText(ResourceManager.DEFAULT_FONT, text.getText(), text.getX(), text.getY(), text.getScale(), text.getColor());
-            } else {
-                renderManager.getRenderEngine().drawText(ResourceManager.DEFAULT_FONT, text.getText(), text.getX(), text.getY() + (32f * text.getScale()) * 1.5f, text.getScale(), text.getColor());
-            }
-        }
-    }
 }

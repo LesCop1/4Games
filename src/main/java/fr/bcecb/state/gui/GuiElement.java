@@ -2,10 +2,11 @@ package fr.bcecb.state.gui;
 
 import fr.bcecb.event.MouseEvent;
 import fr.bcecb.render.IRenderable;
+import fr.bcecb.render.animation.IAnimatable;
 
 import java.util.function.Consumer;
 
-public abstract class GuiElement implements IRenderable {
+public abstract class GuiElement implements IRenderable, IAnimatable {
     private final int id;
     private boolean hovered;
     private boolean visible;
@@ -26,6 +27,7 @@ public abstract class GuiElement implements IRenderable {
         this.height = height;
         this.visible = true;
         this.hovered = false;
+        this.enabled = true;
     }
 
     public int getId() {
