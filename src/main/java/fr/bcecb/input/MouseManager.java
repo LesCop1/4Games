@@ -49,6 +49,9 @@ public class MouseManager {
         if (Platform.get() != Platform.MACOSX) {
             this.positionX = (float) x / Window.getCurrentWindow().getContentScaleX();
             this.positionY = (float) y / Window.getCurrentWindow().getContentScaleY();
+        } else {
+            this.positionX = (float) x;
+            this.positionY = (float) y;
         }
 
         Event event = new MouseEvent.Move(positionX, positionY, lastPositionX - positionX, lastPositionY - positionY);
