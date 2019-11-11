@@ -24,8 +24,9 @@ public abstract class GuiElement implements IRenderable {
         this.y = y;
         this.width = width;
         this.height = height;
-        this.visible = true;
         this.hovered = false;
+        this.visible = true;
+        this.enabled = true;
     }
 
     public int getId() {
