@@ -79,7 +79,7 @@ public abstract class ScreenState extends State {
         if (!Game.instance().getStateEngine().isCurrentState(this)) return;
 
         for (GuiElement element : getGuiElements()) {
-            if (!element.isVisible()) continue;
+            if (!element.isVisible() || !element.isEnabled()) continue;
 
             if (!event.isCancelled() && event.getType() == RELEASED && element.checkBounds(event.getX(), event.getY())) {
                 element.onClick(event);
@@ -118,7 +118,7 @@ public abstract class ScreenState extends State {
         if (!Game.instance().getStateEngine().isCurrentState(this)) return;
 
         for (GuiElement element : getGuiElements()) {
-            if (!element.isVisible()) continue;
+            if (!element.isVisible() || !element.isEnabled()) continue;
 
             if (element.isHovered()) {
                 element.onScroll(event);

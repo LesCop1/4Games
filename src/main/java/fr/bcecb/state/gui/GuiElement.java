@@ -9,6 +9,7 @@ public abstract class GuiElement implements IRenderable {
     private final int id;
     private boolean hovered;
     private boolean visible;
+    private boolean enabled;
 
     private float x, width;
     private float y, height;
@@ -23,8 +24,9 @@ public abstract class GuiElement implements IRenderable {
         this.y = y;
         this.width = width;
         this.height = height;
-        this.visible = true;
         this.hovered = false;
+        this.visible = true;
+        this.enabled = true;
     }
 
     public int getId() {
@@ -79,8 +81,16 @@ public abstract class GuiElement implements IRenderable {
         return visible;
     }
 
+    public boolean isEnabled() {
+        return enabled;
+    }
+
     public void setVisible(boolean visible) {
         this.visible = visible;
+    }
+
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
     }
 
     public Consumer<MouseEvent.Click> getClickHandler() {

@@ -3,6 +3,9 @@ package fr.bcecb.util;
 import org.lwjgl.glfw.GLFWErrorCallback;
 
 import javax.annotation.Nonnull;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.PrintStream;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
@@ -108,5 +111,35 @@ public enum Log {
         private static String getLevelName(Level level) {
             return levelNames.getOrDefault(level, level.getName());
         }
+    }
+
+    private static class LogOutputStream extends OutputStream {
+        private final Level level;
+        private StringBuilder stringBuilder;
+
+        public LogOutputStream(Level level) {
+            this.level = level;
+            this.stringBuilder = new StringBuilder();
+        }
+
+        @Override
+        public void write(int b) {
+            char c = (char)b;
+            if(c == '\r' || c == '\n')
+            {
+                if(stringBuilder.length()>0)
+                {
+                    Log.log(level, stringBuilder.toString());
+                    this.stringBuilder = new StringBuilder();
+                }
+            }
+            else
+                stringBuilder.append(c);
+        }
+    }
+
+    static {
+        System.setOut(new PrintStream(new LogOutputStream(Level.CONFIG)));
+        System.setErr(new PrintStream(new LogOutputStream(Level.SEVERE)));
     }
 }
