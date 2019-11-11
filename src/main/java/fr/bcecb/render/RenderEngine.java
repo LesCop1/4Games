@@ -71,40 +71,46 @@ public class RenderEngine {
         float wR = width / imageWidth;
         if (Math.abs(1 - hR) < Math.abs(1 - wR)) {
             float offset = ((hR * imageWidth) - width) / 2;
-            renderManager.getRenderEngine().drawTexturedRect(textureHandle, -offset, 0,
-                    width + offset, hR * imageHeight);
+            drawTexturedRect(-offset, 0, width + offset, hR * imageHeight, textureHandle);
         } else {
             float offset = ((wR * imageHeight) - height) / 2;
-            renderManager.getRenderEngine().drawTexturedRect(textureHandle, 0, -offset,
-                    wR * imageWidth, height + offset);
+            drawTexturedRect(0, -offset, wR * imageWidth, height + offset, textureHandle);
         }
     }
 
-    public void drawTexturedRect(ResourceHandle<Texture> textureHandle, float minX, float minY, float maxX, float maxY) {
-        drawTexturedRect(textureHandle, minX, minY, maxX, maxY, false);
+    public void drawTexturedRect(float minX, float minY, float maxX, float maxY, ResourceHandle<Texture> textureHandle) {
+        drawTexturedRect(minX, minY, maxX, maxY, false, textureHandle);
     }
 
-    public void drawTexturedRect(ResourceHandle<Texture> textureHandle, float minX, float minY, float maxX, float maxY, boolean centered) {
-        Texture texture = resourceManager.getResourceOrDefault(textureHandle, ResourceManager.DEFAULT_TEXTURE);
-
+    public void drawTexturedRect(float minX, float minY, float maxX, float maxY, boolean centered, ResourceHandle<Texture> textureHandle) {
         float width = Math.abs(maxX - minX);
         float height = Math.abs(maxY - minY);
 
-        texture.bind();
-        {
-            drawRect(minX - (centered ? (width / 2) : 0), minY - (centered ? (height / 2) : 0), maxX - (centered ? (width / 2) : 0), maxY - (centered ? (height / 2) : 0));
-        }
-        texture.unbind();
+        drawRect(minX - (centered ? (width / 2) : 0), minY - (centered ? (height / 2) : 0), maxX - (centered ? (width / 2) : 0), maxY - (centered ? (height / 2) : 0), textureHandle);
     }
 
+    public void drawColoredRect(float minX, float minY, float maxX, float maxY, Vector4f color) {
+        Shader shader = resourceManager.getResource(ResourceManager.DEFAULT_SHADER);
+        shader.bind();
+        {
+            shader.uniformVec4("overrideColor", color);
+        }
+        shader.unbind();
+        drawRect(minX, minY, maxX, maxY, null);
 
-    public void drawRect(float minX, float minY, float maxX, float maxY) {
+    }
+
+    public void drawRect(float minX, float minY, float maxX, float maxY, ResourceHandle<Texture> textureHandle) {
         Matrix4f model = new Matrix4f().translate(minX, minY, 0.0f).scaleXY(maxX - minX, maxY - minY);
 
-        draw(ResourceManager.DEFAULT_SHADER, model);
+        draw(ResourceManager.DEFAULT_SHADER, model, textureHandle);
     }
 
-    public void drawCircle(float x, float y, float radius) {
+    public void drawTexturedCircle(float x, float y, float scale, ResourceHandle<Texture> textureHandle) {
+        drawCircle(x, y, scale, textureHandle);
+    }
+
+    public void drawCircle(float x, float y, float radius, ResourceHandle<Texture> textureHandle) {
         Shader shader = resourceManager.getResource(ResourceManager.CIRCLE_SHADER);
         shader.bind();
         {
@@ -113,17 +119,7 @@ public class RenderEngine {
         shader.unbind();
 
         Matrix4f model = new Matrix4f().translate(x, y, 0.0f).scaleXY(radius * 2, radius * 2);
-        draw(ResourceManager.CIRCLE_SHADER, model);
-    }
-
-    public void drawTexturedCircle(ResourceHandle<Texture> textureHandle, float x, float y, float scale) {
-        Texture texture = resourceManager.getResourceOrDefault(textureHandle, ResourceManager.DEFAULT_TEXTURE);
-
-        texture.bind();
-        {
-            drawCircle(x, y, scale);
-        }
-        texture.unbind();
+        draw(ResourceManager.CIRCLE_SHADER, model, textureHandle);
     }
 
     public void drawCenteredText(ResourceHandle<Font> fontHandle, String text, float x, float y, float scale, Vector4f color) {
@@ -209,15 +205,19 @@ public class RenderEngine {
         return width * stbtt_ScaleForPixelHeight(font.getInfo(), 32 * window.getContentScaleY());
     }
 
-    private void draw(ResourceHandle<Shader> shaderResourceHandle, Matrix4f model) {
+    private void draw(ResourceHandle<Shader> shaderResourceHandle, Matrix4f model, ResourceHandle<Texture> textureHandle) {
+        Texture texture = resourceManager.getResourceOrDefault(textureHandle, ResourceManager.DEFAULT_TEXTURE);
         Shader shader = resourceManager.getResource(shaderResourceHandle);
+        texture.bind();
         shader.bind();
         {
             shader.uniformMat4("projection", projection);
             shader.uniformMat4("model", model);
             tessellator.draw();
+            shader.uniformVec4("overrideColor", new Vector4f(1.0f));
         }
         shader.unbind();
+        texture.unbind();
     }
 
     public Window getWindow() {
