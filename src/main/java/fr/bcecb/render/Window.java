@@ -41,6 +41,8 @@ public class Window {
         glfwDefaultWindowHints();
         glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
         glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
+        glfwWindowHint(GLFW_SAMPLES, 4);
+
 
         long monitor = glfwGetPrimaryMonitor();
         GLFWVidMode vidMode = glfwGetVideoMode(monitor);

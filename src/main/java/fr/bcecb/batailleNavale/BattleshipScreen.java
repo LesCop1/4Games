@@ -27,16 +27,6 @@ public class BattleshipScreen extends ScreenState {
     }
 
     @Override
-    public void onExit() {
-        super.onExit();
-    }
-
-    @Override
-    public void onUpdate() {
-        super.onUpdate();
-    }
-
-    @Override
     public void initGui() {
         setBackgroundTexture(new ResourceHandle<Texture>("textures/mainMenuBG.png") {});
         int width = Window.getCurrentWindow().getWidth();

@@ -24,8 +24,8 @@ public class RenderEngine {
 
     private final Window window;
 
-    private final Tessellator tessellator;
-    private final Tessellator textTessellator;
+    private final Mesh baseMesh;
+    private final Mesh.ReusableBuilder textMeshBuilder = new Mesh.ReusableBuilder(4);
 
     private final Matrix4f projection = new Matrix4f();
     private final TransformStack transform = new TransformStack(16);
@@ -38,19 +38,17 @@ public class RenderEngine {
         GL.createCapabilities();
         Log.RENDER.config("Using OpenGL Version {0}", glGetString(GL_VERSION));
 
+        glEnable(GL_MULTISAMPLE);
         glEnable(GL_TEXTURE_2D);
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-        this.tessellator = new Tessellator();
-        tessellator.begin(GL_TRIANGLE_FAN);
-        tessellator.uv(0.0f, 0.0f).vertex(0.0f, 0.0f);
-        tessellator.uv(1.0f, 0.0f).vertex(1.0f, 0.0f);
-        tessellator.uv(1.0f, 1.0f).vertex(1.0f, 1.0f);
-        tessellator.uv(0.0f, 1.0f).vertex(0.0f, 1.0f);
-        tessellator.finish();
-
-        this.textTessellator = new Tessellator();
+        this.baseMesh = new Mesh.Builder(4)
+                .uv(0.0f, 0.0f).vertex(0.0f, 0.0f)
+                .uv(1.0f, 0.0f).vertex(1.0f, 0.0f)
+                .uv(1.0f, 1.0f).vertex(1.0f, 1.0f)
+                .uv(0.0f, 1.0f).vertex(0.0f, 1.0f)
+                .build();
     }
 
     public void cleanUp() {
@@ -160,6 +158,8 @@ public class RenderEngine {
                             FloatBuffer yBuffer = stack.mallocFloat(1);
                             STBTTAlignedQuad quad = STBTTAlignedQuad.malloc();
 
+                            Mesh textMesh;
+
                             for (int i = 0; i < text.length(); ++i) {
                                 int cp = text.codePointAt(i);
                                 if (cp == '\n') {
@@ -174,16 +174,17 @@ public class RenderEngine {
                                     xBuffer.put(0, xBuffer.get(0) + stbtt_GetCodepointKernAdvance(font.getInfo(), cp, text.codePointAt(i + 1)) * pixelScale);
                                 }
 
-                                textTessellator.begin(GL_TRIANGLE_FAN);
-                                textTessellator.color(transform.color.x, transform.color.y, transform.color.z, transform.color.w);
-                                textTessellator.uv(quad.s0(), quad.t0()).vertex(quad.x0(), quad.y0());
-                                textTessellator.uv(quad.s1(), quad.t0()).vertex(quad.x1(), quad.y0());
-                                textTessellator.uv(quad.s1(), quad.t1()).vertex(quad.x1(), quad.y1());
-                                textTessellator.uv(quad.s0(), quad.t1()).vertex(quad.x0(), quad.y1());
+                                textMesh = textMeshBuilder.reset()
+                                        .color(transform.color.x, transform.color.y, transform.color.z, transform.color.w)
+                                        .uv(quad.s0(), quad.t0()).vertex(quad.x0(), quad.y0())
+                                        .uv(quad.s1(), quad.t0()).vertex(quad.x1(), quad.y0())
+                                        .uv(quad.s1(), quad.t1()).vertex(quad.x1(), quad.y1())
+                                        .uv(quad.s0(), quad.t1()).vertex(quad.x0(), quad.y1())
+                                        .build();
 
                                 shader.uniformMat4("projection", projection);
                                 shader.uniformMat4("model", transform.model);
-                                textTessellator.draw();
+                                textMesh.draw(GL_TRIANGLE_FAN);
                                 shader.uniformVec4("override_Color", COLOR_WHITE);
                             }
                         }
@@ -205,7 +206,7 @@ public class RenderEngine {
             shader.uniformMat4("projection", projection);
             shader.uniformMat4("model", transform.model);
             shader.uniformVec4("override_Color", transform.color);
-            tessellator.draw();
+            baseMesh.draw(GL_TRIANGLE_FAN);
             shader.uniformVec4("override_Color", COLOR_WHITE);
         }
         shader.unbind();

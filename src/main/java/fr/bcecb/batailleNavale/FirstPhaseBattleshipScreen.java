@@ -44,9 +44,6 @@ public class FirstPhaseBattleshipScreen extends ScreenState {
         addGuiElement(backButton);
     }
 
-    public void clickCases(MouseEvent.Click event, int id) {
-    }
-
     public void clickButton(MouseEvent.Click event, int id) {
 //        battleship.swapOrientation();
     }
