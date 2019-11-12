@@ -217,7 +217,6 @@ public class RenderEngine {
                                 textTessellator.uv(quad.s1(), quad.t1()).vertex(quad.x1(), quad.y1());
                                 textTessellator.uv(quad.s0(), quad.t1()).vertex(quad.x0(), quad.y1());
 
-
                                 shader.uniformMat4("projection", projection);
                                 shader.uniformMat4("model", model);
                                 textTessellator.draw();
@@ -260,7 +259,7 @@ public class RenderEngine {
         texture.bind();
         shader.bind();
         {
-            shader.uniformMat4("projection", window.getProjection());
+            shader.uniformMat4("projection", projection);
             shader.uniformMat4("model", model);
             tessellator.draw();
             shader.uniformVec4("overrideColor", COLOR_WHITE);
