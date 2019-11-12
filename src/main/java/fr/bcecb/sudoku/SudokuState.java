@@ -16,6 +16,7 @@ public class SudokuState extends ScreenState {
     private static final int SIZE = 9;
     private static final int SIZE_BOX = (int) Math.floor(Math.sqrt(SIZE));
     private static final Random RANDOM = new Random();
+    List<Button> buttonsCase = new ArrayList<>();
     private static final Collector<?, ?, ?> SHUFFLER = Collectors.collectingAndThen(
             Collectors.toCollection(ArrayList::new),
             list -> {
@@ -49,6 +50,23 @@ public class SudokuState extends ScreenState {
         }
 
         this.generateGrid = Arrays.stream(this.grid).map(int[]::clone).toArray(int[][]::new);
+    }
+
+    public void printSudoku() {
+        for (int i = 0; i < SIZE; i++) {
+            if (i % SIZE_BOX == 0) {
+                System.out.println();
+            }
+
+            for (int j = 0; j < SIZE; j++) {
+                if (j % SIZE_BOX == 0) {
+                    System.out.print(" ");
+                }
+                System.out.print(this.grid[i][j] + " ");
+            }
+            System.out.println();
+        }
+        System.out.println();
     }
 
     /**
@@ -329,6 +347,7 @@ public class SudokuState extends ScreenState {
 
     @Override
     public void initGui() {
+
         int width = Window.getCurrentWindow().getWidth();
         int height = Window.getCurrentWindow().getHeight();
         Button[] buttonsCandidateValues = new Button[SIZE];
@@ -342,7 +361,7 @@ public class SudokuState extends ScreenState {
             });
             buttonsCandidateValues[i].setVisible(false);
             for (int j = 0; j < 9; j++) {
-                final Button button = new Button((9 * i) + j, ((float) width - 80 / ((float) 1920 / width) * SIZE) / 2 + i * 80 / ((float) 1920 / width), ((float) height - 80 / ((float) 1920 / width) * SIZE) / 2 + j * 80 / ((float) 1920 / width), (80 / ((float) 1920 / width)), (80 / ((float) 1920 / width)), false, String.valueOf(grid[j][i] != 0 ? grid[j][i] : ""), new ResourceHandle<>("textures/case_button.png") {
+                final Button button = new Button((9 * i) + j, ((float) width - 80 / ((float) 1920 / width) * SIZE) / 2 + i * 80 / ((float) 1920 / width), ((float) height - 80 / ((float) 1920 / width) * SIZE) / 2 + j * 80 / ((float) 1920 / width), (80 / ((float) 1920 / width)), (80 / ((float) 1920 / width)), false, String.valueOf(grid[j][i] != 0 ? grid[j][i] : ""), new ResourceHandle<>("textures/caseBattleship.png") {
                 });
 
                 if (generateGrid[j][i] == 0) {
@@ -353,6 +372,7 @@ public class SudokuState extends ScreenState {
                         int x = button.getId() % 9;
                         int y = button.getId() / 9;
                         if (grid[x][y] == 0) {
+                            buttonsCase.add(button);
                             int[] candidatesValues = computeCandidates(x, y);
                             for (int l = 0; l < candidatesValues.length; l++) {
                                 int value = candidatesValues[l];
@@ -361,6 +381,7 @@ public class SudokuState extends ScreenState {
                                 buttonsCandidateValues[l].setClickHandler(f -> {
                                     button.setTitle(String.valueOf(value));
                                     grid[x][y] = value;
+
                                     for (GuiElement buttonsCandidateValue : buttonsCandidateValues) {
                                         buttonsCandidateValue.setVisible(false);
                                     }
@@ -371,13 +392,28 @@ public class SudokuState extends ScreenState {
                             grid[x][y] = 0;
                         }
                     });
-                }
+                } else button.setEnabled(false);
 
                 addGuiElement(button);
             }
         }
 
         addGuiElement(buttonsCandidateValues);
+
+    }
+
+    @Override
+    public void update() {
+
+        super.update();
+        if (winCondition()) {
+            GuiElement text = new Text(99, 960, 540, "YOU WON !", false);
+            addGuiElement(text);
+            for (Button buttonCase : buttonsCase) {
+                buttonCase.setEnabled(false);
+
+            }
+        }
     }
 
     public enum Difficulty {
