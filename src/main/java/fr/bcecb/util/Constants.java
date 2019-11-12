@@ -13,6 +13,9 @@ public class Constants {
 
     /* TEXTURES */
     public static final ResourceHandle<Texture> DEFAULT_TEXTURE = new ResourceHandle<>("textures/default.png") {};
+    public static final ResourceHandle<Texture> DEFAULT_LOGO_TEXTURE = new ResourceHandle<>("textures/defaultLogo.png") {};
+    public static final ResourceHandle<Texture> DEFAULT_BACKGROUND_TEXTURE = new ResourceHandle<>("textures/defaultBackground.png") {};
+    public static final ResourceHandle<Texture> DEFAULT_BUTTON_TEXTURE = new ResourceHandle<>("textures/defaultButton.png") {};
     public static final ResourceHandle<Font> DEFAULT_FONT = new ResourceHandle<>("font.ttf") {};
 
     /* SHADERS */

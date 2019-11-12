@@ -6,7 +6,9 @@ import fr.bcecb.event.Event;
 import fr.bcecb.event.EventExceptionHandler;
 import fr.bcecb.event.GameEvent;
 import fr.bcecb.render.RenderEngine;
+import fr.bcecb.resources.ResourceHandle;
 import fr.bcecb.resources.ResourceManager;
+import fr.bcecb.resources.Texture;
 import fr.bcecb.state.MainMenuScreen;
 import fr.bcecb.state.StateEngine;
 import fr.bcecb.util.Log;
@@ -27,6 +29,8 @@ public final class Game {
     private boolean running = false;
 
     private static final Game INSTANCE = new Game();
+
+    public ResourceHandle<Texture> currentProfile = new ResourceHandle<>("textures/defaultProfile.png") {};
 
     private Game() {
         if (!glfwInit()) {
