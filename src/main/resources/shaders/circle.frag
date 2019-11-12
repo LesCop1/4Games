@@ -5,7 +5,6 @@ in vec4 pass_Color;
 
 out vec4 FragColor;
 
-uniform float radius;
 uniform sampler2D textureSampler;
 
 void main(void) {

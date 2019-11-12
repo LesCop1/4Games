@@ -13,6 +13,11 @@ public class CircleImage extends Image {
         this.radius = radius;
     }
 
+    @Override
+    boolean checkBounds(float x, float y) {
+        return super.checkBounds(x, y) && Math.pow((getX() + getRadius()) - x, 2) + Math.pow((getY() + getRadius()) - y, 2) < Math.pow(getRadius(), 2);
+    }
+
     public float getRadius() {
         return radius;
     }
@@ -21,4 +26,19 @@ public class CircleImage extends Image {
         this.radius = radius;
     }
 
+    public static class CircleImageRenderer extends Renderer<CircleImage> {
+        public CircleImageRenderer(RenderManager renderManager) {
+            super(renderManager);
+        }
+
+        @Override
+        public ResourceHandle<Texture> getTexture(CircleImage circleImage) {
+            return circleImage.getImage();
+        }
+
+        @Override
+        public void render(CircleImage circleImage, float partialTick) {
+            renderManager.getRenderEngine().drawCircle(getTexture(circleImage), circleImage.getX(), circleImage.getY(), circleImage.getRadius());
+        }
+    }
 }

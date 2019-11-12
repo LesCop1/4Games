@@ -5,8 +5,8 @@ import fr.bcecb.event.MouseEvent;
 import fr.bcecb.render.RenderManager;
 import fr.bcecb.render.Renderer;
 import fr.bcecb.resources.ResourceHandle;
-import fr.bcecb.resources.ResourceManager;
 import fr.bcecb.resources.Texture;
+import fr.bcecb.util.Constants;
 import org.joml.Vector4f;
 
 public class Text extends GuiElement {
@@ -21,7 +21,7 @@ public class Text extends GuiElement {
     }
 
     public Text(int id, float x, float y, String text, Vector4f color, boolean centered) {
-        this(id, x, y, text, 0, color, centered);
+        this(id, x, y, text, 1.0f, color, centered);
     }
 
     public Text(int id, float x, float y, String text, float scale, boolean centered) {
@@ -31,8 +31,8 @@ public class Text extends GuiElement {
     public Text(int id, float x, float y, String text, float scale, Vector4f color, boolean centered) {
         super(id, x, y, x, y);
         this.text = text;
-        this.scale = Math.min(1, scale);
-        this.color = MoreObjects.firstNonNull(color, new Vector4f(0.0f, 0.0f, 0.0f, 1.0f));
+        this.scale = Math.min(1.0f, scale);
+        this.color = MoreObjects.firstNonNull(color, Constants.COLOR_BLACK);
         this.centered = centered;
     }
 
@@ -83,4 +83,24 @@ public class Text extends GuiElement {
 
     }
 
+    public static class TextRenderer extends Renderer<Text> {
+
+        public TextRenderer(RenderManager renderManager) {
+            super(renderManager);
+        }
+
+        @Override
+        public ResourceHandle<Texture> getTexture(Text text) {
+            return null;
+        }
+
+        @Override
+        public void render(Text text, float partialTick) {
+            if (text.isCentered()) {
+                renderManager.getRenderEngine().drawCenteredText(Constants.DEFAULT_FONT, text.getText(), text.getX(), text.getY(), text.getScale());
+            } else {
+                renderManager.getRenderEngine().drawText(Constants.DEFAULT_FONT, text.getText(), text.getX(), text.getY(), text.getScale());
+            }
+        }
+    }
 }

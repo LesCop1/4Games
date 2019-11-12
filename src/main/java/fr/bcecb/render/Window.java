@@ -7,10 +7,8 @@ import fr.bcecb.event.WindowEvent;
 import fr.bcecb.input.KeyboardManager;
 import fr.bcecb.input.MouseManager;
 import fr.bcecb.util.Log;
-import org.joml.Matrix4f;
 import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.system.MemoryStack;
-import org.lwjgl.system.Platform;
 
 import java.nio.FloatBuffer;
 
@@ -29,8 +27,6 @@ public class Window {
     private int height;
 
     private float contentScaleX, contentScaleY;
-
-    private final Matrix4f projection = new Matrix4f();
 
     private Window(String title, int width, int height, float contentScaleX, float contentScaleY, boolean fullscreen) {
         this.windowId = glfwCreateWindow(width, height, title, fullscreen ? glfwGetPrimaryMonitor() : NULL, NULL);
@@ -74,10 +70,8 @@ public class Window {
             contentScaleX = px.get(0);
             contentScaleY = py.get(0);
 
-            if (Platform.get() != Platform.MACOSX) {
-                width = Math.round(width * contentScaleX);
-                height = Math.round(height * contentScaleY);
-            }
+            width = Math.round(width * contentScaleX);
+            height = Math.round(height * contentScaleY);
         }
 
         Log.SYSTEM.config("Framebuffer content scaling is ({0}, {1})", contentScaleX, contentScaleY);
@@ -137,10 +131,6 @@ public class Window {
         return windowId;
     }
 
-    public Matrix4f getProjection() {
-        return projection;
-    }
-
     public int getWidth() {
         return width;
     }
@@ -163,15 +153,8 @@ public class Window {
     private void setWindowSize(long window, int width, int height) {
         assert window == this.windowId;
 
-        if (Platform.get() != Platform.MACOSX) {
-            width /= getContentScaleX();
-            height /= getContentScaleY();
-        }
-
-        this.width = width;
-        this.height = height;
-
-        this.projection.setOrtho2D(0, width, height, 0);
+        this.width = Math.round(width / contentScaleX);
+        this.height = Math.round(height / contentScaleY);
 
         Event event = new WindowEvent.Size(this.width, this.height);
         Game.EVENT_BUS.post(event);

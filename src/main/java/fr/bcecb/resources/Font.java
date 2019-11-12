@@ -75,7 +75,7 @@ public class Font extends Texture {
         }
 
         ByteBuffer bitmap = BufferUtils.createByteBuffer(width * height);
-        stbtt_BakeFontBitmap(ttf, 64 * Window.getCurrentWindow().getContentScaleY(), bitmap, width, height, 32, cdata);
+        stbtt_BakeFontBitmap(ttf, 32 * Window.getCurrentWindow().getContentScaleY(), bitmap, width, height, 32, cdata);
 
         int texture = glGenTextures();
         glBindTexture(GL_TEXTURE_2D, texture);
