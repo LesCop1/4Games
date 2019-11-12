@@ -4,6 +4,7 @@ import com.google.common.eventbus.Subscribe;
 import fr.bcecb.Game;
 import fr.bcecb.event.Event;
 import fr.bcecb.event.GameEvent;
+import fr.bcecb.event.MouseEvent;
 import fr.bcecb.event.WindowEvent;
 import fr.bcecb.render.RenderManager;
 import fr.bcecb.render.Renderer;
@@ -30,6 +31,12 @@ public class StateEngine {
         Game.EVENT_BUS.post(event);
 
         if (!event.isCancelled()) {
+            if (state instanceof ScreenState) {
+                ScreenState screenState = (ScreenState) state;
+                screenState.clearGuiElements();
+                screenState.initGui();
+            }
+
             stateStack.push(state);
             state.onEnter();
         }
@@ -75,6 +82,45 @@ public class StateEngine {
     @Subscribe
     private void handleWindowResizeEvent(WindowEvent.Size event) {
         this.shouldRebuildGUI = true;
+    }
+
+    @Subscribe
+    private void handleClickEvent(MouseEvent.Click event) {
+        ScreenState screenState;
+        for (State state : stateStack) {
+            if (state instanceof ScreenState) {
+                screenState = (ScreenState) state;
+                screenState.onClick(event);
+            }
+
+            if (event.isCancelled()) break;
+
+            if (!state.shouldUpdateBelow()) break;
+        }
+    }
+
+    @Subscribe
+    private void handleHoverEvent(MouseEvent.Move event) {
+        ScreenState screenState;
+        for (State state : stateStack) {
+            if (state instanceof ScreenState) {
+                screenState = (ScreenState) state;
+                screenState.onHover(event);
+            }
+        }
+    }
+
+    @Subscribe
+    private void handleScrollEvent(MouseEvent.Scroll event) {
+        ScreenState screenState;
+        for (State state : stateStack) {
+            if (state instanceof ScreenState) {
+                screenState = (ScreenState) state;
+                screenState.onScroll(event);
+
+                if (!state.shouldUpdateBelow()) break;
+            }
+        }
     }
 
     public void render(RenderManager renderManager, float partialTick) {
