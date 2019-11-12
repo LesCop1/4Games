@@ -33,7 +33,7 @@ public class CircleImage extends Image {
 
         @Override
         public void render(CircleImage circleImage, float partialTick) {
-            renderManager.getRenderEngine().drawTexturedCircle(getTexture(circleImage), circleImage.getX(), circleImage.getY(), circleImage.getRadius());
+            renderManager.getRenderEngine().drawTexturedCircle(circleImage.getX(), circleImage.getY(), circleImage.getRadius(), getTexture(circleImage));
         }
     }
 }

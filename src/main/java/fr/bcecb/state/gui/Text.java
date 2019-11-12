@@ -21,7 +21,7 @@ public class Text extends GuiElement {
     }
 
     public Text(int id, float x, float y, String text, Vector4f color, boolean centered) {
-        this(id, x, y, text, 0, color, centered);
+        this(id, x, y, text, 1.0f, color, centered);
     }
 
     public Text(int id, float x, float y, String text, float scale, boolean centered) {
@@ -31,8 +31,8 @@ public class Text extends GuiElement {
     public Text(int id, float x, float y, String text, float scale, Vector4f color, boolean centered) {
         super(id, x, y, x, y);
         this.text = text;
-        this.scale = Math.min(1, scale);
-        this.color = MoreObjects.firstNonNull(color, new Vector4f(0.0f, 0.0f, 0.0f, 1.0f));
+        this.scale = Math.min(1.0f, scale);
+        this.color = MoreObjects.firstNonNull(color, new Vector4f(1.0f, 0.0f, 0.0f, 1.0f));
         this.centered = centered;
     }
 
