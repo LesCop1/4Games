@@ -94,6 +94,7 @@ public class BingoState extends ScreenState {
         float gridX, gridW, gridY, gridH;
         int id;
         List<Grid> playerGrids = player.getGrids();
+        float caseScale = 0.7f;
 
         switch (nbGrids) {
             case 1:
@@ -111,7 +112,7 @@ public class BingoState extends ScreenState {
                         GuiElement caseX = new Button(id,
                                 (gridX + j * (gridW / 10)), (gridY + i * (gridH / 3)),
                                 (gridW / 10), (gridH / 3),
-                                false, Integer.toString(playerGrids.get(0).getGrid()[i][j]), new ResourceHandle<>("textures/bingo/caseBG.png") {
+                                false, Integer.toString(playerGrids.get(0).getGrid()[i][j]),caseScale, new ResourceHandle<>("textures/bingo/caseBG.png") {
                         }).setClickHandler(e -> System.out.println("coucou"));
                         addGuiElement(caseX);
                     }
@@ -125,9 +126,9 @@ public class BingoState extends ScreenState {
                 gridY = 1 * (height / 3.5f);
                 gridW = (width / 3f);
                 gridH = (height / 5f);
-
+                id = 0;
                 for (int i = 0; i < 2; i++) {
-                    id = 0;
+
 
                     for (int j = 0; j < 3; j++) {
                         for (int k = 0; k < 9; k++, id++) {
@@ -135,12 +136,13 @@ public class BingoState extends ScreenState {
                             GuiElement caseX = new Button(id,
                                     (gridX + k * (gridW / 10)), (gridY + (j * (gridH / 3) + (i * gridH)) ),
                                     (gridW / 10), (gridH / 3),
-                                    false, Integer.toString(playerGrids.get(i).getGrid()[j][k]),
+                                    false, Integer.toString(playerGrids.get(i).getGrid()[j][k]),caseScale,
                                     new ResourceHandle<Texture>("textures/bingo/caseBG.png") {
                                     }).setClickHandler(e -> System.out.println("coucou"));
                             addGuiElement(caseX);
                         }
                     }
+                    gridY += gridH/3;
                 }
 
                 break;
@@ -164,7 +166,7 @@ public class BingoState extends ScreenState {
 
         // GuiElement gridCase = new Button (10,);
 
-        GuiElement backButton = new Button(31,
+        GuiElement backButton = new Button(400,
                 (width / 20f), (height - (height / 20f) - (height / 10f)),
                 (height / 10f), (height / 10f),
                 false, "Back", new ResourceHandle<>("textures/defaultButton.png") {
