@@ -96,6 +96,9 @@ public class Text extends GuiElement {
 
         @Override
         public void render(Text text, float partialTick) {
+            if (text.getId() == 40) {
+               // System.out.println("text.getText() = " + text.getText());;
+            }
             if (text.isCentered()) {
                 renderManager.getRenderEngine().drawCenteredText(ResourceManager.DEFAULT_FONT, text.getText(), text.getX(), text.getY(), text.getScale(), text.getColor());
             } else {

@@ -22,6 +22,7 @@ public class BingoState extends ScreenState {
     private final static int NB_BOTS = 5;
     private Player player;
     private int lastDrop;
+    private GuiElement ball;
 
     public BingoState(int nbGrids, int difficulty) {
         super("bingo");
@@ -87,40 +88,61 @@ public class BingoState extends ScreenState {
         int height = Window.getCurrentWindow().getHeight();
         setBackgroundTexture(new ResourceHandle<Texture>("textures/bingo/bingoBG.png") {
         });
-// nbGrids n'est pas encore récupéré, redimensionner la fenetre pour rentrer dans le if
-// System.out.println("nbgrids : "+ nbGrids);
+        this.ball = new Text(40, (width / 8f), (height / 5f), "", 5f, false);
+
+
+        float gridX, gridW, gridY, gridH;
+        int id;
+        List<Grid> playerGrids = player.getGrids();
+
         switch (nbGrids) {
-
             case 1:
-                float gridX = 1 * (width / 20f), gridY = 1 * (height / 2.5f);
-                float gridW = (width / 3f), gridH = (height / 5f);
+                gridX = 1 * (width / 20f);
+                gridY = 1 * (height / 2.5f);
+                gridW = (width / 3f);
+                gridH = (height / 5f);
 
-//                final GuiElement grid = new Image(1, new ResourceHandle<>("textures/bingo/gridBG.png") {
-//                },
-//                        gridX, gridY,
-//                        gridW, gridH,
-//                        false, false);
+                id = 0;
+
+                for (int i = 0; i < 3; i++) {
+                    for (int j = 0; j < 9; j++, id++) {
 
 
-                int[][] playerGrid = player.getGrids().get(0).getGrid();
-                int id=0;
-
-                for( int i = 0 ; i < 3 ; i++){
-                    for (int j = 0; j < 9; j++ , j++) {
                         GuiElement caseX = new Button(id,
-                                (gridX + j*(gridW/5)),(gridY + i*(gridH/3)),
+                                (gridX + j * (gridW / 10)), (gridY + i * (gridH / 3)),
                                 (gridW / 10), (gridH / 3),
-                                false, Integer.toString(playerGrid[i][j]),new ResourceHandle<>("textures/bingo/caseBG.png") {
-                        });
+                                false, Integer.toString(playerGrids.get(0).getGrid()[i][j]), new ResourceHandle<>("textures/bingo/caseBG.png") {
+                        }).setClickHandler(e -> System.out.println("coucou"));
                         addGuiElement(caseX);
                     }
-            }
+                }
 
-               // addGuiElement(grid);
+                // addGuiElement(grid);
                 break;
 
-
             case 2:
+                gridX = 1 * (width / 20f);
+                gridY = 1 * (height / 3.5f);
+                gridW = (width / 3f);
+                gridH = (height / 5f);
+
+                for (int i = 0; i < 2; i++) {
+                    id = 0;
+
+                    for (int j = 0; j < 3; j++) {
+                        for (int k = 0; k < 9; k++, id++) {
+                            System.out.println("grille n°"+ i);
+                            GuiElement caseX = new Button(id,
+                                    (gridX + k * (gridW / 10)), (gridY + (j * (gridH / 3) + (i * gridH)) ),
+                                    (gridW / 10), (gridH / 3),
+                                    false, Integer.toString(playerGrids.get(i).getGrid()[j][k]),
+                                    new ResourceHandle<Texture>("textures/bingo/caseBG.png") {
+                                    }).setClickHandler(e -> System.out.println("coucou"));
+                            addGuiElement(caseX);
+                        }
+                    }
+                }
+
                 break;
 
             case 3:
@@ -140,13 +162,12 @@ public class BingoState extends ScreenState {
                 break;
         }
 
-
         // GuiElement gridCase = new Button (10,);
 
-        GuiElement backButton = new Button(3,
+        GuiElement backButton = new Button(31,
                 (width / 20f), (height - (height / 20f) - (height / 10f)),
                 (height / 10f), (height / 10f),
-                false, "Back", new ResourceHandle<Texture>("textures/btn.png") {
+                false, "Back", new ResourceHandle<>("textures/defaultButton.png") {
         }).setClickHandler(e -> Game.instance().getStateEngine().popState());
 
         addGuiElement(backButton);
@@ -155,16 +176,13 @@ public class BingoState extends ScreenState {
 
     private void dropball() {
 
-        int width = Window.getCurrentWindow().getWidth();
-        int height = Window.getCurrentWindow().getHeight();
         Random rand = new Random();
         int randInt = rand.nextInt(numberList.size()); // random de la taille de la liste
 
-        Vector4f black = new Vector4f(0.0f, 0.0f, 0.0f, 1.0f);
-        GuiElement ball = new Text(20, 15 * (width / 20f), (height / 15f), Integer.toString(numberList.get(randInt)), 5f, black, false);
-        addGuiElement(ball);
-
         this.lastDrop = numberList.get(randInt);
+        ((Text) ball).setText(Integer.toString(this.lastDrop));
+        //System.out.println("((Text) ball).getText() = " + ((Text) ball).getText());
+        addGuiElement(ball);
         numberList.remove(randInt);
     }
 
