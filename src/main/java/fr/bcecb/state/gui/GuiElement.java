@@ -2,11 +2,10 @@ package fr.bcecb.state.gui;
 
 import fr.bcecb.event.MouseEvent;
 import fr.bcecb.render.IRenderable;
-import fr.bcecb.render.animation.IAnimatable;
 
 import java.util.function.Consumer;
 
-public abstract class GuiElement implements IRenderable, IAnimatable {
+public abstract class GuiElement implements IRenderable {
     private final int id;
     private boolean hovered;
     private boolean visible;
@@ -120,6 +119,8 @@ public abstract class GuiElement implements IRenderable, IAnimatable {
         this.scrollHandler = scrollHandler;
         return this;
     }
+
+    public abstract void onUpdate();
 
     public abstract void onClick(MouseEvent.Click event);
 

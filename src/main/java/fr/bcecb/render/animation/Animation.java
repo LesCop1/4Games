@@ -13,6 +13,7 @@ public abstract class Animation<T> {
 
     public void reset() {
         this.lastValue = startValue;
+        this.currentValue = startValue;
     }
 
     public T getLastValue() {

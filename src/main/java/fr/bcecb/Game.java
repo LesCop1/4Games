@@ -2,6 +2,7 @@ package fr.bcecb;
 
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
+import fr.bcecb.event.Event;
 import fr.bcecb.event.EventExceptionHandler;
 import fr.bcecb.event.GameEvent;
 import fr.bcecb.render.RenderEngine;
@@ -54,12 +55,15 @@ public final class Game {
         float lastTime = 0.0f;
         float delta = 0.0f;
 
+        Event tickEvent = new GameEvent.Tick();
+
         while (this.isRunning()) {
             currentTime = (float) glfwGetTime();
             delta += (currentTime - lastTime) / ticks;
             lastTime = currentTime;
 
             while (delta >= 1.0) {
+                EVENT_BUS.post(tickEvent);
                 stateEngine.update();
 
                 --delta;

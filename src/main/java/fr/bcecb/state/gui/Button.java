@@ -2,6 +2,8 @@ package fr.bcecb.state.gui;
 
 import com.google.common.base.MoreObjects;
 import fr.bcecb.event.MouseEvent;
+import fr.bcecb.render.animation.Animation;
+import fr.bcecb.render.animation.BounceAnimation;
 import fr.bcecb.resources.ResourceHandle;
 import fr.bcecb.resources.Texture;
 import fr.bcecb.util.Constants;
@@ -11,7 +13,7 @@ public class Button extends GuiElement {
     private float titleScale;
     private ResourceHandle<Texture> texture;
     private ResourceHandle<Texture> onHoverTexture;
-    private float ticksHovered = 0;
+    private Animation<Float> hoverAnimation = new BounceAnimation(1.0f, 0.1f, 3.0f);
 
     public Button(int id, float x, float y, float width, float height) {
         this(id, x, y, width, height, false);
@@ -61,22 +63,15 @@ public class Button extends GuiElement {
         this.onHoverTexture = MoreObjects.firstNonNull(onHoverTexture, Constants.DEFAULT_TEXTURE);
     }
 
-    public float getHoveredTicks() {
-        return ticksHovered;
+    public Animation<Float> getHoverAnimation() {
+        return hoverAnimation;
     }
 
-    public void incHoveredTicks() {
-        this.ticksHovered++;
-    }
-
-    public void decHoveredTicks() {
-        if (this.ticksHovered != 0) {
-            this.ticksHovered--;
-        }
-    }
-
-    public void setTicksHovered(float ticksHovered) {
-        this.ticksHovered = ticksHovered;
+    @Override
+    public void onUpdate() {
+        if (isHovered()) {
+            hoverAnimation.update();
+        } else hoverAnimation.reset();
     }
 
     @Override

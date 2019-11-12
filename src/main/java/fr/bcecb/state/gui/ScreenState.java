@@ -23,20 +23,6 @@ public abstract class ScreenState extends State {
         super(name);
     }
 
-    @Override
-    public void onEnter() {
-        Game.EVENT_BUS.register(this);
-    }
-
-    @Override
-    public void onExit() {
-        Game.EVENT_BUS.unregister(this);
-    }
-
-    @Override
-    public void update() {
-    }
-
     public abstract void initGui();
 
     protected final void addGuiElement(GuiElement... elements) {
@@ -71,6 +57,23 @@ public abstract class ScreenState extends State {
     @Override
     public boolean shouldUpdateBelow() {
         return false;
+    }
+
+    @Override
+    public void onEnter() {
+        Game.EVENT_BUS.register(this);
+    }
+
+    @Override
+    public void onExit() {
+        Game.EVENT_BUS.unregister(this);
+    }
+
+    @Override
+    public void onUpdate() {
+        for (GuiElement element : getGuiElements()) {
+            element.onUpdate();
+        }
     }
 
     public void onClick(MouseEvent.Click event) {

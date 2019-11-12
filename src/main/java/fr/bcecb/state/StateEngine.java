@@ -2,10 +2,7 @@ package fr.bcecb.state;
 
 import com.google.common.eventbus.Subscribe;
 import fr.bcecb.Game;
-import fr.bcecb.event.Event;
-import fr.bcecb.event.GameEvent;
-import fr.bcecb.event.MouseEvent;
-import fr.bcecb.event.WindowEvent;
+import fr.bcecb.event.*;
 import fr.bcecb.render.RenderManager;
 import fr.bcecb.render.Renderer;
 import fr.bcecb.state.gui.ScreenState;
@@ -14,8 +11,6 @@ import fr.bcecb.util.Log;
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.Iterator;
-
-import static fr.bcecb.state.State.StateEvent;
 
 public class StateEngine {
     private final Deque<State> stateStack = new ArrayDeque<>();
@@ -73,7 +68,7 @@ public class StateEngine {
         }
 
         for (State state : stateStack) {
-            state.update();
+            state.onUpdate();
 
             if (!state.shouldUpdateBelow()) break;
         }

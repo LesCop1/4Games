@@ -27,10 +27,16 @@ public class ButtonRenderer extends Renderer<Button> {
 
         transform.pushTransform();
         {
-            renderEngine.drawRect(getTexture(button), button.getX(), button.getY(), button.getX() + button.getWidth(), button.getY() + button.getHeight());
+            float hoverAnimationScale = button.isHovered() ? button.getHoverAnimation().getInterpolatedValue(partialTick) : 1.0f;
+
+            transform.translate(button.getX(), button.getY());
+            transform.translate(button.getWidth() / 2.0f, button.getHeight() / 2.0f);
+            transform.scale(hoverAnimationScale, hoverAnimationScale);
+
+            renderEngine.drawRect(getTexture(button), 0, 0, button.getWidth(), button.getHeight(), true);
 
             if (!Strings.isNullOrEmpty(button.getTitle())) {
-                renderEngine.drawCenteredText(Constants.DEFAULT_FONT, button.getTitle(), button.getX() + (button.getWidth() / 2.0f), button.getY() + (button.getHeight() / 2.0f), button.getTitleScale());
+                renderEngine.drawCenteredText(Constants.DEFAULT_FONT, button.getTitle(), 0, 0, button.getTitleScale());
             }
         }
         transform.popTransform();

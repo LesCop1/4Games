@@ -3,7 +3,10 @@ package fr.bcecb.sudoku;
 import fr.bcecb.Game;
 import fr.bcecb.render.Window;
 import fr.bcecb.resources.ResourceHandle;
-import fr.bcecb.state.gui.*;
+import fr.bcecb.state.gui.Button;
+import fr.bcecb.state.gui.GuiElement;
+import fr.bcecb.state.gui.ScreenState;
+import fr.bcecb.state.gui.Text;
 
 import java.util.*;
 import java.util.stream.Collector;
@@ -406,8 +409,8 @@ public class SudokuState extends ScreenState {
     }
 
     @Override
-    public void update() {
-        super.update();
+    public void onUpdate() {
+        super.onUpdate();
         if (winCondition()) {
             text.setVisible(true);
 

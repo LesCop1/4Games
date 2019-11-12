@@ -6,7 +6,14 @@ public abstract class IncrementalAnimation<T> extends Animation<T> {
 
     public IncrementalAnimation(T startValue, long maxTicks) {
         super(startValue);
+        this.ticks = 0;
         this.maxTicks = maxTicks;
+    }
+
+    @Override
+    public void reset() {
+        super.reset();
+        this.ticks = 0;
     }
 
     @Override

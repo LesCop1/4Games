@@ -35,6 +35,11 @@ public class Image extends GuiElement {
     }
 
     @Override
+    public void onUpdate() {
+
+    }
+
+    @Override
     public void onClick(MouseEvent.Click event) {
 
     }

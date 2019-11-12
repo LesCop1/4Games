@@ -7,7 +7,7 @@ public class BounceAnimation extends IncrementalAnimation<Float> {
     private final float power;
     private final float speed;
 
-    public BounceAnimation(int offset, int power, int speed) {
+    public BounceAnimation(float offset, float power, float speed) {
         super(0.0f, Long.MAX_VALUE);
         this.offset = offset;
         this.power = power;
@@ -16,7 +16,7 @@ public class BounceAnimation extends IncrementalAnimation<Float> {
 
     @Override
     public Float getValue(long ticks) {
-        return (float) (offset + (power * Math.sin(Math.toRadians((ticks - offset) * speed))));
+        return (float) (offset + (power * Math.sin(Math.toRadians(ticks * speed))));
     }
 
     @Override

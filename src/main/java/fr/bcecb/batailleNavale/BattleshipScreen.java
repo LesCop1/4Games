@@ -7,7 +7,6 @@ import fr.bcecb.resources.Texture;
 import fr.bcecb.state.gui.Button;
 import fr.bcecb.state.gui.GuiElement;
 import fr.bcecb.state.gui.ScreenState;
-import fr.bcecb.Game;
 
 
 public class BattleshipScreen extends ScreenState {
@@ -33,8 +32,8 @@ public class BattleshipScreen extends ScreenState {
     }
 
     @Override
-    public void update() {
-        super.update();
+    public void onUpdate() {
+        super.onUpdate();
     }
 
     @Override

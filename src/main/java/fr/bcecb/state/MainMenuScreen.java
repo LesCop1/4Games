@@ -47,28 +47,4 @@ public class MainMenuScreen extends ScreenState {
 
         addGuiElement(logoImage, playButton, profileButton, achievementButton, shopButton, aboutButton, quitButton);
     }
-
-    @Override
-    public void onEnter() {
-        super.onEnter();
-    }
-
-    @Override
-    public void onExit() {
-        super.onExit();
-    }
-
-    @Override
-    public void update() {
-    }
-
-    @Override
-    public boolean shouldRenderBelow() {
-        return super.shouldRenderBelow();
-    }
-
-    @Override
-    public boolean shouldUpdateBelow() {
-        return super.shouldUpdateBelow();
-    }
 }
