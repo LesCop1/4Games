@@ -42,7 +42,7 @@ public class MainMenuScreen extends ScreenState {
         final GuiElement quitButton = new Button(5, (width / 2f) + 25, (height / 2f) + (height / 3.5f), (width / 5f), (height / 10f),
                 "Quit").setClickHandler(e -> Game.instance().getStateEngine().popState());
 
-        final GuiElement line = new Line(10, 10, 10, 5, 100, new Vector4f(0.54f, 0.34f, 0.43f, 1));
+        final GuiElement line = new Rectangle(10, 10, 10, 5, 100, new Vector4f(0.54f, 0.34f, 0.43f, 1));
         addGuiElement(line);
 
         addGuiElement(logoImage, playButton, profileButton, achievementButton, shopButton, aboutButton, quitButton);

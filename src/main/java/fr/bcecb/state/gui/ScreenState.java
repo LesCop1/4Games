@@ -4,9 +4,9 @@ import com.google.common.collect.Sets;
 import fr.bcecb.Game;
 import fr.bcecb.event.MouseEvent;
 import fr.bcecb.resources.ResourceHandle;
-import fr.bcecb.resources.ResourceManager;
 import fr.bcecb.resources.Texture;
 import fr.bcecb.state.State;
+import fr.bcecb.util.Constants;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -17,7 +17,7 @@ import static fr.bcecb.event.MouseEvent.Click.Type.RELEASED;
 
 public abstract class ScreenState extends State {
     private final Set<GuiElement> guiElements = Sets.newTreeSet(Comparator.comparingInt(GuiElement::getId));
-    private ResourceHandle<Texture> backgroundTexture = ResourceManager.DEFAULT_TEXTURE;
+    private ResourceHandle<Texture> backgroundTexture = Constants.DEFAULT_TEXTURE;
 
     protected ScreenState(String name) {
         super(name);
@@ -101,6 +101,8 @@ public abstract class ScreenState extends State {
                 if (element.getHoverHandler() != null) {
                     element.getHoverHandler().accept(event);
                 }
+
+                event.setCancelled(true);
             }
         }
     }
@@ -115,6 +117,8 @@ public abstract class ScreenState extends State {
                 if (element.getScrollHandler() != null) {
                     element.getScrollHandler().accept(event);
                 }
+
+                event.setCancelled(true);
             }
         }
     }

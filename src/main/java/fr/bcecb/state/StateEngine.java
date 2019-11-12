@@ -91,9 +91,9 @@ public class StateEngine {
             if (state instanceof ScreenState) {
                 screenState = (ScreenState) state;
                 screenState.onClick(event);
-            }
 
-            if (event.isCancelled()) break;
+                if (event.isCancelled()) break;
+            }
 
             if (!state.shouldUpdateBelow()) break;
         }
@@ -106,6 +106,8 @@ public class StateEngine {
             if (state instanceof ScreenState) {
                 screenState = (ScreenState) state;
                 screenState.onHover(event);
+
+                if (event.isCancelled()) break;
             }
         }
     }
@@ -117,6 +119,8 @@ public class StateEngine {
             if (state instanceof ScreenState) {
                 screenState = (ScreenState) state;
                 screenState.onScroll(event);
+
+                if (event.isCancelled()) break;
 
                 if (!state.shouldUpdateBelow()) break;
             }

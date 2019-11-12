@@ -21,7 +21,7 @@ public class RenderManager {
         register(Image.class, new Image.ImageRenderer(this));
         register(CircleImage.class, new CircleImage.CircleImageRenderer(this));
         register(Text.class, new Text.TextRenderer(this));
-        register(Line.class, new Line.LineRenderer(this));
+        register(Rectangle.class, new Rectangle.LineRenderer(this));
     }
 
     private <T extends IRenderable> void register(Class<T> clazz, Renderer<T> renderer) {

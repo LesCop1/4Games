@@ -2,16 +2,16 @@ package fr.bcecb.render;
 
 import fr.bcecb.resources.*;
 import fr.bcecb.state.StateEngine;
+import fr.bcecb.util.Constants;
 import fr.bcecb.util.Log;
+import fr.bcecb.util.TextRendering;
+import fr.bcecb.util.TransformStack;
 import org.joml.Matrix4f;
-import org.joml.Matrix4fStack;
-import org.joml.Vector4f;
 import org.lwjgl.opengl.GL;
 import org.lwjgl.stb.STBTTAlignedQuad;
 import org.lwjgl.system.MemoryStack;
 
 import java.nio.FloatBuffer;
-import java.nio.IntBuffer;
 
 import static fr.bcecb.util.Constants.COLOR_WHITE;
 import static org.lwjgl.glfw.GLFW.glfwTerminate;
@@ -24,19 +24,16 @@ public class RenderEngine {
 
     private final Window window;
 
-    private final Matrix4f projection;
-
-    private final Matrix4fStack model;
-
     private final Tessellator tessellator;
     private final Tessellator textTessellator;
+
+    private final Matrix4f projection = new Matrix4f();
+    private final TransformStack transform = new TransformStack(16);
 
     public RenderEngine(ResourceManager resourceManager) {
         this.resourceManager = resourceManager;
         this.renderManager = new RenderManager(this, resourceManager);
         this.window = Window.newInstance("4Games", 800, 600, false);
-        this.projection = new Matrix4f();
-        this.model = new Matrix4fStack(8);
 
         GL.createCapabilities();
         Log.RENDER.config("Using OpenGL Version {0}", glGetString(GL_VERSION));
@@ -68,7 +65,7 @@ public class RenderEngine {
         projection.identity();
         projection.ortho2D(0, window.getWidth(), window.getHeight(), 0);
 
-        model.identity();
+        transform.clear();
 
         stateEngine.render(renderManager, partialTick);
     }
@@ -76,115 +73,82 @@ public class RenderEngine {
     public void drawBackground(ResourceHandle<Texture> textureHandle) {
         float width = Window.getCurrentWindow().getWidth();
         float height = Window.getCurrentWindow().getHeight();
-        Texture texture = resourceManager.getResourceOrDefault(textureHandle, ResourceManager.DEFAULT_TEXTURE);
-        float imageHeight = texture.getHeight();
+        float screenAspectRatio = width / height;
+
+        Texture texture = resourceManager.getResourceOrDefault(textureHandle, Constants.DEFAULT_TEXTURE);
         float imageWidth = texture.getWidth();
+        float imageHeight = texture.getHeight();
+        float textureAspectRatio = imageWidth / imageHeight;
 
-        float aspectRatio = imageWidth/imageHeight;
-        float widthRatio = width / imageWidth;
-        float heightRatio = height / imageHeight;
-        /*if (Math.abs(1 - hR) < Math.abs(1 - wR)) {
-            float offset = ((hR * imageWidth) - width) / 2;
-            drawTexturedRect(-offset, 0, width + offset, hR * imageHeight, textureHandle);
-        } else {
-            float offset = ((wR * imageHeight) - height) / 2;
-            drawTexturedRect(0, -offset, wR * imageWidth, height + offset, textureHandle);
-        }*/
+        float aspectRatio = screenAspectRatio > textureAspectRatio ? width / imageWidth : height / imageHeight;
 
-        model.pushMatrix();
+        transform.pushTransform();
         {
-            drawTexturedRect(0, 0, imageWidth, imageHeight, false, textureHandle);
+            transform.translate(width / 2.0f, height / 2.0f);
+            transform.scale(aspectRatio, aspectRatio);
+
+            drawRect(textureHandle, 0, 0, imageWidth, imageHeight, true);
         }
-        model.popMatrix();
+        transform.popTransform();
     }
 
-    public void drawTexturedRect(float minX, float minY, float maxX, float maxY, ResourceHandle<Texture> textureHandle) {
-        drawTexturedRect(minX, minY, maxX, maxY, false, textureHandle);
+    public void drawRect(ResourceHandle<Texture> textureHandle, float minX, float minY, float maxX, float maxY) {
+        drawRect(textureHandle, minX, minY, maxX, maxY, false);
     }
 
-    public void drawTexturedRect(float minX, float minY, float maxX, float maxY, boolean centered, ResourceHandle<Texture> textureHandle) {
-        float width = Math.abs(maxX - minX);
-        float height = Math.abs(maxY - minY);
-
-        if (centered) {
-            model.pushMatrix();
-            model.translate(-(width / 2), -(height / 2), 0);
-        }
-
-        drawRect(minX, minY, maxX, maxY, textureHandle);
-
-        if (centered) {
-            model.popMatrix();
-        }
-    }
-
-    public void drawColoredRect(float minX, float minY, float maxX, float maxY, Vector4f color) {
-        Shader shader = resourceManager.getResource(ResourceManager.DEFAULT_SHADER);
-        shader.bind();
+    public void drawRect(ResourceHandle<Texture> textureHandle, float minX, float minY, float maxX, float maxY, boolean centered) {
+        transform.pushTransform();
         {
-            shader.uniformVec4("overrideColor", color);
+            if (centered) {
+                float width = Math.abs(maxX - minX);
+                float height = Math.abs(maxY - minY);
+                transform.translate(-(width / 2), -(height / 2));
+            }
+
+            transform.translate(minX, minY);
+            transform.scale(maxX - minX, maxY - minY);
+
+            draw(Constants.DEFAULT_SHADER, textureHandle);
         }
-        shader.unbind();
-        drawRect(minX, minY, maxX, maxY, null);
+        transform.popTransform();
     }
 
-    public void drawRect(float minX, float minY, float maxX, float maxY, ResourceHandle<Texture> textureHandle) {
-        model.pushMatrix();
+    public void drawCircle(ResourceHandle<Texture> textureHandle, float x, float y, float radius) {
+        transform.pushTransform();
         {
-            model.translate(minX, minY, 0.0f);
-            model.scaleXY(maxX - minX, maxY - minY);
-
-            draw(ResourceManager.DEFAULT_SHADER, textureHandle);
+            transform.translate(x, y);
+            transform.scale(radius * 2, radius * 2);
+            draw(Constants.CIRCLE_SHADER, textureHandle);
         }
-        model.popMatrix();
+        transform.popTransform();
     }
 
-    public void drawTexturedCircle(float x, float y, float scale, ResourceHandle<Texture> textureHandle) {
-        drawCircle(x, y, scale, textureHandle);
-    }
-
-    public void drawCircle(float x, float y, float radius, ResourceHandle<Texture> textureHandle) {
-        Shader shader = resourceManager.getResource(ResourceManager.CIRCLE_SHADER);
-        shader.bind();
-        {
-            shader.uniformFloat("radius", radius);
-        }
-        shader.unbind();
-
-        model.pushMatrix();
-        {
-            model.translate(x, y, 0.0f);
-            model.scaleXY(radius * 2, radius * 2);
-            draw(ResourceManager.CIRCLE_SHADER, textureHandle);
-        }
-        model.popMatrix();
-    }
-
-    public void drawCenteredText(ResourceHandle<Font> fontHandle, String text, float x, float y, float scale, Vector4f color) {
-        Font font = resourceManager.getResourceOrDefault(fontHandle, ResourceManager.DEFAULT_FONT);
+    public void drawCenteredText(ResourceHandle<Font> fontHandle, String text, float x, float y, float scale) {
+        Font font = resourceManager.getResourceOrDefault(fontHandle, Constants.DEFAULT_FONT);
 
         if (font != null) {
             float height = ((font.getDescent() - font.getAscent()) / 2.0f) * stbtt_ScaleForPixelHeight(font.getInfo(), 32 * window.getContentScaleY()) * scale;
-            float width = getStringWidth(font, text) * scale;
+            float width = TextRendering.getStringWidth(font, text) * scale;
 
-            model.pushMatrix();
+            transform.pushTransform();
             {
-                model.translate(-(width / 2.0f) / window.getContentScaleX(), -(height / 2.0f) / window.getContentScaleY(), 0);
-                drawText(fontHandle, text, x, y, scale, color);
+                transform.translate(-(width / 2.0f) / window.getContentScaleX(), -(height / 2.0f) / window.getContentScaleY());
+                transform.color(Constants.COLOR_BLACK);
+                drawText(fontHandle, text, x, y, scale);
             }
-            model.popMatrix();
+            transform.popTransform();
         }
     }
 
-    public void drawText(ResourceHandle<Font> fontHandle, String text, float x, float y, float scale, Vector4f color) {
-        Shader shader = resourceManager.getResource(ResourceManager.FONT_SHADER);
-        Font font = resourceManager.getResourceOrDefault(fontHandle, ResourceManager.DEFAULT_FONT);
+    public void drawText(ResourceHandle<Font> fontHandle, String text, float x, float y, float scale) {
+        Shader shader = resourceManager.getResource(Constants.FONT_SHADER);
+        Font font = resourceManager.getResourceOrDefault(fontHandle, Constants.DEFAULT_FONT);
 
-        model.pushMatrix();
+        transform.pushTransform();
         {
             if (font != null) {
-                model.translate(x, y, 0);
-                model.scaleXY(scale / window.getContentScaleX(), scale / window.getContentScaleY());
+                transform.translate(x, y);
+                transform.scale(scale / window.getContentScaleX(), scale / window.getContentScaleY());
 
                 shader.bind();
                 {
@@ -211,15 +175,16 @@ public class RenderEngine {
                                 }
 
                                 textTessellator.begin(GL_TRIANGLE_FAN);
-                                textTessellator.color(color.x, color.y, color.z, color.w);
+                                textTessellator.color(transform.color.x, transform.color.y, transform.color.z, transform.color.w);
                                 textTessellator.uv(quad.s0(), quad.t0()).vertex(quad.x0(), quad.y0());
                                 textTessellator.uv(quad.s1(), quad.t0()).vertex(quad.x1(), quad.y0());
                                 textTessellator.uv(quad.s1(), quad.t1()).vertex(quad.x1(), quad.y1());
                                 textTessellator.uv(quad.s0(), quad.t1()).vertex(quad.x0(), quad.y1());
 
                                 shader.uniformMat4("projection", projection);
-                                shader.uniformMat4("model", model);
+                                shader.uniformMat4("model", transform.model);
                                 textTessellator.draw();
+                                shader.uniformVec4("override_Color", COLOR_WHITE);
                             }
                         }
                     }
@@ -228,41 +193,20 @@ public class RenderEngine {
                 shader.unbind();
             }
         }
-        model.popMatrix();
-    }
-
-    private float getStringWidth(Font font, String text) {
-        int width = 0;
-
-        try (MemoryStack stack = MemoryStack.stackPush()) {
-            IntBuffer pAdvancedWidth = stack.mallocInt(1);
-            IntBuffer pLeftSideBearing = stack.mallocInt(1);
-
-            for (int i = 0; i < text.length(); ++i) {
-                int cp = text.codePointAt(i);
-
-                stbtt_GetCodepointHMetrics(font.getInfo(), cp, pAdvancedWidth, pLeftSideBearing);
-                width += pAdvancedWidth.get(0);
-
-                if (i < text.length() - 1) {
-                    width += stbtt_GetCodepointKernAdvance(font.getInfo(), cp, text.codePointAt(i + 1));
-                }
-            }
-        }
-
-        return width * stbtt_ScaleForPixelHeight(font.getInfo(), 32 * window.getContentScaleY());
+        transform.popTransform();
     }
 
     private void draw(ResourceHandle<Shader> shaderResourceHandle, ResourceHandle<Texture> textureHandle) {
-        Texture texture = resourceManager.getResourceOrDefault(textureHandle, ResourceManager.DEFAULT_TEXTURE);
+        Texture texture = resourceManager.getResourceOrDefault(textureHandle, Constants.DEFAULT_TEXTURE);
         Shader shader = resourceManager.getResource(shaderResourceHandle);
         texture.bind();
         shader.bind();
         {
             shader.uniformMat4("projection", projection);
-            shader.uniformMat4("model", model);
+            shader.uniformMat4("model", transform.model);
+            shader.uniformVec4("override_Color", transform.color);
             tessellator.draw();
-            shader.uniformVec4("overrideColor", COLOR_WHITE);
+            shader.uniformVec4("override_Color", COLOR_WHITE);
         }
         shader.unbind();
         texture.unbind();
@@ -270,5 +214,9 @@ public class RenderEngine {
 
     public Window getWindow() {
         return window;
+    }
+
+    public TransformStack getTransform() {
+        return transform;
     }
 }

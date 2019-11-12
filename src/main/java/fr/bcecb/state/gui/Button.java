@@ -7,9 +7,8 @@ import fr.bcecb.render.RenderEngine;
 import fr.bcecb.render.RenderManager;
 import fr.bcecb.render.Renderer;
 import fr.bcecb.resources.ResourceHandle;
-import fr.bcecb.resources.ResourceManager;
 import fr.bcecb.resources.Texture;
-import org.joml.Vector4f;
+import fr.bcecb.util.Constants;
 
 public class Button extends GuiElement {
     private String title;
@@ -62,8 +61,8 @@ public class Button extends GuiElement {
         super(id, x - (centered ? (width / 2) : 0), y - (centered ? (height / 2) : 0), width, height);
         this.title = title;
         this.titleScale = Math.min(titleScale, 1.0f);
-        this.texture = MoreObjects.firstNonNull(texture, ResourceManager.DEFAULT_TEXTURE);
-        this.onHoverTexture = MoreObjects.firstNonNull(onHoverTexture, ResourceManager.DEFAULT_TEXTURE);
+        this.texture = MoreObjects.firstNonNull(texture, Constants.DEFAULT_TEXTURE);
+        this.onHoverTexture = MoreObjects.firstNonNull(onHoverTexture, Constants.DEFAULT_TEXTURE);
     }
 
     public float getHoveredTicks() {
@@ -138,23 +137,19 @@ public class Button extends GuiElement {
 
         @Override
         public ResourceHandle<Texture> getTexture(Button button) {
-            if (button.isHovered()) {
-                return button.getOnHoverTexture();
-            } else {
-                return button.getTexture();
-            }
+            return button.isHovered() ? button.getOnHoverTexture() : button.getTexture();
         }
 
         @Override
         public void render(Button button, float partialTick) {
-            RenderEngine renderEngine = renderManager.getRenderEngine();
+            RenderEngine engine = renderManager.getRenderEngine();
 
             float effect = bouncyEffect(button, 5, 5, 3);
 
-            renderEngine.drawTexturedRect(button.getX() - effect, button.getY() - effect, button.getX() + button.getWidth() + effect, button.getY() + button.getHeight() + effect, getTexture(button));
+            engine.drawRect(getTexture(button), button.getX() - effect, button.getY() - effect, button.getX() + button.getWidth() + effect, button.getY() + button.getHeight() + effect);
 
             if (!Strings.isNullOrEmpty(button.getTitle())) {
-                renderEngine.drawCenteredText(ResourceManager.DEFAULT_FONT, button.getTitle(), button.getX() + (button.getWidth() / 2.0f), button.getY() + (button.getHeight() / 2.0f), button.getTitleScale(), new Vector4f(0.0f, 0.0f, 0.0f, 1.0f));
+                engine.drawCenteredText(Constants.DEFAULT_FONT, button.getTitle(), button.getX() + (button.getWidth() / 2.0f), button.getY() + (button.getHeight() / 2.0f), button.getTitleScale());
             }
         }
 

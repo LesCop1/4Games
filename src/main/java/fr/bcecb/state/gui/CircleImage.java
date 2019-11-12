@@ -13,6 +13,11 @@ public class CircleImage extends Image {
         this.radius = radius;
     }
 
+    @Override
+    boolean checkBounds(float x, float y) {
+        return super.checkBounds(x, y) && Math.pow((getX() + getRadius()) - x, 2) + Math.pow((getY() + getRadius()) - y, 2) < Math.pow(getRadius(), 2);
+    }
+
     public float getRadius() {
         return radius;
     }
@@ -33,7 +38,7 @@ public class CircleImage extends Image {
 
         @Override
         public void render(CircleImage circleImage, float partialTick) {
-            renderManager.getRenderEngine().drawTexturedCircle(circleImage.getX(), circleImage.getY(), circleImage.getRadius(), getTexture(circleImage));
+            renderManager.getRenderEngine().drawCircle(getTexture(circleImage), circleImage.getX(), circleImage.getY(), circleImage.getRadius());
         }
     }
 }
