@@ -1,11 +1,7 @@
 package fr.bcecb.state.gui;
 
 import com.google.common.base.MoreObjects;
-import com.google.common.base.Strings;
 import fr.bcecb.event.MouseEvent;
-import fr.bcecb.render.RenderEngine;
-import fr.bcecb.render.RenderManager;
-import fr.bcecb.render.Renderer;
 import fr.bcecb.resources.ResourceHandle;
 import fr.bcecb.resources.Texture;
 import fr.bcecb.util.Constants;
@@ -127,54 +123,5 @@ public class Button extends GuiElement {
 
     public void setOnHoverTexture(ResourceHandle<Texture> onHoverTexture) {
         this.onHoverTexture = onHoverTexture;
-    }
-
-    public static class ButtonRenderer extends Renderer<Button> {
-
-        public ButtonRenderer(RenderManager renderManager) {
-            super(renderManager);
-        }
-
-        @Override
-        public ResourceHandle<Texture> getTexture(Button button) {
-            return button.isHovered() ? button.getOnHoverTexture() : button.getTexture();
-        }
-
-        @Override
-        public void render(Button button, float partialTick) {
-            RenderEngine engine = renderManager.getRenderEngine();
-
-            float effect = bouncyEffect(button, 5, 5, 3);
-
-            engine.drawRect(getTexture(button), button.getX() - effect, button.getY() - effect, button.getX() + button.getWidth() + effect, button.getY() + button.getHeight() + effect);
-
-            if (!Strings.isNullOrEmpty(button.getTitle())) {
-                engine.drawCenteredText(Constants.DEFAULT_FONT, button.getTitle(), button.getX() + (button.getWidth() / 2.0f), button.getY() + (button.getHeight() / 2.0f), button.getTitleScale());
-            }
-        }
-
-        private float bouncyEffect(Button button, int offset, int bouncePower, int bounceSpeed) {
-            boolean bounce = true;
-            if (button.isEnabled() && button.isHovered()) {
-                if (button.getHoveredTicks() < (180 / ((float) bounceSpeed)) + offset) {
-                    button.incHoveredTicks();
-                } else {
-                    button.setTicksHovered(offset);
-                }
-            } else {
-                bounce = false;
-                if (button.getHoveredTicks() < (offset + bouncePower)) {
-                    button.decHoveredTicks();
-                } else {
-                    button.setTicksHovered((float) Math.floor(offset + (bouncePower * Math.sin(Math.toRadians((button.getHoveredTicks() - offset) * bounceSpeed)))));
-                }
-            }
-
-            if ((button.getHoveredTicks() < offset) || !bounce) {
-                return button.getHoveredTicks();
-            } else {
-                return (float) (offset + (bouncePower * Math.sin(Math.toRadians((button.getHoveredTicks() - offset) * bounceSpeed))));
-            }
-        }
     }
 }

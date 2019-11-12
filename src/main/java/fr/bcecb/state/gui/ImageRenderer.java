@@ -28,13 +28,13 @@ public class ImageRenderer extends Renderer<Image> {
             float offsetW = image.getWidth() - (closestTo0Ratio * imageWidth);
             float offsetH = image.getHeight() - (closestTo0Ratio * imageHeight);
 
-            renderManager.getRenderEngine().drawTexturedRect(getTexture(image), image.getX() + (offsetW / 2),
+            renderManager.getRenderEngine().drawRect(getTexture(image), image.getX() + (offsetW / 2),
                     image.getY() + (offsetH / 2),
                     image.getX() + (offsetW / 2) + (closestTo0Ratio * imageWidth),
                     image.getY() + (offsetH / 2) + (closestTo0Ratio * imageHeight));
 
         } else {
-            renderManager.getRenderEngine().drawTexturedRect(getTexture(image), image.getX(), image.getY(), image.getX() + image.getWidth(), image.getY() + image.getHeight());
+            renderManager.getRenderEngine().drawRect(getTexture(image), image.getX(), image.getY(), image.getX() + image.getWidth(), image.getY() + image.getHeight());
         }
     }
 }

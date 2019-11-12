@@ -1,8 +1,6 @@
 package fr.bcecb.state.gui;
 
 import fr.bcecb.event.MouseEvent;
-import fr.bcecb.render.RenderManager;
-import fr.bcecb.render.Renderer;
 import fr.bcecb.resources.ResourceHandle;
 import fr.bcecb.resources.Texture;
 
@@ -50,5 +48,4 @@ public class Image extends GuiElement {
     public void onScroll(MouseEvent.Scroll event) {
 
     }
-
 }

@@ -17,6 +17,6 @@ public class CircleImageRenderer extends Renderer<CircleImage> {
 
     @Override
     public void render(CircleImage circleImage, float partialTick) {
-        renderManager.getRenderEngine().drawTexturedCircle(getTexture(circleImage), circleImage.getX(), circleImage.getY(), circleImage.getRadius());
+        renderManager.getRenderEngine().drawCircle(getTexture(circleImage), circleImage.getX(), circleImage.getY(), circleImage.getRadius());
     }
 }

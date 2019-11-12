@@ -2,12 +2,6 @@ package fr.bcecb.state.gui;
 
 import com.google.common.base.MoreObjects;
 import fr.bcecb.event.MouseEvent;
-import fr.bcecb.render.RenderEngine;
-import fr.bcecb.render.RenderManager;
-import fr.bcecb.render.Renderer;
-import fr.bcecb.resources.ResourceHandle;
-import fr.bcecb.resources.Texture;
-import fr.bcecb.util.TransformStack;
 import org.joml.Vector4f;
 
 public class Rectangle extends GuiElement {
@@ -45,28 +39,4 @@ public class Rectangle extends GuiElement {
         this.color = color;
     }
 
-    public static class LineRenderer extends Renderer<Rectangle> {
-
-        public LineRenderer(RenderManager renderManager) {
-            super(renderManager);
-        }
-
-        @Override
-        public ResourceHandle<Texture> getTexture(Rectangle rect) {
-            return null;
-        }
-
-        @Override
-        public void render(Rectangle rect, float partialTick) {
-            RenderEngine engine = renderManager.getRenderEngine();
-            TransformStack transform = engine.getTransform();
-
-            transform.pushTransform();
-            {
-                transform.color(rect.getColor());
-                engine.drawRect(null, rect.getX(), rect.getY(), rect.getWidth(), rect.getHeight());
-            }
-            transform.popTransform();
-        }
-    }
 }

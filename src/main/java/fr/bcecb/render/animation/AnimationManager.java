@@ -1,8 +1,6 @@
 package fr.bcecb.render.animation;
 
-import fr.bcecb.render.IRenderable;
 import fr.bcecb.render.RenderEngine;
-import fr.bcecb.render.Renderer;
 import fr.bcecb.resources.ResourceManager;
 
 import java.util.HashMap;
@@ -28,7 +26,7 @@ public class AnimationManager {
 
     private <T extends IAnimatable, A extends Animator<T>> A getAnimatorFor(Class<? extends IAnimatable> clazz) {
         A animator = (A) this.animators.get(clazz);
-        if (animator == null && clazz != IRenderable.class) {
+        if (animator == null && clazz != IAnimatable.class) {
             animator = this.getAnimatorFor((Class<? extends IAnimatable>) clazz.getSuperclass());
             this.animators.put(clazz, animator);
         }

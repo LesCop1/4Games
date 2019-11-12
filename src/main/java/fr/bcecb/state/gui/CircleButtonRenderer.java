@@ -18,6 +18,6 @@ public class CircleButtonRenderer extends Renderer<CircleButton> {
 
     @Override
     public void render(CircleButton button, float partialTick) {
-        renderManager.getRenderEngine().drawTexturedCircle(getTexture(button), button.getX(), button.getY(), button.getRadius());
+        renderManager.getRenderEngine().drawCircle(getTexture(button), button.getX(), button.getY(), button.getRadius());
     }
 }

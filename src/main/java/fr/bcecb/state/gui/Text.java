@@ -2,10 +2,6 @@ package fr.bcecb.state.gui;
 
 import com.google.common.base.MoreObjects;
 import fr.bcecb.event.MouseEvent;
-import fr.bcecb.render.RenderManager;
-import fr.bcecb.render.Renderer;
-import fr.bcecb.resources.ResourceHandle;
-import fr.bcecb.resources.Texture;
 import fr.bcecb.util.Constants;
 import org.joml.Vector4f;
 
@@ -81,26 +77,5 @@ public class Text extends GuiElement {
     @Override
     public void onScroll(MouseEvent.Scroll event) {
 
-    }
-
-    public static class TextRenderer extends Renderer<Text> {
-
-        public TextRenderer(RenderManager renderManager) {
-            super(renderManager);
-        }
-
-        @Override
-        public ResourceHandle<Texture> getTexture(Text text) {
-            return null;
-        }
-
-        @Override
-        public void render(Text text, float partialTick) {
-            if (text.isCentered()) {
-                renderManager.getRenderEngine().drawCenteredText(Constants.DEFAULT_FONT, text.getText(), text.getX(), text.getY(), text.getScale());
-            } else {
-                renderManager.getRenderEngine().drawText(Constants.DEFAULT_FONT, text.getText(), text.getX(), text.getY(), text.getScale());
-            }
-        }
     }
 }
