@@ -1,5 +1,6 @@
 package fr.bcecb.state.gui;
 
+import com.google.common.base.MoreObjects;
 import com.google.common.base.Strings;
 import fr.bcecb.event.MouseEvent;
 import fr.bcecb.render.RenderEngine;
@@ -12,10 +13,9 @@ import org.joml.Vector4f;
 
 public class Button extends GuiElement {
     private String title;
-    private ResourceHandle<Texture> onHoverTexture = new ResourceHandle<>("textures/defaultButtonHover.png") {
-    };
-    private ResourceHandle<Texture> texture = new ResourceHandle<>("textures/defaultButton.png") {
-    };
+    private float titleScale;
+    private ResourceHandle<Texture> texture;
+    private ResourceHandle<Texture> onHoverTexture;
     private float ticksHovered = 0;
 
     public Button(int id, float x, float y, float width, float height) {
@@ -23,42 +23,47 @@ public class Button extends GuiElement {
     }
 
     public Button(int id, float x, float y, float width, float height, boolean centered) {
-        this(id, x, y, width, height, centered, null, null);
+        this(id, x, y, width, height, centered, (String) null);
     }
 
     public Button(int id, float x, float y, float width, float height, String title) {
-        this(id, x, y, width, height, false, title, null);
+        this(id, x, y, width, height, false, title, 1.0f, null);
+    }
+
+    public Button(int id, float x, float y, float width, float height, String title, float titleScale) {
+        this(id, x, y, width, height, false, title, titleScale, null);
     }
 
     public Button(int id, float x, float y, float width, float height, ResourceHandle<Texture> texture) {
-        this(id, x, y, width, height, false, null, texture);
+        this(id, x, y, width, height, false, null, 1.0f, texture);
     }
 
     public Button(int id, float x, float y, float width, float height, boolean centered, String title) {
-        this(id, x, y, width, height, centered, title, null);
+        this(id, x, y, width, height, centered, title, 1.0f, null);
     }
 
-    public Button(int id, float x, float y, float width, float height, String title, ResourceHandle<Texture> texture) {
-        this(id, x, y, width, height, false, title, texture);
+    public Button(int id, float x, float y, float width, float height, boolean centered, String title, float titleScale) {
+        this(id, x, y, width, height, centered, title, titleScale, null);
     }
 
     public Button(int id, float x, float y, float width, float height, boolean centered, ResourceHandle<Texture> texture) {
-        this(id, x, y, width, height, centered, null, texture);
+        this(id, x, y, width, height, centered, null, 1.0f, texture);
     }
 
     public Button(int id, float x, float y, float width, float height, boolean centered, String title, ResourceHandle<Texture> texture) {
-        this(id, x, y, width, height, centered, title, texture, texture);
+        this(id, x, y, width, height, centered, title, 1.0f, texture, texture);
     }
 
-    public Button(int id, float x, float y, float width, float height, boolean centered, String title, ResourceHandle<Texture> texture, ResourceHandle<Texture> onHoverTexture) {
+    public Button(int id, float x, float y, float width, float height, boolean centered, String title, float titleScale, ResourceHandle<Texture> texture) {
+        this(id, x, y, width, height, centered, title, titleScale, texture, texture);
+    }
+
+    public Button(int id, float x, float y, float width, float height, boolean centered, String title, float titleScale, ResourceHandle<Texture> texture, ResourceHandle<Texture> onHoverTexture) {
         super(id, x - (centered ? (width / 2) : 0), y - (centered ? (height / 2) : 0), width, height);
         this.title = title;
-        if (texture != null) {
-            this.texture = texture;
-        }
-        if (onHoverTexture != null) {
-            this.onHoverTexture = onHoverTexture;
-        }
+        this.titleScale = Math.min(titleScale, 1.0f);
+        this.texture = MoreObjects.firstNonNull(texture, ResourceManager.DEFAULT_TEXTURE);
+        this.onHoverTexture = MoreObjects.firstNonNull(onHoverTexture, ResourceManager.DEFAULT_TEXTURE);
     }
 
     public float getHoveredTicks() {
@@ -101,6 +106,14 @@ public class Button extends GuiElement {
         this.title = title;
     }
 
+    public float getTitleScale() {
+        return titleScale;
+    }
+
+    public void setTitleScale(float titleScale) {
+        this.titleScale = titleScale;
+    }
+
     public ResourceHandle<Texture> getTexture() {
         return texture;
     }
@@ -138,10 +151,10 @@ public class Button extends GuiElement {
 
             float effect = bouncyEffect(button, 5, 5, 3);
 
-            renderEngine.drawTexturedRect(getTexture(button), button.getX() - effect, button.getY() - effect, button.getX() + button.getWidth() + effect, button.getY() + button.getHeight() + effect);
+            renderEngine.drawTexturedRect(button.getX() - effect, button.getY() - effect, button.getX() + button.getWidth() + effect, button.getY() + button.getHeight() + effect, getTexture(button));
 
             if (!Strings.isNullOrEmpty(button.getTitle())) {
-                renderEngine.drawCenteredText(ResourceManager.DEFAULT_FONT, button.getTitle(), button.getX() + (button.getWidth() / 2.0f), button.getY() + (button.getHeight() / 2.0f), 1.0f, new Vector4f(0.0f, 0.0f, 0.0f, 1.0f));
+                renderEngine.drawCenteredText(ResourceManager.DEFAULT_FONT, button.getTitle(), button.getX() + (button.getWidth() / 2.0f), button.getY() + (button.getHeight() / 2.0f), button.getTitleScale(), new Vector4f(0.0f, 0.0f, 0.0f, 1.0f));
             }
         }
 
