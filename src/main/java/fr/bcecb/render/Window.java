@@ -20,9 +20,6 @@ import static org.lwjgl.system.MemoryUtil.NULL;
 public class Window {
     private final long windowId;
 
-    private final MouseManager mouseManager;
-    private final KeyboardManager keyboardManager;
-
     private int width;
     private int height;
 
@@ -33,8 +30,8 @@ public class Window {
         this.contentScaleX = contentScaleX;
         this.contentScaleY = contentScaleY;
 
-        this.mouseManager = new MouseManager(this);
-        this.keyboardManager = new KeyboardManager(this);
+        MouseManager mouseManager = new MouseManager(this);
+        KeyboardManager keyboardManager = new KeyboardManager(this);
     }
 
     public static Window newInstance(String title, int width, int height, boolean fullscreen) {
@@ -80,29 +77,29 @@ public class Window {
 
         Window window = new Window(title, width, height, contentScaleX, contentScaleY, fullscreen);
 
-        if (window.getId() == NULL) {
+        if (window.windowId == NULL) {
             return null;
         }
 
         if (!fullscreen) {
             if (vidMode != null) {
-                glfwSetWindowPos(window.getId(), (vidMode.width() - width) / 2, (vidMode.height() - height) / 2);
+                glfwSetWindowPos(window.windowId, (vidMode.width() - width) / 2, (vidMode.height() - height) / 2);
             } else Log.SYSTEM.warning("No video mode available !");
         }
 
-        glfwSetWindowSizeCallback(window.getId(), window::setWindowSize);
-        glfwSetFramebufferSizeCallback(window.getId(), window::setFramebufferSize);
-        glfwSetWindowCloseCallback(window.getId(), window::close);
+        glfwSetWindowSizeCallback(window.windowId, window::setWindowSize);
+        glfwSetFramebufferSizeCallback(window.windowId, window::setFramebufferSize);
+        glfwSetWindowCloseCallback(window.windowId, window::close);
 
-        glfwMakeContextCurrent(window.getId());
+        glfwMakeContextCurrent(window.windowId);
         glfwSwapInterval(1);
 
         return window;
     }
 
     public void show() {
-        glfwShowWindow(getId());
-        glfwInvoke(getId(), this::setWindowSize, this::setFramebufferSize);
+        glfwShowWindow(windowId);
+        glfwInvoke(windowId, this::setWindowSize, this::setFramebufferSize);
     }
 
     public float getContentScaleX() {
@@ -115,14 +112,6 @@ public class Window {
 
     public static Window getCurrentWindow() {
         return Game.instance().getRenderEngine().getWindow();
-    }
-
-    public MouseManager getMouseManager() {
-        return mouseManager;
-    }
-
-    public KeyboardManager getKeyboardManager() {
-        return keyboardManager;
     }
 
     public void destroy() {
@@ -139,10 +128,6 @@ public class Window {
 
     public int getHeight() {
         return height;
-    }
-
-    public boolean shouldClose() {
-        return glfwWindowShouldClose(windowId);
     }
 
     private void close(long window) {

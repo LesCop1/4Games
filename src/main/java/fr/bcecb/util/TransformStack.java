@@ -1,7 +1,5 @@
 package fr.bcecb.util;
 
-import com.google.errorprone.annotations.CanIgnoreReturnValue;
-
 public class TransformStack extends Transform {
     private Transform[] transforms;
 
@@ -19,14 +17,12 @@ public class TransformStack extends Transform {
         }
     }
 
-    @CanIgnoreReturnValue
     public Transform clear() {
         this.current = 0;
         identity();
         return this;
     }
 
-    @CanIgnoreReturnValue
     public TransformStack pushTransform() {
         if (current == transforms.length) {
             throw new IllegalStateException("Max transform stack size of " + (current + 1) + " reached");
@@ -36,12 +32,12 @@ public class TransformStack extends Transform {
         return this;
     }
 
-    @CanIgnoreReturnValue
     public TransformStack popTransform() {
         set(transforms[--current]);
         return this;
     }
 
+    @SuppressWarnings("NonFinalFieldReferencedInHashCode")
     public int hashCode() {
         final int prime = 31;
         int result = super.hashCode();

@@ -6,7 +6,7 @@ import fr.bcecb.render.RenderManager;
 import fr.bcecb.render.Renderer;
 import fr.bcecb.resources.ResourceHandle;
 import fr.bcecb.resources.Texture;
-import fr.bcecb.util.Constants;
+import fr.bcecb.util.Resources;
 import fr.bcecb.util.TransformStack;
 
 public class ButtonRenderer extends Renderer<Button> {
@@ -17,7 +17,7 @@ public class ButtonRenderer extends Renderer<Button> {
 
     @Override
     public ResourceHandle<Texture> getTexture(Button button) {
-        return button.isHovered() ? button.getOnHoverTexture() : button.getTexture();
+        return button.isHovered() ? button.getHoverTexture() : button.getTexture();
     }
 
     @Override
@@ -36,7 +36,7 @@ public class ButtonRenderer extends Renderer<Button> {
             renderEngine.drawRect(getTexture(button), 0, 0, button.getWidth(), button.getHeight(), true);
 
             if (!Strings.isNullOrEmpty(button.getTitle())) {
-                renderEngine.drawCenteredText(Constants.DEFAULT_FONT, button.getTitle(), 0, 0, button.getTitleScale());
+                renderEngine.drawCenteredText(Resources.DEFAULT_FONT, button.getTitle(), 0, 0, button.getTitleScale());
             }
         }
         transform.popTransform();

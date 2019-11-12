@@ -13,7 +13,7 @@ public class CircleImage extends Image {
 
     @Override
     boolean checkBounds(float x, float y) {
-        return super.checkBounds(x, y) && Math.pow((getX() + getRadius()) - x, 2) + Math.pow((getY() + getRadius()) - y, 2) < Math.pow(getRadius(), 2);
+        return super.checkBounds(x, y) && Math.pow((getX() + radius) - x, 2) + Math.pow((getY() + radius) - y, 2) < Math.pow(radius, 2);
     }
 
     public float getRadius() {

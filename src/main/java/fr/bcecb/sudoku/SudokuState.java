@@ -87,7 +87,6 @@ public class SudokuState extends ScreenState {
 
 
     private static <T> Collector<T, ?, List<T>> toShuffledList() {
-        //noinspection unchecked
         return (Collector<T, ?, List<T>>) SHUFFLER;
     }
 
@@ -358,7 +357,7 @@ public class SudokuState extends ScreenState {
         setBackgroundTexture(new ResourceHandle<>("textures/arche.jpg") {
         });
         GuiElement backButton = new Button(999, 0, 0, 50 / ((float) 1920 / width), 50 / ((float) 1920 / width), false, new ResourceHandle<>("textures/back_button.png") {
-        }).setClickHandler(e -> Game.instance().getStateEngine().popState());
+        }).setClickHandler((id, e) -> Game.instance().getStateEngine().popState());
         text = new Text(99, 960, 540, "YOU WON !", false);
         text.setVisible(false);
         addGuiElement(backButton, text);
@@ -371,12 +370,12 @@ public class SudokuState extends ScreenState {
                 });
 
                 if (generateGrid[j][i] == 0) {
-                    button.setClickHandler(e -> {
+                    button.setClickHandler((id, e) -> {
                         for (Button candidateValue : buttonsCandidateValues) {
                             candidateValue.setVisible(false);
                         }
-                        int x = button.getId() % 9;
-                        int y = button.getId() / 9;
+                        int x = id % 9;
+                        int y = id / 9;
                         if (grid[x][y] == 0) {
                             buttonsCase.add(button);
                             int[] candidatesValues = computeCandidates(x, y);
@@ -384,7 +383,7 @@ public class SudokuState extends ScreenState {
                                 int value = candidatesValues[l];
                                 buttonsCandidateValues[l].setTitle(String.valueOf(value));
                                 buttonsCandidateValues[l].setVisible(true);
-                                buttonsCandidateValues[l].setClickHandler(f -> {
+                                buttonsCandidateValues[l].setClickHandler((id1, e1) -> {
                                     button.setTitle(String.valueOf(value));
                                     grid[x][y] = value;
 
@@ -398,7 +397,7 @@ public class SudokuState extends ScreenState {
                             grid[x][y] = 0;
                         }
                     });
-                } else button.setEnabled(false);
+                } else button.setDisabled(false);
 
                 addGuiElement(button);
             }
@@ -415,7 +414,7 @@ public class SudokuState extends ScreenState {
             text.setVisible(true);
 
             for (Button buttonCase : buttonsCase) {
-                buttonCase.setEnabled(false);
+                buttonCase.setDisabled(false);
             }
         }
     }

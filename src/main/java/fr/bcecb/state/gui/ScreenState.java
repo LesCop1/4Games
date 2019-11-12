@@ -6,7 +6,7 @@ import fr.bcecb.event.MouseEvent;
 import fr.bcecb.resources.ResourceHandle;
 import fr.bcecb.resources.Texture;
 import fr.bcecb.state.State;
-import fr.bcecb.util.Constants;
+import fr.bcecb.util.Resources;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -17,24 +17,22 @@ import static fr.bcecb.event.MouseEvent.Click.Type.RELEASED;
 
 public abstract class ScreenState extends State {
     private final Set<GuiElement> guiElements = Sets.newTreeSet(Comparator.comparingInt(GuiElement::getId));
-    private ResourceHandle<Texture> backgroundTexture = Constants.DEFAULT_TEXTURE;
+    private ResourceHandle<Texture> backgroundTexture = Resources.DEFAULT_BACKGROUND_TEXTURE;
 
-    protected ScreenState(String name) {
+    public ScreenState(String name) {
         super(name);
     }
 
-    public abstract void initGui();
-
-    protected final void addGuiElement(GuiElement... elements) {
+    public final void addGuiElement(GuiElement... elements) {
         guiElements.addAll(Arrays.asList(elements));
-    }
-
-    protected final void removeGuiElement(GuiElement element) {
-        guiElements.remove(element);
     }
 
     public final void clearGuiElements() {
         guiElements.clear();
+    }
+
+    public final Collection<GuiElement> getGuiElements() {
+        return guiElements;
     }
 
     public void setBackgroundTexture(ResourceHandle<Texture> backgroundTexture) {
@@ -45,18 +43,14 @@ public abstract class ScreenState extends State {
         return backgroundTexture;
     }
 
-    public final Collection<GuiElement> getGuiElements() {
-        return guiElements;
-    }
-
     @Override
     public boolean shouldRenderBelow() {
         return false;
     }
 
     @Override
-    public boolean shouldUpdateBelow() {
-        return false;
+    public boolean shouldPauseBelow() {
+        return true;
     }
 
     @Override
@@ -78,13 +72,13 @@ public abstract class ScreenState extends State {
 
     public void onClick(MouseEvent.Click event) {
         for (GuiElement element : getGuiElements()) {
-            if (!element.isVisible() || !element.isEnabled()) continue;
+            if (!element.isVisible() || element.isDisabled()) continue;
 
             if (!event.isCancelled() && event.getType() == RELEASED && element.checkBounds(event.getX(), event.getY())) {
                 element.onClick(event);
 
                 if (element.getClickHandler() != null) {
-                    element.getClickHandler().accept(event);
+                    element.getClickHandler().accept(element.getId(), event);
                 }
 
                 event.setCancelled(true);
@@ -102,7 +96,7 @@ public abstract class ScreenState extends State {
                 element.onHover(event);
 
                 if (element.getHoverHandler() != null) {
-                    element.getHoverHandler().accept(event);
+                    element.getHoverHandler().accept(element.getId(), event);
                 }
 
                 event.setCancelled(true);
@@ -112,17 +106,19 @@ public abstract class ScreenState extends State {
 
     public void onScroll(MouseEvent.Scroll event) {
         for (GuiElement element : getGuiElements()) {
-            if (!element.isVisible() || !element.isEnabled()) continue;
+            if (!element.isVisible() || element.isDisabled()) continue;
 
             if (element.isHovered()) {
                 element.onScroll(event);
 
                 if (element.getScrollHandler() != null) {
-                    element.getScrollHandler().accept(event);
+                    element.getScrollHandler().accept(element.getId(), event);
                 }
 
                 event.setCancelled(true);
             }
         }
     }
+
+    public abstract void initGui();
 }

@@ -3,22 +3,11 @@ package fr.bcecb.util;
 import org.joml.Matrix4f;
 import org.joml.Vector4f;
 
-import javax.annotation.Nonnull;
-
 public class Transform {
     public final Matrix4f model = new Matrix4f();
     public final Vector4f color = new Vector4f(1.0f);
 
     public Transform() {
-    }
-
-    public Transform(@Nonnull Transform transform) {
-        this(transform.model, transform.color);
-    }
-
-    public Transform(Matrix4f model, Vector4f color) {
-        this.model.set(model);
-        this.color.set(color);
     }
 
     public Transform identity() {
@@ -51,14 +40,6 @@ public class Transform {
     public Transform color(Vector4f color) {
         this.color.mul(color);
         return this;
-    }
-
-    public Matrix4f model() {
-        return model;
-    }
-
-    public Vector4f color() {
-        return color;
     }
 
     @Override

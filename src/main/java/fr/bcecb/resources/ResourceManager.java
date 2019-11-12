@@ -2,8 +2,8 @@ package fr.bcecb.resources;
 
 import com.google.common.base.MoreObjects;
 import com.google.common.collect.Maps;
-import fr.bcecb.util.Constants;
 import fr.bcecb.util.Log;
+import fr.bcecb.util.Resources;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -16,8 +16,8 @@ public class ResourceManager {
     private final Map<ResourceHandle, IResource> LOADED_RESOURCES = Maps.newHashMap();
 
     public ResourceManager() {
-        DEFAULT_RESOURCES.put(Shader.class, Constants.DEFAULT_SHADER);
-        DEFAULT_RESOURCES.put(Texture.class, Constants.DEFAULT_TEXTURE);
+        DEFAULT_RESOURCES.put(Shader.class, Resources.DEFAULT_SHADER);
+        DEFAULT_RESOURCES.put(Texture.class, Resources.DEFAULT_TEXTURE);
     }
 
     public <R extends IResource> R getResourceOrDefault(ResourceHandle<R> handle, ResourceHandle<R> defaultHandle) {
@@ -28,7 +28,6 @@ public class ResourceManager {
         if (handle == null) {
             return null;
         }
-
 
         R resource;
         if (!LOADED_RESOURCES.containsKey(handle)) {

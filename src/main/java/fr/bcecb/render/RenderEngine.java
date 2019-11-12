@@ -2,10 +2,7 @@ package fr.bcecb.render;
 
 import fr.bcecb.resources.*;
 import fr.bcecb.state.StateEngine;
-import fr.bcecb.util.Constants;
-import fr.bcecb.util.Log;
-import fr.bcecb.util.TextRendering;
-import fr.bcecb.util.TransformStack;
+import fr.bcecb.util.*;
 import org.joml.Matrix4f;
 import org.lwjgl.opengl.GL;
 import org.lwjgl.stb.STBTTAlignedQuad;
@@ -13,7 +10,6 @@ import org.lwjgl.system.MemoryStack;
 
 import java.nio.FloatBuffer;
 
-import static fr.bcecb.util.Constants.COLOR_WHITE;
 import static org.lwjgl.glfw.GLFW.glfwTerminate;
 import static org.lwjgl.opengl.GL45.*;
 import static org.lwjgl.stb.STBTruetype.*;
@@ -43,12 +39,13 @@ public class RenderEngine {
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-        this.baseMesh = new Mesh.Builder(4)
-                .uv(0.0f, 0.0f).vertex(0.0f, 0.0f)
-                .uv(1.0f, 0.0f).vertex(1.0f, 0.0f)
-                .uv(1.0f, 1.0f).vertex(1.0f, 1.0f)
-                .uv(0.0f, 1.0f).vertex(0.0f, 1.0f)
-                .build();
+        Mesh.Builder baseMeshBuilder = new Mesh.Builder(4);
+        baseMeshBuilder.uv(0.0f, 0.0f).vertex(0.0f, 0.0f);
+        baseMeshBuilder.uv(1.0f, 0.0f).vertex(1.0f, 0.0f);
+        baseMeshBuilder.uv(1.0f, 1.0f).vertex(1.0f, 1.0f);
+        baseMeshBuilder.uv(0.0f, 1.0f).vertex(0.0f, 1.0f);
+
+        this.baseMesh = baseMeshBuilder.build();
     }
 
     public void cleanUp() {
@@ -73,7 +70,7 @@ public class RenderEngine {
         float height = Window.getCurrentWindow().getHeight();
         float screenAspectRatio = width / height;
 
-        Texture texture = resourceManager.getResourceOrDefault(textureHandle, Constants.DEFAULT_TEXTURE);
+        Texture texture = resourceManager.getResourceOrDefault(textureHandle, Resources.DEFAULT_TEXTURE);
         float imageWidth = texture.getWidth();
         float imageHeight = texture.getHeight();
         float textureAspectRatio = imageWidth / imageHeight;
@@ -106,7 +103,7 @@ public class RenderEngine {
             transform.translate(minX, minY);
             transform.scale(maxX - minX, maxY - minY);
 
-            draw(Constants.DEFAULT_SHADER, textureHandle);
+            draw(Resources.DEFAULT_SHADER, textureHandle);
         }
         transform.popTransform();
     }
@@ -116,13 +113,13 @@ public class RenderEngine {
         {
             transform.translate(x, y);
             transform.scale(radius * 2, radius * 2);
-            draw(Constants.CIRCLE_SHADER, textureHandle);
+            draw(Resources.CIRCLE_SHADER, textureHandle);
         }
         transform.popTransform();
     }
 
     public void drawCenteredText(ResourceHandle<Font> fontHandle, String text, float x, float y, float scale) {
-        Font font = resourceManager.getResourceOrDefault(fontHandle, Constants.DEFAULT_FONT);
+        Font font = resourceManager.getResourceOrDefault(fontHandle, Resources.DEFAULT_FONT);
 
         if (font != null) {
             float height = ((font.getDescent() - font.getAscent()) / 2.0f) * stbtt_ScaleForPixelHeight(font.getInfo(), 32 * window.getContentScaleY()) * scale;
@@ -139,78 +136,72 @@ public class RenderEngine {
     }
 
     public void drawText(ResourceHandle<Font> fontHandle, String text, float x, float y, float scale) {
-        Shader shader = resourceManager.getResource(Constants.FONT_SHADER);
-        Font font = resourceManager.getResourceOrDefault(fontHandle, Constants.DEFAULT_FONT);
+        Font font = resourceManager.getResourceOrDefault(fontHandle, Resources.DEFAULT_FONT);
 
         transform.pushTransform();
         {
             if (font != null) {
-                transform.translate(x, y);
-                transform.scale(scale / window.getContentScaleX(), scale / window.getContentScaleY());
-
-                shader.bind();
+                font.bind();
                 {
+                    transform.translate(x, y);
+                    transform.scale(scale / window.getContentScaleX(), scale / window.getContentScaleY());
+
                     float pixelScale = stbtt_ScaleForPixelHeight(font.getInfo(), 32 * scale * window.getContentScaleY());
-                    font.bind();
-                    {
-                        try (MemoryStack stack = MemoryStack.stackPush()) {
-                            FloatBuffer xBuffer = stack.mallocFloat(1);
-                            FloatBuffer yBuffer = stack.mallocFloat(1);
-                            STBTTAlignedQuad quad = STBTTAlignedQuad.malloc();
 
-                            Mesh textMesh;
+                    try (MemoryStack stack = MemoryStack.stackPush()) {
+                        FloatBuffer xBuffer = stack.mallocFloat(1);
+                        FloatBuffer yBuffer = stack.mallocFloat(1);
+                        STBTTAlignedQuad quad = STBTTAlignedQuad.malloc();
 
-                            for (int i = 0; i < text.length(); ++i) {
-                                int cp = text.codePointAt(i);
-                                if (cp == '\n') {
-                                    yBuffer.put(0, yBuffer.get(0) + (font.getAscent() - font.getDescent() + font.getLineGap()) * pixelScale);
-                                    xBuffer.put(0, 0.0f);
-                                    continue;
-                                }
-
-                                stbtt_GetBakedQuad(font.getCData(), font.getWidth(), font.getHeight(), cp - 32, xBuffer, yBuffer, quad, true);
-
-                                if (i < text.length() - 1) {
-                                    xBuffer.put(0, xBuffer.get(0) + stbtt_GetCodepointKernAdvance(font.getInfo(), cp, text.codePointAt(i + 1)) * pixelScale);
-                                }
-
-                                textMesh = textMeshBuilder.reset()
-                                        .color(transform.color.x, transform.color.y, transform.color.z, transform.color.w)
-                                        .uv(quad.s0(), quad.t0()).vertex(quad.x0(), quad.y0())
-                                        .uv(quad.s1(), quad.t0()).vertex(quad.x1(), quad.y0())
-                                        .uv(quad.s1(), quad.t1()).vertex(quad.x1(), quad.y1())
-                                        .uv(quad.s0(), quad.t1()).vertex(quad.x0(), quad.y1())
-                                        .build();
-
-                                shader.uniformMat4("projection", projection);
-                                shader.uniformMat4("model", transform.model);
-                                textMesh.draw(GL_TRIANGLE_FAN);
-                                shader.uniformVec4("override_Color", COLOR_WHITE);
+                        for (int i = 0; i < text.length(); ++i) {
+                            int cp = text.codePointAt(i);
+                            if (cp == '\n') {
+                                yBuffer.put(0, yBuffer.get(0) + (font.getAscent() - font.getDescent() + font.getLineGap()) * pixelScale);
+                                xBuffer.put(0, 0.0f);
+                                continue;
                             }
+
+                            stbtt_GetBakedQuad(font.getCData(), font.getWidth(), font.getHeight(), cp - 32, xBuffer, yBuffer, quad, true);
+
+                            if (i < text.length() - 1) {
+                                xBuffer.put(0, xBuffer.get(0) + stbtt_GetCodepointKernAdvance(font.getInfo(), cp, text.codePointAt(i + 1)) * pixelScale);
+                            }
+
+                            textMeshBuilder.reset();
+                            textMeshBuilder.uv(quad.s0(), quad.t0()).vertex(quad.x0(), quad.y0());
+                            textMeshBuilder.uv(quad.s1(), quad.t0()).vertex(quad.x1(), quad.y0());
+                            textMeshBuilder.uv(quad.s1(), quad.t1()).vertex(quad.x1(), quad.y1());
+                            textMeshBuilder.uv(quad.s0(), quad.t1()).vertex(quad.x0(), quad.y1());
+
+                            draw(textMeshBuilder.build(), Resources.FONT_SHADER);
                         }
                     }
-                    font.unbind();
                 }
-                shader.unbind();
+                font.unbind();
             }
         }
         transform.popTransform();
     }
 
     private void draw(ResourceHandle<Shader> shaderResourceHandle, ResourceHandle<Texture> textureHandle) {
-        Texture texture = resourceManager.getResourceOrDefault(textureHandle, Constants.DEFAULT_TEXTURE);
-        Shader shader = resourceManager.getResource(shaderResourceHandle);
+        Texture texture = resourceManager.getResourceOrDefault(textureHandle, Resources.DEFAULT_TEXTURE);
+
         texture.bind();
-        shader.bind();
         {
-            shader.uniformMat4("projection", projection);
-            shader.uniformMat4("model", transform.model);
-            shader.uniformVec4("override_Color", transform.color);
-            baseMesh.draw(GL_TRIANGLE_FAN);
-            shader.uniformVec4("override_Color", COLOR_WHITE);
+            draw(baseMesh, shaderResourceHandle);
         }
-        shader.unbind();
         texture.unbind();
+    }
+
+    private void draw(Mesh mesh, ResourceHandle<Shader> shaderResourceHandle) {
+        Shader shader = resourceManager.getResourceOrDefault(shaderResourceHandle, Resources.DEFAULT_SHADER);
+
+        shader.bind();
+        shader.uniformMat4("projection", projection);
+        shader.uniformMat4("model", transform.model);
+        shader.uniformVec4("override_Color", transform.color);
+        shader.unbind();
+        mesh.draw(GL_TRIANGLE_FAN, shader);
     }
 
     public Window getWindow() {

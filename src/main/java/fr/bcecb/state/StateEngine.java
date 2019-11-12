@@ -22,7 +22,7 @@ public class StateEngine {
     }
 
     public void pushState(State state) {
-        Event event = new StateEvent.Enter(state, getCurrentState());
+        Event event = new StateEvent.Enter(state);
         Game.EVENT_BUS.post(event);
 
         if (!event.isCancelled()) {
@@ -70,7 +70,7 @@ public class StateEngine {
         for (State state : stateStack) {
             state.onUpdate();
 
-            if (!state.shouldUpdateBelow()) break;
+            if (state.shouldPauseBelow()) break;
         }
     }
 
@@ -90,7 +90,7 @@ public class StateEngine {
                 if (event.isCancelled()) break;
             }
 
-            if (!state.shouldUpdateBelow()) break;
+            if (state.shouldPauseBelow()) break;
         }
     }
 
@@ -117,7 +117,7 @@ public class StateEngine {
 
                 if (event.isCancelled()) break;
 
-                if (!state.shouldUpdateBelow()) break;
+                if (state.shouldPauseBelow()) break;
             }
         }
     }
@@ -140,17 +140,5 @@ public class StateEngine {
                 renderer.render(state, partialTick);
             } else Log.RENDER.warning("State {0} has no renderer !", state.getName());
         }
-    }
-
-    public boolean isCurrentState(State state) {
-        return state == getCurrentState();
-    }
-
-    public State getCurrentState() {
-        return !stateStack.isEmpty() ? stateStack.peek() : null;
-    }
-
-    public Deque<State> getStateStack() {
-        return stateStack;
     }
 }

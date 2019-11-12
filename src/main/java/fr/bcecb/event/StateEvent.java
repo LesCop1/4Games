@@ -21,15 +21,8 @@ public abstract class StateEvent extends Event {
     }
 
     public static class Enter extends StateEvent {
-        private final State currentState;
-
-        public Enter(State newState, State currentState) {
+        public Enter(State newState) {
             super(newState);
-            this.currentState = currentState;
-        }
-
-        public State getCurrentState() {
-            return currentState;
         }
     }
 }

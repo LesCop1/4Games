@@ -21,6 +21,5 @@ public abstract class State implements IRenderable {
 
     public abstract boolean shouldRenderBelow();
 
-    public abstract boolean shouldUpdateBelow();
-
+    public abstract boolean shouldPauseBelow();
 }

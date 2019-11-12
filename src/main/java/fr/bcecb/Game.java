@@ -2,7 +2,6 @@ package fr.bcecb;
 
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
-import fr.bcecb.event.Event;
 import fr.bcecb.event.EventExceptionHandler;
 import fr.bcecb.event.GameEvent;
 import fr.bcecb.render.RenderEngine;
@@ -49,7 +48,7 @@ public final class Game {
 
     private void start() {
         renderEngine.getWindow().show();
-        Log.SYSTEM.debug("Starting the game");
+        Log.SYSTEM.info("Starting the game");
         running = true;
 
         stateEngine.pushState(new MainMenuScreen());
@@ -59,15 +58,13 @@ public final class Game {
         float lastTime = 0.0f;
         float delta = 0.0f;
 
-        Event tickEvent = new GameEvent.Tick();
-
-        while (this.isRunning()) {
+        while (this.running) {
             currentTime = (float) glfwGetTime();
             delta += (currentTime - lastTime) / ticks;
             lastTime = currentTime;
 
             while (delta >= 1.0) {
-                EVENT_BUS.post(tickEvent);
+                EVENT_BUS.post(new GameEvent.Tick());
                 stateEngine.update();
 
                 --delta;
@@ -86,10 +83,6 @@ public final class Game {
     @Subscribe
     public void stop(GameEvent.Close event) {
         running = false;
-    }
-
-    private boolean isRunning() {
-        return running;
     }
 
     public RenderEngine getRenderEngine() {

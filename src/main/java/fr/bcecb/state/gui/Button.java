@@ -6,13 +6,13 @@ import fr.bcecb.render.animation.Animation;
 import fr.bcecb.render.animation.BounceAnimation;
 import fr.bcecb.resources.ResourceHandle;
 import fr.bcecb.resources.Texture;
-import fr.bcecb.util.Constants;
+import fr.bcecb.util.Resources;
 
 public class Button extends GuiElement {
     private String title;
     private float titleScale;
     private ResourceHandle<Texture> texture;
-    private ResourceHandle<Texture> onHoverTexture;
+    private ResourceHandle<Texture> hoverTexture;
     private Animation<Float> hoverAnimation = new BounceAnimation(1.0f, 0.1f, 3.0f);
 
     public Button(int id, float x, float y, float width, float height) {
@@ -59,8 +59,8 @@ public class Button extends GuiElement {
         super(id, x - (centered ? (width / 2) : 0), y - (centered ? (height / 2) : 0), width, height);
         this.title = title;
         this.titleScale = Math.min(titleScale, 1.0f);
-        this.texture = MoreObjects.firstNonNull(texture, Constants.DEFAULT_TEXTURE);
-        this.onHoverTexture = MoreObjects.firstNonNull(onHoverTexture, Constants.DEFAULT_TEXTURE);
+        this.texture = MoreObjects.firstNonNull(texture, Resources.DEFAULT_TEXTURE);
+        this.hoverTexture = MoreObjects.firstNonNull(onHoverTexture, Resources.DEFAULT_TEXTURE);
     }
 
     public Animation<Float> getHoverAnimation() {
@@ -112,11 +112,11 @@ public class Button extends GuiElement {
         this.texture = texture;
     }
 
-    public ResourceHandle<Texture> getOnHoverTexture() {
-        return onHoverTexture;
+    public ResourceHandle<Texture> getHoverTexture() {
+        return hoverTexture;
     }
 
-    public void setOnHoverTexture(ResourceHandle<Texture> onHoverTexture) {
-        this.onHoverTexture = onHoverTexture;
+    public void setHoverTexture(ResourceHandle<Texture> hoverTexture) {
+        this.hoverTexture = hoverTexture;
     }
 }

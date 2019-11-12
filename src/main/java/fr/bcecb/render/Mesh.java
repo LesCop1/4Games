@@ -1,7 +1,9 @@
 package fr.bcecb.render;
 
+import fr.bcecb.resources.Shader;
 import org.lwjgl.BufferUtils;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.nio.FloatBuffer;
 
@@ -46,6 +48,14 @@ public final class Mesh {
             }
         }
         glBindVertexArray(0);
+    }
+
+    public void draw(int mode, @Nonnull Shader shader) {
+        shader.bind();
+        {
+            draw(mode);
+        }
+        shader.unbind();
     }
 
     public void draw(int mode) {
