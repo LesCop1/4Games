@@ -74,13 +74,13 @@ public class Image extends GuiElement {
                 float offsetW = image.getWidth() - (closestTo0Ratio * imageWidth);
                 float offsetH = image.getHeight() - (closestTo0Ratio * imageHeight);
 
-                renderManager.getRenderEngine().drawTexturedRect(getTexture(image), image.getX() + (offsetW / 2),
+                renderManager.getRenderEngine().drawTexturedRect(image.getX() + (offsetW / 2),
                         image.getY() + (offsetH / 2),
                         image.getX() + (offsetW / 2) + (closestTo0Ratio * imageWidth),
-                        image.getY() + (offsetH / 2) + (closestTo0Ratio * imageHeight));
+                        image.getY() + (offsetH / 2) + (closestTo0Ratio * imageHeight), getTexture(image));
 
             } else {
-                renderManager.getRenderEngine().drawTexturedRect(getTexture(image), image.getX(), image.getY(), image.getX() + image.getWidth(), image.getY() + image.getHeight());
+                renderManager.getRenderEngine().drawTexturedRect(image.getX(), image.getY(), image.getX() + image.getWidth(), image.getY() + image.getHeight(), getTexture(image));
             }
         }
     }

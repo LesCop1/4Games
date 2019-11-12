@@ -151,7 +151,7 @@ public class Button extends GuiElement {
 
             float effect = bouncyEffect(button, 5, 5, 3);
 
-            renderEngine.drawTexturedRect(getTexture(button), button.getX() - effect, button.getY() - effect, button.getX() + button.getWidth() + effect, button.getY() + button.getHeight() + effect);
+            renderEngine.drawTexturedRect(button.getX() - effect, button.getY() - effect, button.getX() + button.getWidth() + effect, button.getY() + button.getHeight() + effect, getTexture(button));
 
             if (!Strings.isNullOrEmpty(button.getTitle())) {
                 renderEngine.drawCenteredText(ResourceManager.DEFAULT_FONT, button.getTitle(), button.getX() + (button.getWidth() / 2.0f), button.getY() + (button.getHeight() / 2.0f), button.getTitleScale(), new Vector4f(0.0f, 0.0f, 0.0f, 1.0f));

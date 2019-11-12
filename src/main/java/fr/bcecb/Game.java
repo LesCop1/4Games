@@ -1,6 +1,5 @@
 package fr.bcecb;
 
-import com.google.common.eventbus.AsyncEventBus;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import fr.bcecb.event.EventExceptionHandler;
@@ -11,21 +10,13 @@ import fr.bcecb.state.MainMenuScreen;
 import fr.bcecb.state.StateEngine;
 import fr.bcecb.util.Log;
 
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.SynchronousQueue;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
-
 import static org.lwjgl.glfw.GLFW.*;
 
 public final class Game {
 
     private static final int ticksPerSecond = 60;
 
-    private static final ExecutorService EVENT_EXECUTOR = new ThreadPoolExecutor(0, 5, 60L, TimeUnit.SECONDS, new SynchronousQueue<>(), (r, executor) -> {
-    });
-
-    public static final EventBus EVENT_BUS = new AsyncEventBus(EVENT_EXECUTOR, EventExceptionHandler.getInstance());
+    public static final EventBus EVENT_BUS = new EventBus(EventExceptionHandler.getInstance());
 
     private final RenderEngine renderEngine;
     private final StateEngine stateEngine;
@@ -86,7 +77,6 @@ public final class Game {
 
     @Subscribe
     public void stop(GameEvent.Close event) {
-        EVENT_EXECUTOR.shutdown();
         running = false;
     }
 

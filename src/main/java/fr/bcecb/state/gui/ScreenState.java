@@ -1,7 +1,6 @@
 package fr.bcecb.state.gui;
 
 import com.google.common.collect.Sets;
-import com.google.common.eventbus.Subscribe;
 import fr.bcecb.Game;
 import fr.bcecb.event.MouseEvent;
 import fr.bcecb.resources.ResourceHandle;
@@ -74,10 +73,7 @@ public abstract class ScreenState extends State {
         return false;
     }
 
-    @Subscribe
-    private void handleClickEvent(MouseEvent.Click event) {
-        if (!Game.instance().getStateEngine().isCurrentState(this)) return;
-
+    public void onClick(MouseEvent.Click event) {
         for (GuiElement element : getGuiElements()) {
             if (!element.isVisible() || !element.isEnabled()) continue;
 
@@ -93,11 +89,7 @@ public abstract class ScreenState extends State {
         }
     }
 
-    @Subscribe
-    private void handleHoverEvent(MouseEvent.Move event) {
-        if (!Game.instance().getStateEngine().isCurrentState(this)) return;
-
-
+    public void onHover(MouseEvent.Move event) {
         for (GuiElement element : getGuiElements()) {
             if (!element.isVisible()) continue;
 
@@ -113,10 +105,7 @@ public abstract class ScreenState extends State {
         }
     }
 
-    @Subscribe
-    private void handleScrollEvent(MouseEvent.Scroll event) {
-        if (!Game.instance().getStateEngine().isCurrentState(this)) return;
-
+    public void onScroll(MouseEvent.Scroll event) {
         for (GuiElement element : getGuiElements()) {
             if (!element.isVisible() || !element.isEnabled()) continue;
 
