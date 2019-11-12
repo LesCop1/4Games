@@ -17,7 +17,7 @@ public class Line extends GuiElement {
 
     public Line(int id, float x, float y, float width, float height, Vector4f color) {
         super(id, x, y, width, height);
-        this.color = MoreObjects.firstNonNull(color, new Vector4f(1, 1, 1, 1));
+        this.color = MoreObjects.firstNonNull(color, new Vector4f(1));
     }
 
     @Override
