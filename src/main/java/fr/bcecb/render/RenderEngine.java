@@ -3,6 +3,7 @@ package fr.bcecb.render;
 import fr.bcecb.resources.*;
 import fr.bcecb.state.StateEngine;
 import fr.bcecb.util.Log;
+import fr.bcecb.util.TextRendering;
 import org.joml.Matrix4f;
 import org.joml.Vector4f;
 import org.lwjgl.opengl.GL;
@@ -127,7 +128,7 @@ public class RenderEngine {
 
         if (font != null) {
             float height = ((font.getDescent() - font.getAscent()) / 2.0f) * stbtt_ScaleForPixelHeight(font.getInfo(), 32 * window.getContentScaleY()) * scale;
-            float width = getStringWidth(font, text) * scale;
+            float width = TextRendering.getStringWidth(font, text) * scale;
 
             drawText(fontHandle, text, x - (width / 2) / window.getContentScaleX(), y - (height / 2) / window.getContentScaleY(), scale, color);
         }
@@ -181,28 +182,6 @@ public class RenderEngine {
             }
             shader.unbind();
         }
-    }
-
-    private float getStringWidth(Font font, String text) {
-        int width = 0;
-
-        try (MemoryStack stack = MemoryStack.stackPush()) {
-            IntBuffer pAdvancedWidth = stack.mallocInt(1);
-            IntBuffer pLeftSideBearing = stack.mallocInt(1);
-
-            for (int i = 0; i < text.length(); ++i) {
-                int cp = text.codePointAt(i);
-
-                stbtt_GetCodepointHMetrics(font.getInfo(), cp, pAdvancedWidth, pLeftSideBearing);
-                width += pAdvancedWidth.get(0);
-
-                if (i < text.length() - 1) {
-                    width += stbtt_GetCodepointKernAdvance(font.getInfo(), cp, text.codePointAt(i + 1));
-                }
-            }
-        }
-
-        return width * stbtt_ScaleForPixelHeight(font.getInfo(), 32 * window.getContentScaleY());
     }
 
     private void draw(ResourceHandle<Shader> shaderResourceHandle, Matrix4f model, ResourceHandle<Texture> textureHandle) {
