@@ -27,17 +27,12 @@ public class FirstPhaseBattleshipScreen extends ScreenState {
         for (int i = 0; i < 10; i++) {
             for (int j = 0; j < 10; j++) {
                 GuiElement cases = new Button((10 * i) + j, i * 80 + (width / 3.43f), j * 80 + 100, 80, 80,
-                        false, "" + j + i, new ResourceHandle<Texture>("textures/caseBattleship.png") {
+                      false, "" /*+ j + i*/, new ResourceHandle<Texture>("textures/caseBattleship.png") {
                 });
-                cases.setClickHandler(e -> clickButton(e, cases.getId()));
+                cases.setClickHandler(e -> clickCases(e, cases.getId()));
                 addGuiElement(cases);
             }
         }
-        final GuiElement swap = new Button(101, 2.9f*(width/4), (height - (height / 20f) - (height / 10f)), 500,
-                100,
-                false, "Changer l'orientation", new ResourceHandle<Texture>("textures/defaultButton.png") {});
-        swap.setClickHandler(e -> clickButton(e, swap.getId()));
-        addGuiElement(swap);
         final GuiElement backButton = new Button(102, (width / 20f), (height - (height / 20f) - (height / 10f)), (height / 10f),
                 (height / 10f), false, "Back", new ResourceHandle<Texture>("textures/defaultButton.png") {
         }).setClickHandler(e -> doubleBack());
@@ -45,10 +40,6 @@ public class FirstPhaseBattleshipScreen extends ScreenState {
     }
 
     public void clickCases(MouseEvent.Click event, int id) {
-    }
-
-    public void clickButton(MouseEvent.Click event, int id) {
-//        battleship.swapOrientation();
     }
 
     public void doubleBack() {
