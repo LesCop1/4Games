@@ -31,6 +31,8 @@ public class SudokuState extends ScreenState {
     private final int[][] grid = new int[SIZE][SIZE];
     private final int[][] generateGrid;
 
+    private GuiElement text;
+
     public SudokuState(Difficulty difficulty) {
         super("sudoku_game");
         for (int i = 0; i < SIZE; i += SIZE_BOX) {
@@ -347,15 +349,15 @@ public class SudokuState extends ScreenState {
 
     @Override
     public void initGui() {
-
         int width = Window.getCurrentWindow().getWidth();
         int height = Window.getCurrentWindow().getHeight();
         Button[] buttonsCandidateValues = new Button[SIZE];
-        setBackgroundTexture(new ResourceHandle<>("textures/arche.jpg") {
+        setBackgroundTexture(new ResourceHandle<>("textures/background_sudoku.png") {
         });
-        GuiElement backButton = new Button(999, 0, 0, 50 / ((float) 1920 / width), 50 / ((float) 1920 / width), false, new ResourceHandle<>("textures/back_button.png") {
+        GuiElement backButton = new Button(999, 10, 10, 50 / ((float) 1920 / width), 50 / ((float) 1920 / width), false, new ResourceHandle<>("textures/back_button.png") {
         }).setClickHandler(e -> Game.instance().getStateEngine().popState());
         addGuiElement(backButton);
+        addGuiElement(text);
         for (int i = 0; i < SIZE; i++) {
             buttonsCandidateValues[i] = new Button(100 + i, ((float) width - 80 / ((float) 1920 / width) * SIZE) / 2 + i * 80 / ((float) 1920 / width), height - 80 / ((float) 1920 / width), 80 / ((float) 1920 / width), 80 / ((float) 1920 / width), false, String.valueOf(i + 1), new ResourceHandle<>("textures/candidateValuesTextures.png") {
             });
@@ -407,11 +409,9 @@ public class SudokuState extends ScreenState {
 
         super.update();
         if (winCondition()) {
-            GuiElement text = new Text(99, 960, 540, "YOU WON !", false);
-            addGuiElement(text);
+            text.setVisible(true);
             for (Button buttonCase : buttonsCase) {
                 buttonCase.setEnabled(false);
-
             }
         }
     }
