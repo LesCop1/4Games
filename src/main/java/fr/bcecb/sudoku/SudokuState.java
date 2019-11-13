@@ -1,9 +1,11 @@
 package fr.bcecb.sudoku;
 
 import fr.bcecb.Game;
+import fr.bcecb.event.MouseEvent;
 import fr.bcecb.render.Window;
 import fr.bcecb.resources.ResourceHandle;
 import fr.bcecb.state.gui.*;
+import fr.bcecb.util.Constants;
 
 import java.util.*;
 import java.util.stream.Collector;
@@ -16,7 +18,6 @@ public class SudokuState extends ScreenState {
     private static final int SIZE = 9;
     private static final int SIZE_BOX = (int) Math.floor(Math.sqrt(SIZE));
     private static final Random RANDOM = new Random();
-    List<Button> buttonsCase = new ArrayList<>();
     private static final Collector<?, ?, ?> SHUFFLER = Collectors.collectingAndThen(
             Collectors.toCollection(ArrayList::new),
             list -> {
@@ -28,9 +29,11 @@ public class SudokuState extends ScreenState {
     /**
      * The sudoku grid
      */
-    private final int[][] grid = new int[SIZE][SIZE];
-    private final int[][] generateGrid;
+    private final int[][] playerGrid = new int[SIZE][SIZE];
+    private final int[][] initialGrid;
 
+    private List<Button> buttonGrid = new ArrayList<>();
+    private Button[] candidateValuesButtons = new Button[SIZE];
     private GuiElement text;
 
     public SudokuState(Difficulty difficulty) {
@@ -48,27 +51,10 @@ public class SudokuState extends ScreenState {
             x = i / SIZE;
             y = i % SIZE;
 
-            this.grid[x][y] = 0;
+            this.playerGrid[x][y] = 0;
         }
 
-        this.generateGrid = Arrays.stream(this.grid).map(int[]::clone).toArray(int[][]::new);
-    }
-
-    public void printSudoku() {
-        for (int i = 0; i < SIZE; i++) {
-            if (i % SIZE_BOX == 0) {
-                System.out.println();
-            }
-
-            for (int j = 0; j < SIZE; j++) {
-                if (j % SIZE_BOX == 0) {
-                    System.out.print(" ");
-                }
-                System.out.print(this.grid[i][j] + " ");
-            }
-            System.out.println();
-        }
-        System.out.println();
+        this.initialGrid = Arrays.stream(this.playerGrid).map(int[]::clone).toArray(int[][]::new);
     }
 
     /**
@@ -77,11 +63,6 @@ public class SudokuState extends ScreenState {
     private static int randomInt() {
         return RANDOM.nextInt(9) + 1;
     }
-
-    /**
-     * Pretty-prints the sudoku grid to the console
-     */
-
 
     private static <T> Collector<T, ?, List<T>> toShuffledList() {
         //noinspection unchecked
@@ -134,7 +115,7 @@ public class SudokuState extends ScreenState {
         for (int n = 1; n <= 9; ++n, found = false) {
             for (int i = x; i < x + SIZE_BOX; ++i) {
                 for (int j = y; j < y + SIZE_BOX; ++j) {
-                    if (this.grid[i][j] == n) {
+                    if (this.playerGrid[i][j] == n) {
                         if (!found) {
                             found = true;
                         } else return false;
@@ -157,7 +138,7 @@ public class SudokuState extends ScreenState {
     private boolean checkBox(int n, int x, int y) {
         for (int i = x; i < x + SIZE_BOX; i++) {
             for (int j = y; j < y + SIZE_BOX; j++) {
-                if (this.grid[i][j] == n) return true;
+                if (this.playerGrid[i][j] == n) return true;
             }
         }
 
@@ -174,7 +155,7 @@ public class SudokuState extends ScreenState {
         boolean found = false;
         for (int n = 1; n <= 9; ++n, found = false) {
             for (int y = 0; y < SIZE; y++) {
-                if (this.grid[x][y] == n) {
+                if (this.playerGrid[x][y] == n) {
                     if (!found) {
                         found = true;
                     } else return false;
@@ -194,7 +175,7 @@ public class SudokuState extends ScreenState {
      */
     private boolean checkRow(int n, int x) {
         for (int i = 0; i < SIZE; i++) {
-            if (this.grid[x][i] == n) return true;
+            if (this.playerGrid[x][i] == n) return true;
         }
 
         return false;
@@ -210,7 +191,7 @@ public class SudokuState extends ScreenState {
         boolean found = false;
         for (int n = 1; n <= 9; ++n, found = false) {
             for (int x = 0; x < SIZE; x++) {
-                if (this.grid[x][y] == n) {
+                if (this.playerGrid[x][y] == n) {
                     if (!found) {
                         found = true;
                     } else return false;
@@ -230,7 +211,7 @@ public class SudokuState extends ScreenState {
      */
     private boolean checkColumn(int n, int y) {
         for (int i = 0; i < SIZE; i++) {
-            if (this.grid[i][y] == n) return true;
+            if (this.playerGrid[i][y] == n) return true;
         }
 
         return false;
@@ -251,7 +232,7 @@ public class SudokuState extends ScreenState {
                 }
                 while (checkBox(n, x, y));
 
-                this.grid[x + i][y + j] = n;
+                this.playerGrid[x + i][y + j] = n;
             }
         }
     }
@@ -291,11 +272,11 @@ public class SudokuState extends ScreenState {
 
         for (int n = 1; n <= SIZE; n++) {
             if (checkGrid(n, x, y)) {
-                this.grid[x][y] = n;
+                this.playerGrid[x][y] = n;
                 if (fillRemaining(x, y + 1))
                     return true;
 
-                this.grid[x][y] = 0;
+                this.playerGrid[x][y] = 0;
             }
         }
         return false;
@@ -307,7 +288,7 @@ public class SudokuState extends ScreenState {
      * @return {@code true} if the grid could be solved, {@code false} otherwise
      */
     public boolean solve() {
-        int[][] copy = Arrays.stream(this.grid).map(int[]::clone).toArray(int[][]::new);
+        int[][] copy = Arrays.stream(this.playerGrid).map(int[]::clone).toArray(int[][]::new);
 
         return solve(copy);
     }
@@ -340,7 +321,7 @@ public class SudokuState extends ScreenState {
     public boolean winCondition() {
         for (int i = 0; i < SIZE; i++) {
             for (int j = 0; j < SIZE; j++) {
-                if (grid[i][j] == 0) return false;
+                if (playerGrid[i][j] == 0) return false;
 
             }
         }
@@ -351,67 +332,72 @@ public class SudokuState extends ScreenState {
     public void initGui() {
         int width = Window.getCurrentWindow().getWidth();
         int height = Window.getCurrentWindow().getHeight();
-        Button[] buttonsCandidateValues = new Button[SIZE];
-        setBackgroundTexture(new ResourceHandle<>("textures/background_sudoku.png") {
-        });
-        GuiElement backButton = new Button(999, 10, 10, 50 / ((float) 1920 / width), 50 / ((float) 1920 / width), false, new ResourceHandle<>("textures/back_button.png") {
-        }).setClickHandler(e -> Game.instance().getStateEngine().popState());
-        addGuiElement(backButton);
-        addGuiElement(text);
+
         for (int i = 0; i < SIZE; i++) {
-            buttonsCandidateValues[i] = new Button(100 + i, ((float) width - 80 / ((float) 1920 / width) * SIZE) / 2 + i * 80 / ((float) 1920 / width), height - 80 / ((float) 1920 / width), 80 / ((float) 1920 / width), 80 / ((float) 1920 / width), false, String.valueOf(i + 1), new ResourceHandle<>("textures/candidateValuesTextures.png") {
+            candidateValuesButtons[i] = new Button(100 + i, ((float) width - 80 / ((float) 1920 / width) * SIZE) / 2 + i * 80 / ((float) 1920 / width), height - 80 / ((float) 1920 / width), 80 / ((float) 1920 / width), 80 / ((float) 1920 / width), false, String.valueOf(i + 1), new ResourceHandle<>("textures/candidateValuesTextures.png") {
             });
-            buttonsCandidateValues[i].setVisible(false);
-            for (int j = 0; j < 9; j++) {
-                final Button button = new Button((9 * i) + j, ((float) width - 80 / ((float) 1920 / width) * SIZE) / 2 + i * 80 / ((float) 1920 / width), ((float) height - 80 / ((float) 1920 / width) * SIZE) / 2 + j * 80 / ((float) 1920 / width), (80 / ((float) 1920 / width)), (80 / ((float) 1920 / width)), false, String.valueOf(grid[j][i] != 0 ? grid[j][i] : ""), new ResourceHandle<>("textures/caseBattleship.png") {
+            candidateValuesButtons[i].setVisible(false);
+            for (int j = 0; j < SIZE; j++) {
+                final Button caseButton = new Button((9 * i) + j, ((float) width - 80 / ((float) 1920 / width) * SIZE) / 2 + i * 80 / ((float) 1920 / width), ((float) height - 80 / ((float) 1920 / width) * SIZE) / 2 + j * 80 / ((float) 1920 / width), (80 / ((float) 1920 / width)), (80 / ((float) 1920 / width)), false, String.valueOf(playerGrid[j][i] != 0 ? playerGrid[j][i] : ""), new ResourceHandle<>("textures/caseBattleship.png") {
                 });
 
-                if (generateGrid[j][i] == 0) {
-                    button.setClickHandler(e -> {
-                        for (int k = 0; k < buttonsCandidateValues.length; k++) {
-                            buttonsCandidateValues[k].setVisible(false);
-                        }
-                        int x = button.getId() % 9;
-                        int y = button.getId() / 9;
-                        if (grid[x][y] == 0) {
-                            buttonsCase.add(button);
-                            int[] candidatesValues = computeCandidates(x, y);
-                            for (int l = 0; l < candidatesValues.length; l++) {
-                                int value = candidatesValues[l];
-                                buttonsCandidateValues[l].setTitle(String.valueOf(value));
-                                buttonsCandidateValues[l].setVisible(true);
-                                buttonsCandidateValues[l].setClickHandler(f -> {
-                                    button.setTitle(String.valueOf(value));
-                                    grid[x][y] = value;
-
-                                    for (GuiElement buttonsCandidateValue : buttonsCandidateValues) {
-                                        buttonsCandidateValue.setVisible(false);
-                                    }
-                                });
-                            }
-                        } else if (e.getButton() == GLFW_MOUSE_BUTTON_RIGHT) {
-                            button.setTitle("");
-                            grid[x][y] = 0;
-                        }
-                    });
-                } else button.setEnabled(false);
-
-                addGuiElement(button);
+                if (this.initialGrid[j][i] == 0) {
+                    caseButton.setClickHandler(this::emptyCaseClickHandler);
+                } else {
+                    caseButton.setDisabled(true);
+                }
+                addGuiElement(caseButton);
             }
         }
 
-        addGuiElement(buttonsCandidateValues);
+        this.text = new Text(200, 10, 10, "done", Constants.COLOR_BLACK, false);
+        this.text.setVisible(false);
+
+        final GuiElement backButton = new Button(999, 10, 10, 50 / ((float) 1920 / width), 50 / ((float) 1920 / width), false)
+                .setClickHandler((id, event) -> Game.instance().getStateEngine().popState());
+        addGuiElement(candidateValuesButtons);
+        addGuiElement(this.text, backButton);
 
     }
 
-    @Override
-    public void update() {
+    private void emptyCaseClickHandler(int id, MouseEvent.Click event) {
+        int x = id % 9;
+        int y = id / 9;
+        Button caseButton = ((Button) getGuiElementById(id));
+        if (playerGrid[x][y] == 0) {
+            for (GuiElement buttonsCandidateValue : candidateValuesButtons) {
+                buttonsCandidateValue.setVisible(false);
+            }
+            this.buttonGrid.add(caseButton);
+            int[] candidatesValues = computeCandidates(x, y);
 
-        super.update();
+            for (int k = 0; k < candidatesValues.length; k++) {
+                int value = candidatesValues[k];
+                this.candidateValuesButtons[k].setTitle(String.valueOf(value));
+                this.candidateValuesButtons[k].setVisible(true);
+                this.candidateValuesButtons[k].setClickHandler((id1, e1) -> {
+                    this.playerGrid[x][y] = value;
+                    caseButton.setTitle(String.valueOf(value));
+                    for (GuiElement buttonsCandidateValue : candidateValuesButtons) {
+                        buttonsCandidateValue.setVisible(false);
+                    }
+                });
+            }
+        } else if (event.getButton() == GLFW_MOUSE_BUTTON_RIGHT) {
+            this.playerGrid[x][y] = 0;
+            caseButton.setTitle("");
+        }
+    }
+
+    @Override
+    public void onUpdate() {
+        super.onUpdate();
         if (winCondition()) {
-            text.setVisible(true);
-            for (Button buttonCase : buttonsCase) {
-                buttonCase.setEnabled(false);
+            if (!this.text.isVisible()) {
+                text.setVisible(true);
+                for (Button buttonCase : buttonGrid) {
+                    buttonCase.setDisabled(true);
+                }
             }
         }
     }
