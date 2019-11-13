@@ -7,6 +7,7 @@ import fr.bcecb.resources.ResourceHandle;
 import fr.bcecb.resources.Texture;
 import fr.bcecb.state.gui.Button;
 import fr.bcecb.state.gui.GuiElement;
+import fr.bcecb.state.gui.Image;
 import fr.bcecb.state.gui.ScreenState;
 
 public class FirstPhaseBattleshipScreen extends ScreenState {
@@ -23,11 +24,12 @@ public class FirstPhaseBattleshipScreen extends ScreenState {
     public void initGui() {
         int width = Window.getCurrentWindow().getWidth();
         int height = Window.getCurrentWindow().getHeight();
-        setBackgroundTexture(new ResourceHandle<Texture>("textures/battleshipScreen.png") {});
+        setBackgroundTexture(new ResourceHandle<Texture>("textures/background_battleship.jpg") {
+        });
         for (int i = 0; i < 10; i++) {
             for (int j = 0; j < 10; j++) {
-                GuiElement cases = new Button((10 * i) + j, i * 80 + (width / 3.43f), j * 80 + 100, 80, 80,
-                      false, "" /*+ j + i*/, new ResourceHandle<Texture>("textures/caseBattleship.png") {
+                GuiElement cases = new Button((10 * i) + j, ((float) width - 80 / ((float) 1920 / width) * 10) / 2 + i * 80 / ((float) 1920 / width), ((float) height - 80 / ((float) 1920 / width) * 10) / 8 + j * 80 / ((float) 1920 / width), (80 / ((float) 1920 / width)), (80 / ((float) 1920 / width)),
+                        false, "" /*+ j + i*/, new ResourceHandle<Texture>("textures/caseBattleship.png") {
                 });
                 cases.setClickHandler(e -> clickCases(e, cases.getId()));
                 addGuiElement(cases);
@@ -37,6 +39,8 @@ public class FirstPhaseBattleshipScreen extends ScreenState {
                 (height / 10f), false, "Back", new ResourceHandle<Texture>("textures/defaultButton.png") {
         }).setClickHandler(e -> doubleBack());
         addGuiElement(backButton);
+        final GuiElement a = new Image(900,new ResourceHandle<Texture>("textures/a.png"){},0,0,200f,200f,true);
+        addGuiElement(a);
     }
 
     public void clickCases(MouseEvent.Click event, int id) {
