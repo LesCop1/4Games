@@ -12,7 +12,6 @@ import fr.bcecb.state.gui.ScreenState;
 
 public class FirstPhaseBattleshipScreen extends ScreenState {
     private Battleship battleship;
-
     private Boat boat;
 
     protected FirstPhaseBattleshipScreen(Battleship battleship) {
@@ -39,7 +38,11 @@ public class FirstPhaseBattleshipScreen extends ScreenState {
                 (height / 10f), false, "Back", new ResourceHandle<Texture>("textures/defaultButton.png") {
         }).setClickHandler(e -> doubleBack());
         addGuiElement(backButton);
-        final GuiElement a = new Image(900,new ResourceHandle<Texture>("textures/a.png"){},0,0,200f,200f,true);
+
+        final Button a = new Button(102, (width / 20f), 100, (height / 10f),
+                (height / 10f), false, "AIRCRAFT_CARRIER", new ResourceHandle<Texture>("textures/a.png") {
+        });
+        a.setClickHandler(e -> whichBoat(a.getTitle()));
         addGuiElement(a);
     }
 
@@ -49,5 +52,9 @@ public class FirstPhaseBattleshipScreen extends ScreenState {
     public void doubleBack() {
         Game.instance().getStateEngine().popState();
         Game.instance().getStateEngine().popState();
+    }
+
+    public void whichBoat(String BoatName) {
+        boat = new Boat(Boat.Type.AIRCRAFT_CARRIER);
     }
 }
