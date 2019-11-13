@@ -3,11 +3,9 @@ package fr.bcecb.batailleNavale;
 import fr.bcecb.Game;
 import fr.bcecb.render.Window;
 import fr.bcecb.resources.ResourceHandle;
-import fr.bcecb.resources.Texture;
 import fr.bcecb.state.gui.Button;
 import fr.bcecb.state.gui.GuiElement;
 import fr.bcecb.state.gui.ScreenState;
-import fr.bcecb.Game;
 
 
 public class BattleshipScreen extends ScreenState {
@@ -17,10 +15,6 @@ public class BattleshipScreen extends ScreenState {
         super("game-battleship");
     }
 
-    private int clickGrid() {
-        return 0; //Case de la grille
-    }
-
     @Override
     public void onEnter() {
         super.onEnter();
@@ -28,23 +22,13 @@ public class BattleshipScreen extends ScreenState {
     }
 
     @Override
-    public void onExit() {
-        super.onExit();
-    }
-
-    @Override
-    public void update() {
-        super.update();
-    }
-
-    @Override
     public void initGui() {
-        setBackgroundTexture(new ResourceHandle<Texture>("textures/mainMenuBG.png") {});
+        setBackgroundTexture(new ResourceHandle<>("textures/mainMenuBG.png") {});
         int width = Window.getCurrentWindow().getWidth();
         int height = Window.getCurrentWindow().getHeight();
         GuiElement backButton = new Button(5, (width / 20f), (height - (height / 20f) - (height / 10f)), (height / 10f),
-                (height / 10f), false, "Back", new ResourceHandle<Texture>("textures/defaultButton.png") {
-        }).setClickHandler(e -> Game.instance().getStateEngine().popState());
+                (height / 10f), false, "Back", new ResourceHandle<>("textures/defaultButton.png") {
+        }).setClickHandler((id, e) -> Game.instance().getStateEngine().popState());
 
         addGuiElement(backButton);
     }
@@ -55,7 +39,7 @@ public class BattleshipScreen extends ScreenState {
     }
 
     @Override
-    public boolean shouldUpdateBelow() {
-        return false;
+    public boolean shouldPauseBelow() {
+        return true;
     }
 }

@@ -1,8 +1,9 @@
 package fr.bcecb.util;
 
-import fr.bcecb.Game;
-import fr.bcecb.resources.IResource;
+import fr.bcecb.resources.Font;
 import fr.bcecb.resources.ResourceHandle;
+import fr.bcecb.resources.Shader;
+import fr.bcecb.resources.Texture;
 import org.lwjgl.BufferUtils;
 
 import java.io.BufferedReader;
@@ -14,9 +15,16 @@ import java.util.stream.Collectors;
 
 public class Resources {
 
-    public static <R extends IResource> R getResource(ResourceHandle<R> handle) {
-        return Game.instance().getResourceManager().getResource(handle);
-    }
+    /* TEXTURES */
+    public static final ResourceHandle<Texture> DEFAULT_TEXTURE = new ResourceHandle<>("textures/default.png") {};
+    public static final ResourceHandle<Texture> DEFAULT_LOGO_TEXTURE = new ResourceHandle<>("textures/defaultLogo.png") {};
+    public static final ResourceHandle<Texture> DEFAULT_BACKGROUND_TEXTURE = new ResourceHandle<>("textures/defaultBackground.png") {};
+    public static final ResourceHandle<Texture> DEFAULT_BUTTON_TEXTURE = new ResourceHandle<>("textures/defaultButton.png") {};
+    public static final ResourceHandle<Font> DEFAULT_FONT = new ResourceHandle<>("font.ttf") {};
+    /* SHADERS */
+    public static final ResourceHandle<Shader> DEFAULT_SHADER = new ResourceHandle<>("shaders/base.json") {};
+    public static final ResourceHandle<Shader> CIRCLE_SHADER = new ResourceHandle<>("shaders/circle.json") {};
+    public static final ResourceHandle<Shader> FONT_SHADER = new ResourceHandle<>("shaders/font.json") {};
 
     public static ByteBuffer readBytes(InputStream inputStream) throws IOException {
         ByteBuffer buffer = BufferUtils.createByteBuffer(inputStream.available());

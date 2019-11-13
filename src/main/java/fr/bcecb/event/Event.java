@@ -31,6 +31,6 @@ public abstract class Event {
     @Retention(RetentionPolicy.RUNTIME)
     @Target(ElementType.TYPE)
     public @interface Logging {
-        public Log value() default Log.SYSTEM;
+        Log value() default Log.SYSTEM;
     }
 }

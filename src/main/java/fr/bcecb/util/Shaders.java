@@ -75,15 +75,11 @@ public class Shaders {
     }
 
     private static String getShaderName(int type) {
-        switch (type) {
-            case GL_VERTEX_SHADER:
-                return "Vertex";
-            case GL_FRAGMENT_SHADER:
-                return "Fragment";
-            case GL_GEOMETRY_SHADER:
-                return "Geometry";
-            default:
-                return "";
-        }
+        return switch (type) {
+            case GL_VERTEX_SHADER -> "Vertex";
+            case GL_FRAGMENT_SHADER -> "Fragment";
+            case GL_GEOMETRY_SHADER -> "Geometry";
+            default -> "";
+        };
     }
 }

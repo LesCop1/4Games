@@ -2,11 +2,7 @@ package fr.bcecb.state.gui;
 
 import com.google.common.base.MoreObjects;
 import fr.bcecb.event.MouseEvent;
-import fr.bcecb.render.RenderManager;
-import fr.bcecb.render.Renderer;
-import fr.bcecb.resources.ResourceHandle;
-import fr.bcecb.resources.ResourceManager;
-import fr.bcecb.resources.Texture;
+import fr.bcecb.util.Constants;
 import org.joml.Vector4f;
 
 public class Text extends GuiElement {
@@ -32,7 +28,7 @@ public class Text extends GuiElement {
         super(id, x, y, x, y);
         this.text = text;
         this.scale = Math.min(1.0f, scale);
-        this.color = MoreObjects.firstNonNull(color, new Vector4f(1.0f, 0.0f, 0.0f, 1.0f));
+        this.color = MoreObjects.firstNonNull(color, Constants.COLOR_BLACK);
         this.centered = centered;
     }
 
@@ -69,6 +65,11 @@ public class Text extends GuiElement {
     }
 
     @Override
+    public void onUpdate() {
+
+    }
+
+    @Override
     public void onClick(MouseEvent.Click event) {
 
     }
@@ -81,26 +82,5 @@ public class Text extends GuiElement {
     @Override
     public void onScroll(MouseEvent.Scroll event) {
 
-    }
-
-    public static class TextRenderer extends Renderer<Text> {
-
-        public TextRenderer(RenderManager renderManager) {
-            super(renderManager);
-        }
-
-        @Override
-        public ResourceHandle<Texture> getTexture(Text text) {
-            return null;
-        }
-
-        @Override
-        public void render(Text text, float partialTick) {
-            if (text.isCentered()) {
-                renderManager.getRenderEngine().drawCenteredText(ResourceManager.DEFAULT_FONT, text.getText(), text.getX(), text.getY(), text.getScale(), text.getColor());
-            } else {
-                renderManager.getRenderEngine().drawText(ResourceManager.DEFAULT_FONT, text.getText(), text.getX(), text.getY() + (32f * text.getScale()) * 1.5f, text.getScale(), text.getColor());
-            }
-        }
     }
 }
