@@ -1,6 +1,5 @@
 package fr.bcecb.state.gui;
 
-import com.google.common.collect.Sets;
 import fr.bcecb.Game;
 import fr.bcecb.event.MouseEvent;
 import fr.bcecb.resources.ResourceHandle;
@@ -8,15 +7,12 @@ import fr.bcecb.resources.Texture;
 import fr.bcecb.state.State;
 import fr.bcecb.util.Resources;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.Set;
+import java.util.*;
 
 import static fr.bcecb.event.MouseEvent.Click.Type.RELEASED;
 
 public abstract class ScreenState extends State {
-    private final Set<GuiElement> guiElements = Sets.newTreeSet(Comparator.comparingInt(GuiElement::getId));
+    private final Map<Integer, GuiElement> guiElements = new TreeMap<>(Comparator.naturalOrder());
     private ResourceHandle<Texture> backgroundTexture = Resources.DEFAULT_BACKGROUND_TEXTURE;
 
     public ScreenState(String name) {
@@ -24,15 +20,19 @@ public abstract class ScreenState extends State {
     }
 
     public final void addGuiElement(GuiElement... elements) {
-        guiElements.addAll(Arrays.asList(elements));
+        for (GuiElement element : elements) {
+            guiElements.put(element.getId(), element);
+        }
     }
 
     public final void clearGuiElements() {
         guiElements.clear();
     }
 
+    public final GuiElement getGuiElementById(int id) { return guiElements.get(id); }
+
     public final Collection<GuiElement> getGuiElements() {
-        return guiElements;
+        return guiElements.values();
     }
 
     public void setBackgroundTexture(ResourceHandle<Texture> backgroundTexture) {
