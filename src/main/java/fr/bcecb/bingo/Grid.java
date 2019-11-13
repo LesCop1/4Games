@@ -31,19 +31,9 @@ public class Grid {
         }
     }
 
-    private boolean isInGrid(int n) {
-        if (n == 0) {
-            return true;
-        }
-        for (int i = 0; i < 3; i++) {
-            for (int j = 0; j < 9; j++) {
-                if (this.grid[i][j] == n) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
+
+
+
 
     private void fillGrid() {
         int value = 0;
@@ -86,10 +76,20 @@ public class Grid {
         }
     }
 
-    public void removeValue(int i, int j) {
-        if (this.grid[i][j] != 0) {
-            this.grid[i][j] = 0;
+
+
+    private boolean isInGrid(int n) {
+        if (n == 0) {
+            return true;
         }
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 9; j++) {
+                if (this.grid[i][j] == n) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     public boolean checkWin() {
