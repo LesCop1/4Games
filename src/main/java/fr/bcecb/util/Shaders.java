@@ -50,7 +50,7 @@ public class Shaders {
             return 0;
         }
 
-        StringResource resource = Game.instance().getResourceManager().loadResource(resourceHandle);
+        StringResource resource = Game.instance().getResourceManager().getResource(resourceHandle);
 
         if (resource == null) {
             return 0;
