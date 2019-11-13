@@ -3,6 +3,7 @@ package fr.bcecb.resources;
 import com.google.common.base.MoreObjects;
 import com.google.common.collect.Maps;
 import fr.bcecb.util.Log;
+import fr.bcecb.util.Resources;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -11,22 +12,12 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.Map;
 
 public class ResourceManager {
-    public static final ResourceHandle<Texture> DEFAULT_TEXTURE = new ResourceHandle<>("textures/default.png") {
-    };
-    public static final ResourceHandle<Shader> DEFAULT_SHADER = new ResourceHandle<>("shaders/base.json") {
-    };
-    public static final ResourceHandle<Shader> CIRCLE_SHADER = new ResourceHandle<>("shaders/circle.json") {
-    };
-    public static final ResourceHandle<Font> DEFAULT_FONT = new ResourceHandle<>("font.ttf") {
-    };
-    public static final ResourceHandle<Shader> FONT_SHADER = new ResourceHandle<>("shaders/font.json") {
-    };
     private final Map<Class<? extends IResource>, ResourceHandle> DEFAULT_RESOURCES = Maps.newHashMap();
     private final Map<ResourceHandle, IResource> LOADED_RESOURCES = Maps.newHashMap();
 
     public ResourceManager() {
-        DEFAULT_RESOURCES.put(Shader.class, DEFAULT_SHADER);
-        DEFAULT_RESOURCES.put(Texture.class, DEFAULT_TEXTURE);
+        DEFAULT_RESOURCES.put(Shader.class, Resources.DEFAULT_SHADER);
+        DEFAULT_RESOURCES.put(Texture.class, Resources.DEFAULT_TEXTURE);
     }
 
     public <R extends IResource> R getResourceOrDefault(ResourceHandle<R> handle, ResourceHandle<R> defaultHandle) {
@@ -37,7 +28,6 @@ public class ResourceManager {
         if (handle == null) {
             return null;
         }
-
 
         R resource;
         if (!LOADED_RESOURCES.containsKey(handle)) {

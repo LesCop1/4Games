@@ -12,7 +12,7 @@ import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 
-import static org.lwjgl.opengl.GL45.*;
+import static org.lwjgl.opengl.GL45.GL_RED;
 import static org.lwjgl.stb.STBTruetype.*;
 
 public class Font extends Texture {
@@ -30,6 +30,7 @@ public class Font extends Texture {
         this.height = Math.round(512 * Window.getCurrentWindow().getContentScaleY());
     }
 
+    @SuppressWarnings("unused")
     public ByteBuffer getTTF() {
         return ttf;
     }
@@ -77,14 +78,7 @@ public class Font extends Texture {
         ByteBuffer bitmap = BufferUtils.createByteBuffer(width * height);
         stbtt_BakeFontBitmap(ttf, 32 * Window.getCurrentWindow().getContentScaleY(), bitmap, width, height, 32, cdata);
 
-        int texture = glGenTextures();
-        glBindTexture(GL_TEXTURE_2D, texture);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, width, height, 0, GL_RED, GL_UNSIGNED_BYTE, bitmap);
-
-        return texture;
+        return generate(bitmap, GL_RED);
     }
 
     @Override

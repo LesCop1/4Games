@@ -40,30 +40,20 @@ public abstract class MouseEvent extends Event {
     }
 
     public static final class Move extends MouseEvent {
-        private final float x, dx;
-        private final float y, dy;
+        private final float x;
+        private final float y;
 
-        public Move(float x, float y, float dx, float dy) {
+        public Move(float x, float y) {
             this.x = x;
-            this.dx = dx;
             this.y = y;
-            this.dy = dy;
         }
 
         public float getX() {
             return x;
         }
 
-        public float getDeltaX() {
-            return dx;
-        }
-
         public float getY() {
             return y;
-        }
-
-        public float getDeltaY() {
-            return dy;
         }
     }
 
@@ -83,18 +73,6 @@ public abstract class MouseEvent extends Event {
 
         public double getY() {
             return y;
-        }
-    }
-
-    public static final class Enter extends MouseEvent {
-        private final boolean entered;
-
-        public Enter(boolean entered) {
-            this.entered = entered;
-        }
-
-        public boolean hasEntered() {
-            return entered;
         }
     }
 }

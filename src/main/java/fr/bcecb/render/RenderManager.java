@@ -15,16 +15,17 @@ public class RenderManager {
         this.renderEngine = renderEngine;
         this.resourceManager = resourceManager;
 
-        register(ScreenState.class, new ScreenStateRenderer(this));
-        register(Button.class, new Button.ButtonRenderer(this));
-        register(CircleButton.class, new CircleButton.CircleButtonRenderer(this));
-        register(Image.class, new Image.ImageRenderer(this));
-        register(CircleImage.class, new CircleImage.CircleImageRenderer(this));
-        register(Text.class, new Text.TextRenderer(this));
-        register(Line.class, new Line.LineRenderer(this));
+        registerRenderer(ScreenState.class, new ScreenStateRenderer(this));
+        registerRenderer(CircleButton.class, new CircleButtonRenderer(this));
+        registerRenderer(Image.class, new ImageRenderer(this));
+        registerRenderer(CircleImage.class, new CircleImageRenderer(this));
+        registerRenderer(Text.class, new TextRenderer(this));
+        registerRenderer(Rectangle.class, new RectangleRenderer(this));
+
+        registerRenderer(Button.class, new ButtonRenderer(this));
     }
 
-    private <T extends IRenderable> void register(Class<T> clazz, Renderer<T> renderer) {
+    private <T extends IRenderable> void registerRenderer(Class<T> clazz, Renderer<T> renderer) {
         renderers.put(clazz, renderer);
     }
 

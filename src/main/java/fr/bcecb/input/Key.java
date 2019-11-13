@@ -11,21 +11,13 @@ public enum Key {
     LEFT(GLFW_KEY_LEFT),
     RIGHT(GLFW_KEY_RIGHT);
 
-    private int glfwKey;
+    private final int glfwKey;
 
     Key(int glfwKey) {
         this.glfwKey = glfwKey;
     }
 
-    public void setGlfwKey(int glfwKey) {
-        this.glfwKey = glfwKey;
-    }
-
-    public int getGLFWKey() {
-        return glfwKey;
-    }
-
     public static Key valueOf(int glfwKey) {
-        return Arrays.stream(Key.values()).filter(k -> k.getGLFWKey() == glfwKey).findFirst().orElse(Key.UNKNOWN);
+        return Arrays.stream(Key.values()).filter(k -> k.glfwKey == glfwKey).findFirst().orElse(Key.UNKNOWN);
     }
 }
