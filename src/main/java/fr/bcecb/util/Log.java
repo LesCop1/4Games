@@ -3,7 +3,6 @@ package fr.bcecb.util;
 import org.lwjgl.glfw.GLFWErrorCallback;
 
 import javax.annotation.Nonnull;
-import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.text.DateFormat;
@@ -17,12 +16,11 @@ import java.util.logging.*;
 public enum Log {
     SYSTEM("System"),
     EVENT("Event"),
-    GAME("Game"),
     UI("UI"),
     RENDER("Render Engine");
-    
+
     private final Logger logger;
-    
+
     Log(String name) {
         logger = Logger.getLogger(name);
         logger.setUseParentHandlers(false);
@@ -67,7 +65,7 @@ public enum Log {
 
     public static void log(Level level, Log log, @Nonnull Object... message) {
         if (message.length >= 1) {
-            log.getLogger().log(level, String.valueOf(message[0]).replaceAll("'", "''"), Arrays.stream(message, 1, message.length).map(String::valueOf).toArray());
+            log.logger.log(level, String.valueOf(message[0]).replaceAll("'", "''"), Arrays.stream(message, 1, message.length).map(String::valueOf).toArray());
         }
     }
 
@@ -124,16 +122,13 @@ public enum Log {
 
         @Override
         public void write(int b) {
-            char c = (char)b;
-            if(c == '\r' || c == '\n')
-            {
-                if(stringBuilder.length()>0)
-                {
+            char c = (char) b;
+            if (c == '\r' || c == '\n') {
+                if (stringBuilder.length() > 0) {
                     Log.log(level, stringBuilder.toString());
                     this.stringBuilder = new StringBuilder();
                 }
-            }
-            else
+            } else
                 stringBuilder.append(c);
         }
     }

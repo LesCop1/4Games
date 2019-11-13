@@ -3,20 +3,20 @@ package fr.bcecb.state.gui;
 import fr.bcecb.event.MouseEvent;
 import fr.bcecb.render.IRenderable;
 
-import java.util.function.Consumer;
+import java.util.function.BiConsumer;
 
 public abstract class GuiElement implements IRenderable {
     private final int id;
     private boolean hovered;
     private boolean visible;
-    private boolean enabled;
+    private boolean disabled;
 
     private float x, width;
     private float y, height;
 
-    private Consumer<MouseEvent.Click> clickHandler;
-    private Consumer<MouseEvent.Move> hoverHandler;
-    private Consumer<MouseEvent.Scroll> scrollHandler;
+    private BiConsumer<Integer, MouseEvent.Click> clickHandler;
+    private BiConsumer<Integer, MouseEvent.Move> hoverHandler;
+    private BiConsumer<Integer, MouseEvent.Scroll> scrollHandler;
 
     public GuiElement(int id, float x, float y, float width, float height) {
         this.id = id;
@@ -26,7 +26,7 @@ public abstract class GuiElement implements IRenderable {
         this.height = height;
         this.hovered = false;
         this.visible = true;
-        this.enabled = true;
+        this.disabled = false;
     }
 
     public int getId() {
@@ -66,7 +66,7 @@ public abstract class GuiElement implements IRenderable {
     }
 
     boolean checkBounds(float x, float y) {
-        return x >= getX() && x <= getX() + getWidth() && y >= getY() && y <= getY() + getHeight();
+        return x >= this.x && x <= this.x + width && y >= this.y && y <= this.y + height;
     }
 
     public void setHovered(boolean hovered) {
@@ -81,44 +81,46 @@ public abstract class GuiElement implements IRenderable {
         return visible;
     }
 
-    public boolean isEnabled() {
-        return enabled;
+    public boolean isDisabled() {
+        return disabled;
     }
 
     public void setVisible(boolean visible) {
         this.visible = visible;
     }
 
-    public void setEnabled(boolean enabled) {
-        this.enabled = enabled;
+    public void setDisabled(boolean disabled) {
+        this.disabled = disabled;
     }
 
-    public Consumer<MouseEvent.Click> getClickHandler() {
+    public BiConsumer<Integer, MouseEvent.Click> getClickHandler() {
         return clickHandler;
     }
 
-    public GuiElement setClickHandler(Consumer<MouseEvent.Click> clickHandler) {
+    public GuiElement setClickHandler(BiConsumer<Integer, MouseEvent.Click> clickHandler) {
         this.clickHandler = clickHandler;
         return this;
     }
 
-    public Consumer<MouseEvent.Move> getHoverHandler() {
+    public BiConsumer<Integer, MouseEvent.Move> getHoverHandler() {
         return hoverHandler;
     }
 
-    public GuiElement setHoverHandler(Consumer<MouseEvent.Move> hoverHandler) {
+    public GuiElement setHoverHandler(BiConsumer<Integer, MouseEvent.Move> hoverHandler) {
         this.hoverHandler = hoverHandler;
         return this;
     }
 
-    public Consumer<MouseEvent.Scroll> getScrollHandler() {
+    public BiConsumer<Integer, MouseEvent.Scroll> getScrollHandler() {
         return scrollHandler;
     }
 
-    public GuiElement setScrollHandler(Consumer<MouseEvent.Scroll> scrollHandler) {
+    public GuiElement setScrollHandler(BiConsumer<Integer, MouseEvent.Scroll> scrollHandler) {
         this.scrollHandler = scrollHandler;
         return this;
     }
+
+    public abstract void onUpdate();
 
     public abstract void onClick(MouseEvent.Click event);
 

@@ -5,33 +5,9 @@ import fr.bcecb.resources.ResourceHandle;
 import fr.bcecb.resources.StringResource;
 
 public class ShaderDescriptor {
-    private final String vertex;
-    private final String fragment;
-    private final String geometry;
-
-    public ShaderDescriptor() {
-        this.vertex = null;
-        this.fragment = null;
-        this.geometry = null;
-    }
-
-    public ShaderDescriptor(String vertex, String fragment, String geometry) {
-        this.vertex = vertex;
-        this.fragment = fragment;
-        this.geometry = geometry;
-    }
-
-    public String getVertex() {
-        return vertex;
-    }
-
-    public String getFragment() {
-        return fragment;
-    }
-
-    public String getGeometry() {
-        return geometry;
-    }
+    private String vertex = null;
+    private String fragment = null;
+    private String geometry = null;
 
     public boolean isVertexEnabled() {
         return vertex != null;
@@ -46,15 +22,15 @@ public class ShaderDescriptor {
     }
 
     public ResourceHandle<StringResource> getVertexResource() {
-        return isVertexEnabled() ? new ResourceHandle<>(getVertex()) {} : null;
+        return isVertexEnabled() ? new ResourceHandle<>(vertex) {} : null;
     }
 
     public ResourceHandle<StringResource> getFragmentResource() {
-        return isFragmentEnabled() ? new ResourceHandle<>(getFragment()) {} : null;
+        return isFragmentEnabled() ? new ResourceHandle<>(fragment) {} : null;
     }
 
     public ResourceHandle<StringResource> getGeometryResource() {
-        return isGeometryEnabled() ? new ResourceHandle<>(getGeometry()) {} : null;
+        return isGeometryEnabled() ? new ResourceHandle<>(geometry) {} : null;
     }
 
     @Override

@@ -1,22 +1,19 @@
 package fr.bcecb.state.gui;
 
 import com.google.common.base.MoreObjects;
-import com.google.common.base.Strings;
 import fr.bcecb.event.MouseEvent;
-import fr.bcecb.render.RenderEngine;
-import fr.bcecb.render.RenderManager;
-import fr.bcecb.render.Renderer;
+import fr.bcecb.render.animation.Animation;
+import fr.bcecb.render.animation.BounceAnimation;
 import fr.bcecb.resources.ResourceHandle;
-import fr.bcecb.resources.ResourceManager;
 import fr.bcecb.resources.Texture;
-import org.joml.Vector4f;
+import fr.bcecb.util.Resources;
 
 public class Button extends GuiElement {
     private String title;
     private float titleScale;
     private ResourceHandle<Texture> texture;
-    private ResourceHandle<Texture> onHoverTexture;
-    private float ticksHovered = 0;
+    private ResourceHandle<Texture> hoverTexture;
+    private Animation<Float> hoverAnimation = new BounceAnimation(1.0f, 0.1f, 3.0f);
 
     public Button(int id, float x, float y, float width, float height) {
         this(id, x, y, width, height, false);
@@ -62,26 +59,19 @@ public class Button extends GuiElement {
         super(id, x - (centered ? (width / 2) : 0), y - (centered ? (height / 2) : 0), width, height);
         this.title = title;
         this.titleScale = Math.min(titleScale, 1.0f);
-        this.texture = MoreObjects.firstNonNull(texture, ResourceManager.DEFAULT_TEXTURE);
-        this.onHoverTexture = MoreObjects.firstNonNull(onHoverTexture, ResourceManager.DEFAULT_TEXTURE);
+        this.texture = MoreObjects.firstNonNull(texture, Resources.DEFAULT_TEXTURE);
+        this.hoverTexture = MoreObjects.firstNonNull(onHoverTexture, Resources.DEFAULT_TEXTURE);
     }
 
-    public float getHoveredTicks() {
-        return ticksHovered;
+    public Animation<Float> getHoverAnimation() {
+        return hoverAnimation;
     }
 
-    public void incHoveredTicks() {
-        this.ticksHovered++;
-    }
-
-    public void decHoveredTicks() {
-        if (this.ticksHovered != 0) {
-            this.ticksHovered--;
-        }
-    }
-
-    public void setTicksHovered(float ticksHovered) {
-        this.ticksHovered = ticksHovered;
+    @Override
+    public void onUpdate() {
+        if (isHovered()) {
+            hoverAnimation.update();
+        } else hoverAnimation.reset();
     }
 
     @Override
@@ -122,64 +112,11 @@ public class Button extends GuiElement {
         this.texture = texture;
     }
 
-    public ResourceHandle<Texture> getOnHoverTexture() {
-        return onHoverTexture;
+    public ResourceHandle<Texture> getHoverTexture() {
+        return hoverTexture;
     }
 
-    public void setOnHoverTexture(ResourceHandle<Texture> onHoverTexture) {
-        this.onHoverTexture = onHoverTexture;
-    }
-
-    public static class ButtonRenderer extends Renderer<Button> {
-
-        public ButtonRenderer(RenderManager renderManager) {
-            super(renderManager);
-        }
-
-        @Override
-        public ResourceHandle<Texture> getTexture(Button button) {
-            if (button.isHovered()) {
-                return button.getOnHoverTexture();
-            } else {
-                return button.getTexture();
-            }
-        }
-
-        @Override
-        public void render(Button button, float partialTick) {
-            RenderEngine renderEngine = renderManager.getRenderEngine();
-
-            float effect = bouncyEffect(button, 5, 5, 3);
-
-            renderEngine.drawTexturedRect(button.getX() - effect, button.getY() - effect, button.getX() + button.getWidth() + effect, button.getY() + button.getHeight() + effect, getTexture(button));
-
-            if (!Strings.isNullOrEmpty(button.getTitle())) {
-                renderEngine.drawCenteredText(ResourceManager.DEFAULT_FONT, button.getTitle(), button.getX() + (button.getWidth() / 2.0f), button.getY() + (button.getHeight() / 2.0f), button.getTitleScale(), new Vector4f(0.0f, 0.0f, 0.0f, 1.0f));
-            }
-        }
-
-        private float bouncyEffect(Button button, int offset, int bouncePower, int bounceSpeed) {
-            boolean bounce = true;
-            if (button.isEnabled() && button.isHovered()) {
-                if (button.getHoveredTicks() < (180 / ((float) bounceSpeed)) + offset) {
-                    button.incHoveredTicks();
-                } else {
-                    button.setTicksHovered(offset);
-                }
-            } else {
-                bounce = false;
-                if (button.getHoveredTicks() < (offset + bouncePower)) {
-                    button.decHoveredTicks();
-                } else {
-                    button.setTicksHovered((float) Math.floor(offset + (bouncePower * Math.sin(Math.toRadians((button.getHoveredTicks() - offset) * bounceSpeed)))));
-                }
-            }
-
-            if ((button.getHoveredTicks() < offset) || !bounce) {
-                return button.getHoveredTicks();
-            } else {
-                return (float) (offset + (bouncePower * Math.sin(Math.toRadians((button.getHoveredTicks() - offset) * bounceSpeed))));
-            }
-        }
+    public void setHoverTexture(ResourceHandle<Texture> hoverTexture) {
+        this.hoverTexture = hoverTexture;
     }
 }
