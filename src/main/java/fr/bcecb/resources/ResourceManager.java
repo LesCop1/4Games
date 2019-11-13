@@ -38,7 +38,7 @@ public class ResourceManager {
         return resource;
     }
 
-    public <R extends IResource> R loadResource(ResourceHandle<R> handle) {
+    private <R extends IResource> R loadResource(ResourceHandle<R> handle) {
         if (handle == null) {
             return null;
         }
