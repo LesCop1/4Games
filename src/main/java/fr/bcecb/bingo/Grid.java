@@ -4,7 +4,6 @@ import java.util.Random;
 
 public class Grid {
 
-
     private final static int NB_ROWS = 3;
     private final static int NB_COLS = 9;
     private int[][] grid;
@@ -30,10 +29,6 @@ public class Grid {
             return randInt;
         }
     }
-
-
-
-
 
     private void fillGrid() {
         int value = 0;
@@ -77,7 +72,6 @@ public class Grid {
     }
 
 
-
     private boolean isInGrid(int n) {
         if (n == 0) {
             return true;
@@ -102,7 +96,6 @@ public class Grid {
             }
         }
         return compteur == 24;
-
     }
 
     public void dispGrid() {
@@ -126,5 +119,9 @@ public class Grid {
 
     public void setGrid(int[][] grid) {
         this.grid = grid;
+    }
+
+    public int getValue(int x, int y) {
+        return this.grid[x][y];
     }
 }

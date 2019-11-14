@@ -4,22 +4,26 @@ import fr.bcecb.Game;
 import fr.bcecb.render.Window;
 import fr.bcecb.resources.ResourceHandle;
 import fr.bcecb.resources.Texture;
-import fr.bcecb.state.gui.*;
-import org.joml.Vector4f;
+import fr.bcecb.state.gui.Button;
+import fr.bcecb.state.gui.GuiElement;
+import fr.bcecb.state.gui.ScreenState;
+import fr.bcecb.state.gui.Text;
 
-import java.beans.IntrospectionException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Random;
 
 public class BingoState extends ScreenState {
+    private static final ResourceHandle<Texture> CASE_TEXTURE = new ResourceHandle<>("textures/bingo/caseBG.png") {
+    };
+    private static final ResourceHandle<Texture> CASE_HOVERED_TEXTURE = new ResourceHandle<>("textures/bingo/caseBGhovered.png") {
+    };
+    private final static int NB_BOTS = 5;
     private int tickMultiplier = 0;
     private int ticks = 0;
     private int nbGrids;
     private List<Integer> numberList = new ArrayList<>();
     private List<Player> bots = new ArrayList<>();
-    private final static int NB_BOTS = 5;
     private Player player;
     private int lastDrop;
     private GuiElement ball;
@@ -116,162 +120,56 @@ public class BingoState extends ScreenState {
         int height = Window.getCurrentWindow().getHeight();
         setBackgroundTexture(new ResourceHandle<>("textures/bingo/bingoBG.png") {
         });
-        this.ball = new Text(401, 6 * (width / 8f), (height / 5f), "", 5f, false);
-        this.gameStatus = new Text(402, 2 * (width / 8f), 1 * (height / 10f), "Starting", 5f, true);
-        addGuiElement(gameStatus);
 
-        float gridX, gridW, gridY, gridH;
-        int caseID;
-        List<Grid> playerGrids = player.getGrids();
-        float caseScale;
+        float startX = (width / 20f);
+        float startY = (height / 5f);
 
-        switch (nbGrids) {
-            case 1:
-                gridX = 1 * (width / 20f);
-                gridY = 1 * (height / 2.5f);
-                gridW = (width / 3f);
-                gridH = (height / 5f);
-                caseScale = (0.9f * ((gridW / 9f) / (gridH / 3f)));
-                Vector4f lineColor = new Vector4f(1.0f, 1.0f, 1.0f, 1.0f);
+        float gridW = (width / 3f);
+        float gridH = (height / 5f);
+        float marginW = (width / 10f);
+        float marginH = (height / 20f);
 
-                //GuiElement line1 = new Line(1000,(width/20f),1* (height/2.5f),gridW,(height/40f),lineColor);
-                //addGuiElement(line1);
-                caseID = 0;
+        for (int i = 0; i < this.nbGrids; i++) {
+            float offsetX = ((float) Math.floor(i / 3f)) * (gridW + marginW);
+            float offsetY = (i % 3) * (gridH + marginH);
+            float gridX = startX + offsetX;
+            float gridY = startY + offsetY;
 
-                for (int i = 0; i < 3; i++) {
-                    for (int j = 0; j < 9; j++, caseID++) {
-                        final GuiElement caseX = new Button(caseID,
-                                (gridX + j * (gridW / 9)), (gridY + i * (gridH / 3)),
-                                (gridW / 10), (gridH / 3),
-                                false, Integer.toString(playerGrids.get(0).getGrid()[i][j]), caseScale, new ResourceHandle<>("textures/bingo/caseBG.png") {
-                        });
-                        ((Button) caseX).setHoverTexture(new ResourceHandle<Texture>("textures/bingo/caseBGhovered.png") {
-                        });
-                        if (((Button) caseX).getTitle().equals("0")) {
-                            ((Button) caseX).setDisabled(true);
-                        }
-                        addGuiElement(caseX);
-                        caseX.setClickHandler((id, e) -> {
-                            checkCase(caseX.getId());
-                        });
-
-                    }
-                }
-
-                // addGuiElement(grid);
-                break;
-
-            case 2:
-                gridX = 1 * (width / 20f);
-                gridY = 1 * (height / 3.5f);
-                gridW = (width / 3f);
-                gridH = (height / 5f);
-                caseScale = (0.9f * ((gridW / 9f) / (gridH / 3f)));
-                caseID = 0;
-                for (int i = 0; i < nbGrids; i++) {
-
-
-                    for (int j = 0; j < 3; j++) {
-                        for (int k = 0; k < 9; k++, caseID++) {
-                            final GuiElement caseX = new Button(caseID,
-                                    (gridX + k * (gridW / 9)), (gridY + (j * (gridH / 3) + (i * gridH))),
-                                    (gridW / 10), (gridH / 3),
-                                    false, Integer.toString(playerGrids.get(i).getGrid()[j][k]), caseScale,
-                                    new ResourceHandle<>("textures/bingo/caseBG.png") {
-                                    });
-                            caseX.setClickHandler((id, e) -> {
-                                checkCase(id);
-                            });
-                            addGuiElement(caseX);
-                        }
-                    }
-                    gridY += gridH / 3;
-                }
-
-                break;
-
-            case 3:
-                gridX = 2 * (width / 20f);
-                gridY = 1 * (height / 7.5f);
-                gridW = (width / 3f);
-                gridH = (height / 5f);
-                caseScale = (0.9f * ((gridW / 9f) / (gridH / 3f)));
-                caseID = 0;
-
-                for (int i = 0; i < nbGrids; i++) {
-
-                    for (int j = 0; j < 3; j++) {
-                        for (int k = 0; k < 9; k++, caseID++) {
-                            final GuiElement caseX = new Button(caseID,
-                                    (gridX + k * (gridW / 9)), (gridY + (j * (gridH / 3) + (i * gridH))),
-                                    (gridW / 10), (gridH / 3),
-                                    false, Integer.toString(playerGrids.get(i).getGrid()[j][k]), caseScale,
-                                    new ResourceHandle<>("textures/bingo/caseBG.png") {
-                                    });
-                            caseX.setClickHandler((id, e) -> {
-                                checkCase(id);
-                            });
-                            addGuiElement(caseX);
-                        }
-                    }
-                    gridY += gridH / 3;
-                }
-
-                break;
-
-            case 4:
-
-                gridX = 2 * (width / 20f);
-                gridY = 1 * (height / 7.5f);
-                gridW = (width / 3f);
-                gridH = (height / 5f);
-                caseScale = (0.9f * ((gridW / 9f) / (gridH / 3f)));
-                caseID = 0;
-
-                for (int i = 0; i < nbGrids; i++) {
-                    if (i > 2) {
-                        gridX = 1 * (width / 2f);
-                    }
-                    for (int j = 0; j < 3; j++) {
-                        for (int k = 0; k < 9; k++, caseID++) {
-                            final GuiElement caseX = new Button(caseID,
-                                    1 * (gridX + k * (gridW / 9)), 1 * (gridY + (j * (gridH / 3) + (i * gridH))),
-                                    1 * (gridW / 10), 1 * (gridH / 3),
-                                    false, Integer.toString(playerGrids.get(i).getGrid()[j][k]), caseScale,
-                                    new ResourceHandle<>("textures/bingo/caseBG.png") {
-                                    });
-                            caseX.setClickHandler((id, e) -> {
-                                checkCase(id);
-                            });
-                            addGuiElement(caseX);
-                        }
-                    }
-                    gridY += gridH / 3;
-
-                }
-                break;
-
-            case 5:
-                break;
-
-            case 6:
-                break;
-
-            default:
-                Game.instance().getStateEngine().popState();
-                break;
+            drawGrid(gridX, gridY, gridW, gridH, i);
         }
 
-        // GuiElement gridCase = new Button (10,);
+        this.ball = new Text(401, 6 * (width / 8f), (height / 5f), "", 5f, false);
+        this.gameStatus = new Text(402, 2 * (width / 8f), 1 * (height / 10f), "Starting", 5f, true);
 
-        GuiElement backButton = new Button(400,
-                (width / 20f), (height - (height / 20f) - (height / 10f)),
-                (height / 10f), (height / 10f),
-                false, "Back", new ResourceHandle<>("textures/defaultButton.png") {
-        });
-        backButton.setClickHandler((id, e) -> Game.instance().getStateEngine().popState());
+        final GuiElement backButton = new Button(-1,
+                (width / 20f), (height - (height / 20f) - (height / 10f)), (height / 10f), (height / 10f), false, "Back")
+                .setClickHandler((id, e) -> Game.instance().getStateEngine().popState());
 
-        addGuiElement(backButton);
+        addGuiElement(backButton, this.gameStatus);
+    }
+
+    private void drawGrid(float gridX, float gridY, float gridW, float gridH, int numGrid) {
+        int caseID = (100 * numGrid);
+
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 9; j++, caseID++) {
+                final Button caseX = new Button(caseID,
+                        (gridX + j * (gridW / 9)), (gridY + i * (gridH / 3)),
+                        (gridW / 10), (gridH / 3), false, Integer.toString(this.player.getGrid(numGrid).getValue(i, j)), CASE_TEXTURE);
+
+                caseX.setHoverTexture(CASE_HOVERED_TEXTURE);
+
+                if (caseX.getTitle().equals("0")) {
+                    caseX.setDisabled(true);
+                }
+
+                caseX.setClickHandler((id, e) -> {
+                    checkCase(caseX.getId());
+                });
+
+                addGuiElement(caseX);
+            }
+        }
     }
 
     @Override
@@ -284,7 +182,7 @@ public class BingoState extends ScreenState {
                 numberList) {
             System.out.print(" | " + boule);
         }
-        System.out.println("");
+        System.out.println();
     }
 
 }
