@@ -24,6 +24,7 @@ public class Resources {
     /* SHADERS */
     public static final ResourceHandle<Shader> DEFAULT_SHADER = new ResourceHandle<>("shaders/base.json") {};
     public static final ResourceHandle<Shader> CIRCLE_SHADER = new ResourceHandle<>("shaders/circle.json") {};
+    public static final ResourceHandle<Shader> ROUNDED_SHADER = new ResourceHandle<>("shaders/rounded.json") {};
     public static final ResourceHandle<Shader> FONT_SHADER = new ResourceHandle<>("shaders/font.json") {};
 
     public static ByteBuffer readBytes(InputStream inputStream) throws IOException {

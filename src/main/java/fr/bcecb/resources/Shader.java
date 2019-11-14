@@ -32,6 +32,14 @@ public class Shader extends GLResource {
         glUniform4f(location, vector.x, vector.y, vector.z, vector.w);
     }
 
+    public void uniformFloat(String name, float value) {
+        uniformFloat(getUniformLocation(name), value);
+    }
+
+    private void uniformFloat(int location, float value) {
+        glUniform1f(location, value);
+    }
+
     public void uniformMat4(String name, Matrix4f matrix) {
         uniformMat4(getUniformLocation(name), matrix);
     }

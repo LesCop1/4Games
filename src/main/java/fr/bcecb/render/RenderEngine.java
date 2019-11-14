@@ -112,6 +112,31 @@ public class RenderEngine {
         transform.popTransform();
     }
 
+    public void drawRoundedRect(ResourceHandle<Texture> textureHandle, float minX, float minY, float maxX, float maxY, float radius) {
+        Shader shader = resourceManager.getResource(Resources.ROUNDED_SHADER);
+
+        float width = maxX - minX;
+        float height = maxY - minY;
+        radius = Math.min(radius, Math.min((width / 2), (height / 2)));
+
+        shader.bind();
+        {
+            shader.uniformFloat("uiWidth", width);
+            shader.uniformFloat("uiHeight", height);
+            shader.uniformFloat("radius", radius);
+        }
+        shader.unbind();
+
+        transform.pushTransform();
+        {
+            transform.translate(minX, minY);
+            transform.scale(maxX - minX, maxY - minY);
+
+            draw(Resources.ROUNDED_SHADER, textureHandle);
+        }
+        transform.popTransform();
+    }
+
     public void drawCircle(ResourceHandle<Texture> textureHandle, float x, float y, float radius) {
         transform.pushTransform();
         {
