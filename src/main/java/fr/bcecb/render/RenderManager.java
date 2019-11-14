@@ -16,7 +16,9 @@ public class RenderManager {
         this.resourceManager = resourceManager;
 
         registerRenderer(ScreenState.class, new ScreenStateRenderer(this));
+        registerRenderer(Button.class, new ButtonRenderer(this));
         registerRenderer(CircleButton.class, new CircleButtonRenderer(this));
+        registerRenderer(RoundedButton.class, new RoundedButtonRenderer(this));
         registerRenderer(Image.class, new ImageRenderer(this));
         registerRenderer(CircleImage.class, new CircleImageRenderer(this));
         registerRenderer(Text.class, new TextRenderer(this));
