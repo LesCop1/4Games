@@ -1,7 +1,5 @@
 package fr.bcecb.state.gui;
 
-import fr.bcecb.render.RenderManager;
-import fr.bcecb.render.Renderer;
 import fr.bcecb.resources.ResourceHandle;
 import fr.bcecb.resources.Texture;
 
@@ -13,27 +11,16 @@ public class CircleImage extends Image {
         this.radius = radius;
     }
 
+    @Override
+    boolean checkBounds(float x, float y) {
+        return super.checkBounds(x, y) && Math.pow((getX() + radius) - x, 2) + Math.pow((getY() + radius) - y, 2) < Math.pow(radius, 2);
+    }
+
     public float getRadius() {
         return radius;
     }
 
     public void setRadius(float radius) {
         this.radius = radius;
-    }
-
-    public static class CircleImageRenderer extends Renderer<CircleImage> {
-        public CircleImageRenderer(RenderManager renderManager) {
-            super(renderManager);
-        }
-
-        @Override
-        public ResourceHandle<Texture> getTexture(CircleImage circleImage) {
-            return circleImage.getImage();
-        }
-
-        @Override
-        public void render(CircleImage circleImage, float partialTick) {
-            renderManager.getRenderEngine().drawTexturedCircle(circleImage.getX(), circleImage.getY(), circleImage.getRadius(), getTexture(circleImage));
-        }
     }
 }

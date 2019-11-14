@@ -5,7 +5,9 @@ import com.google.common.eventbus.Subscribe;
 import fr.bcecb.event.EventExceptionHandler;
 import fr.bcecb.event.GameEvent;
 import fr.bcecb.render.RenderEngine;
+import fr.bcecb.resources.ResourceHandle;
 import fr.bcecb.resources.ResourceManager;
+import fr.bcecb.resources.Texture;
 import fr.bcecb.state.MainMenuScreen;
 import fr.bcecb.state.StateEngine;
 import fr.bcecb.util.Log;
@@ -27,6 +29,8 @@ public final class Game {
 
     private static final Game INSTANCE = new Game();
 
+    public ResourceHandle<Texture> currentProfile = new ResourceHandle<>("textures/defaultProfile.png") {};
+
     private Game() {
         if (!glfwInit()) {
             Log.SYSTEM.severe("Couldn't initialize GLFW");
@@ -44,7 +48,7 @@ public final class Game {
 
     private void start() {
         renderEngine.getWindow().show();
-        Log.SYSTEM.debug("Starting the game");
+        Log.SYSTEM.info("Starting the game");
         running = true;
 
         stateEngine.pushState(new MainMenuScreen());
@@ -54,12 +58,13 @@ public final class Game {
         float lastTime = 0.0f;
         float delta = 0.0f;
 
-        while (this.isRunning()) {
+        while (this.running) {
             currentTime = (float) glfwGetTime();
             delta += (currentTime - lastTime) / ticks;
             lastTime = currentTime;
 
             while (delta >= 1.0) {
+                EVENT_BUS.post(new GameEvent.Tick());
                 stateEngine.update();
 
                 --delta;
@@ -78,10 +83,6 @@ public final class Game {
     @Subscribe
     public void stop(GameEvent.Close event) {
         running = false;
-    }
-
-    private boolean isRunning() {
-        return running;
     }
 
     public RenderEngine getRenderEngine() {

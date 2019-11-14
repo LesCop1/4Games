@@ -28,17 +28,13 @@ public class KeyboardManager {
             keyStates.put(key, action == GLFW_PRESS);
         }
 
-        Event event = null;
+        Event event = switch (action) {
+            case GLFW_RELEASE -> new KeyboardEvent.Release(key);
+            case GLFW_PRESS -> new KeyboardEvent.Press(key);
+            case GLFW_REPEAT -> new KeyboardEvent.Repeat(key);
+            default -> new KeyboardEvent(key, false) {};
+        };
 
-        if (action == GLFW_RELEASE)
-            event = new KeyboardEvent.Release(key);
-        else if (action == GLFW_PRESS)
-            event = new KeyboardEvent.Press(key);
-        else if (action == GLFW_REPEAT)
-            event = new KeyboardEvent.Repeat(key);
-
-        if (event != null) {
-            Game.EVENT_BUS.post(event);
-        }
+        Game.EVENT_BUS.post(event);
     }
 }

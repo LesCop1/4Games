@@ -4,7 +4,7 @@ import com.google.common.base.MoreObjects;
 import com.google.common.base.Objects;
 import com.google.common.reflect.TypeToken;
 
-public class ResourceHandle<R extends IResource> {
+public abstract class ResourceHandle<R extends IResource> {
     private final String handle;
 
     public ResourceHandle(String handle) {
@@ -33,11 +33,11 @@ public class ResourceHandle<R extends IResource> {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         ResourceHandle<?> that = (ResourceHandle<?>) o;
-        return Objects.equal(getHandle(), that.getHandle());
+        return Objects.equal(handle, that.handle);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(getHandle());
+        return Objects.hashCode(handle);
     }
 }
