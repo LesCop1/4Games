@@ -23,8 +23,8 @@ public class RenderManager {
         registerRenderer(CircleImage.class, new CircleImageRenderer(this));
         registerRenderer(Text.class, new TextRenderer(this));
         registerRenderer(Rectangle.class, new RectangleRenderer(this));
-
-        registerRenderer(Button.class, new ButtonRenderer(this));
+        registerRenderer(Slider.class, new SliderRenderer(this));
+        registerRenderer(ProgressBar.class, new ProgressBarRenderer(this));
     }
 
     private <T extends IRenderable> void registerRenderer(Class<T> clazz, Renderer<T> renderer) {
