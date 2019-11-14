@@ -18,6 +18,8 @@ public class BingoState extends ScreenState {
     };
     private static final ResourceHandle<Texture> CASE_HOVERED_TEXTURE = new ResourceHandle<>("textures/bingo/caseBGhovered.png") {
     };
+    private static final ResourceHandle<Texture> CASE_CHECKED_TEXTURE = new ResourceHandle<>("textures/bingo/caseBGchecked.png") {
+    };
     private final static int NB_BOTS = 5;
     private int tickMultiplier = 0;
     private int ticks = 0;
@@ -34,13 +36,13 @@ public class BingoState extends ScreenState {
         this.nbGrids = nbGrids;
         switch (difficulty) {
             case 1:
-                this.tickMultiplier = 6;
+                this.tickMultiplier = 8;
                 break;
             case 2:
-                this.tickMultiplier = 4;
+                this.tickMultiplier = 6;
                 break;
             case 3:
-                this.tickMultiplier = 1;
+                this.tickMultiplier = 4;
         }
         initGame();
         createBots();
@@ -107,10 +109,8 @@ public class BingoState extends ScreenState {
 
     public void checkCase(int btnID) {
         if (((Button) getGuiElementById(btnID)).getTitle().equals(((Integer) this.lastDrop).toString())) {
-            ((Button) getGuiElementById(btnID)).setTexture(new ResourceHandle<>("textures/bingo/caseBGchecked.png") {
-            });
-            ((Button) getGuiElementById(btnID)).setHoverTexture(new ResourceHandle<>("textures/bingo/caseBGchecked.png") {
-            });
+            ((Button) getGuiElementById(btnID)).setTexture(CASE_CHECKED_TEXTURE);
+            ((Button) getGuiElementById(btnID)).setHoverTexture(CASE_CHECKED_TEXTURE);
         }
     }
 
@@ -121,7 +121,7 @@ public class BingoState extends ScreenState {
         setBackgroundTexture(new ResourceHandle<>("textures/bingo/bingoBG.png") {
         });
 
-        float startX = (width / 20f);
+        float startX = 2.5f * (width / 20f);
         float startY = (height / 5f);
 
         float gridW = (width / 3f);
@@ -138,10 +138,10 @@ public class BingoState extends ScreenState {
             drawGrid(gridX, gridY, gridW, gridH, i);
         }
 
-        this.ball = new Text(401, 6 * (width / 8f), (height / 5f), "", 5f, false);
-        this.gameStatus = new Text(402, 2 * (width / 8f), 1 * (height / 10f), "Starting", 5f, true);
+        this.ball = new Text(2000,1 * (startX+gridW), 1 * (height / 10f), "", 5f, false);
+        this.gameStatus = new Text(2001, 2 * (width / 8f), 1 * (height / 10f), "Starting", 5f, true);
 
-        final GuiElement backButton = new Button(-1,
+        final GuiElement backButton = new Button(2002,
                 (width / 20f), (height - (height / 20f) - (height / 10f)), (height / 10f), (height / 10f), false, "Back")
                 .setClickHandler((id, e) -> Game.instance().getStateEngine().popState());
 

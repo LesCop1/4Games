@@ -2,6 +2,7 @@ package fr.bcecb.state;
 
 import fr.bcecb.Game;
 import fr.bcecb.batailleNavale.BattleshipScreen;
+import fr.bcecb.bingo.SettingsBingoState;
 import fr.bcecb.render.Window;
 import fr.bcecb.state.gui.Button;
 import fr.bcecb.state.gui.CircleButton;
