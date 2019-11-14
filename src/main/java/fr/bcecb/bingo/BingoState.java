@@ -23,6 +23,7 @@ public class BingoState extends ScreenState {
     private Player player;
     private int lastDrop;
     private GuiElement ball;
+    private GuiElement gameStatus;
 
     public BingoState(int nbGrids, int difficulty) {
         super("bingo");
@@ -71,35 +72,42 @@ public class BingoState extends ScreenState {
     }
 
     @Override
-    public void update() {
-        super.update();
-        if (numberList.size() > 2) {
-            if (++ticks > tickMultiplier * 60) {
-                dropball();
-                System.out.println(this.lastDrop);
-                this.ticks = 0;
-            }
-        } else System.out.println("boulier vide");
+    public void onUpdate() {
+        super.onUpdate();
+        if(!player.checkWin()){
+            if (numberList.size() > 0) {
+                if (++ticks > tickMultiplier * 60) {
+                    dropball();
+                    System.out.println("Boule :"+this.lastDrop);
+                    dispList();
+                    this.ticks = 0;
+                }
+            } else  ((Text) gameStatus).setText("Perdu");
+
+        }else         ((Text) gameStatus).setText("Gagné");
+// push winstate
+
     }
 
     public void checkCase(int btnID){
-        System.out.println("    id de la case : "+btnID);
-        System.out.println("    indice i :"+ btnID / 9 %27%3);
-        System.out.println("    indice j :"+ btnID % 9 %27);
-        System.out.println("    tableau :" + btnID/27);
+        if( ((Button) getGuiElementById(btnID)).getTitle().equals(((Integer) this.lastDrop).toString())){
+            ((Button) getGuiElementById(btnID)).setTexture(new ResourceHandle<>("textures/bingo/caseBGchecked.png"){});
+            ((Button) getGuiElementById(btnID)).setHoverTexture(new ResourceHandle<>("textures/bingo/caseBGchecked.png"){});
+        }
     }
 
     @Override
     public void initGui() {
         int width = Window.getCurrentWindow().getWidth();
         int height = Window.getCurrentWindow().getHeight();
-        setBackgroundTexture(new ResourceHandle<Texture>("textures/bingo/bingoBG.png") {
+        setBackgroundTexture(new ResourceHandle<>("textures/bingo/bingoBG.png") {
         });
-        this.ball = new Text(401, 7* (width / 8f), (height / 5f), "", 5f, false);
-
+        this.ball = new Text(401, 6* (width / 8f), (height / 5f), "", 5f, false);
+        this.gameStatus = new Text(402,2*(width / 8f),1*(height/10f),"Starting",5f,true);
+        addGuiElement(gameStatus);
 
         float gridX, gridW, gridY, gridH;
-        int id;
+        int caseID;
         List<Grid> playerGrids = player.getGrids();
         float caseScale;
 
@@ -114,19 +122,24 @@ public class BingoState extends ScreenState {
 
                 //GuiElement line1 = new Line(1000,(width/20f),1* (height/2.5f),gridW,(height/40f),lineColor);
                 //addGuiElement(line1);
-                id = 0;
+                caseID = 0;
 
                 for (int i = 0; i < 3; i++) {
-                    for (int j = 0; j < 9; j++, id++) {
-                        final GuiElement caseX = new Button(id,
+                    for (int j = 0; j < 9; j++, caseID++) {
+                        final GuiElement caseX = new Button(caseID,
                                 (gridX + j * (gridW / 9)), (gridY + i * (gridH / 3)),
                                 (gridW / 10), (gridH / 3),
                                 false, Integer.toString(playerGrids.get(0).getGrid()[i][j]),caseScale, new ResourceHandle<>("textures/bingo/caseBG.png") {
                         });
-                        caseX.setClickHandler(e -> {
+                        ((Button) caseX).setHoverTexture(new ResourceHandle<Texture>("textures/bingo/caseBGhovered.png") {});
+                        if(((Button) caseX).getTitle().equals("0")){
+                            ((Button) caseX).setDisabled(true);
+                        }
+                        addGuiElement(caseX);
+                        caseX.setClickHandler((id,e) -> {
                             checkCase(caseX.getId());
                         });
-                        addGuiElement(caseX);
+
                     }
                 }
 
@@ -139,20 +152,20 @@ public class BingoState extends ScreenState {
                 gridW = (width / 3f);
                 gridH = (height / 5f);
                 caseScale = (0.9f * ((gridW/9f)/(gridH/3f)));
-                id = 0;
-                for (int i = 0; i < 2; i++) {
+                caseID = 0;
+                for (int i = 0; i < nbGrids; i++) {
 
 
                     for (int j = 0; j < 3; j++) {
-                        for (int k = 0; k < 9; k++, id++) {
-                            final GuiElement caseX = new Button(id,
+                        for (int k = 0; k < 9; k++, caseID++) {
+                            final GuiElement caseX = new Button(caseID,
                                     (gridX + k * (gridW / 9)), (gridY + (j * (gridH / 3) + (i * gridH)) ),
                                     (gridW / 10), (gridH / 3),
                                     false, Integer.toString(playerGrids.get(i).getGrid()[j][k]),caseScale,
-                                    new ResourceHandle<Texture>("textures/bingo/caseBG.png") {
+                                    new ResourceHandle<>("textures/bingo/caseBG.png") {
                                     });
-                            caseX.setClickHandler(e -> {
-                                checkCase(caseX.getId());
+                            caseX.setClickHandler((id,e) -> {
+                                checkCase(id);
                             });
                             addGuiElement(caseX);
                         }
@@ -163,9 +176,63 @@ public class BingoState extends ScreenState {
                 break;
 
             case 3:
+                gridX = 2 * (width / 20f);
+                gridY = 1 * (height / 7.5f);
+                gridW = (width / 3f);
+                gridH = (height / 5f);
+                caseScale = (0.9f * ((gridW/9f)/(gridH/3f)));
+                caseID = 0;
+
+                for (int i = 0; i < nbGrids; i++) {
+
+                    for (int j = 0; j < 3; j++) {
+                        for (int k = 0; k < 9; k++, caseID++) {
+                            final GuiElement caseX = new Button(caseID,
+                                    (gridX + k * (gridW / 9)), (gridY + (j * (gridH / 3) + (i * gridH)) ),
+                                    (gridW / 10), (gridH / 3),
+                                    false, Integer.toString(playerGrids.get(i).getGrid()[j][k]),caseScale,
+                                    new ResourceHandle<>("textures/bingo/caseBG.png") {
+                                    });
+                            caseX.setClickHandler((id,e) -> {
+                                checkCase(id);
+                            });
+                            addGuiElement(caseX);
+                        }
+                    }
+                    gridY += gridH/3;
+                }
+
                 break;
 
             case 4:
+
+                gridX = 2 * (width / 20f);
+                gridY = 1 * (height / 7.5f);
+                gridW = (width / 3f);
+                gridH = (height / 5f);
+                caseScale = (0.9f * ((gridW/9f)/(gridH/3f)));
+                caseID = 0;
+
+                for (int i = 0; i < nbGrids; i++) {
+                    if(i> 2){
+                        gridX = 1*(width / 2f);
+                    }
+                    for (int j = 0; j < 3; j++) {
+                        for (int k = 0; k < 9; k++, caseID++) {
+                            final GuiElement caseX = new Button(caseID,
+                                    (gridX + k * (gridW / 9)), (gridY + (j * (gridH / 3) + (i * gridH)) ),
+                                    (gridW / 10), (gridH / 3),
+                                    false, Integer.toString(playerGrids.get(i).getGrid()[j][k]),caseScale,
+                                    new ResourceHandle<>("textures/bingo/caseBG.png") {
+                                    });
+                            caseX.setClickHandler((id,e) -> {
+                                checkCase(id);
+                            });
+                            addGuiElement(caseX);
+                        }
+                    }
+                    gridY += gridH/3;
+                }
                 break;
 
             case 5:
@@ -185,14 +252,15 @@ public class BingoState extends ScreenState {
                 (width / 20f), (height - (height / 20f) - (height / 10f)),
                 (height / 10f), (height / 10f),
                 false, "Back", new ResourceHandle<>("textures/defaultButton.png") {
-        }).setClickHandler(e -> Game.instance().getStateEngine().popState());
+        });
+        backButton.setClickHandler((id,e) -> Game.instance().getStateEngine().popState());
 
         addGuiElement(backButton);
     }
 
 
     private void dropball() {
-
+        ((Text) gameStatus).setText("Playing");
         Random rand = new Random();
         int randInt = rand.nextInt(numberList.size()); // random de la taille de la liste
 
@@ -209,9 +277,13 @@ public class BingoState extends ScreenState {
         return false;
     }
 
-    @Override
-    public boolean shouldUpdateBelow() {
-        return false;
+    public void dispList(){
+        for (int boule      :
+        numberList){
+            System.out.print(" | "+boule);
+        }
+        System.out.println("");
     }
+
 }
 

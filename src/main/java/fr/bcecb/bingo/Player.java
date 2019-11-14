@@ -14,11 +14,12 @@ public class Player {
         }
     }
 
-    private void checkWin(){
+    public boolean checkWin(){
         for (Grid g :
                 grids) {
             if (g.checkWin()) this.win = true;
         }
+        return this.win;
     }
 
     private void addGrid(){
@@ -28,9 +29,5 @@ public class Player {
 
     public List<Grid> getGrids() {
         return grids;
-    }
-
-    public void setGrids(List<Grid> grids) {
-        this.grids = grids;
     }
 }

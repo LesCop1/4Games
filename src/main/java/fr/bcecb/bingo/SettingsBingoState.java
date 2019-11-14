@@ -27,8 +27,8 @@ public class SettingsBingoState extends ScreenState {
     }
 
     @Override
-    public void update() {
-        super.update();
+    public void onUpdate() {
+        super.onUpdate();
 
 
     }
@@ -51,7 +51,7 @@ public class SettingsBingoState extends ScreenState {
                 (width / 10f), (height / 6f) + 10,
                 (width / 20f), (height / 10f),
                 true, "1", new ResourceHandle<>("textures/defaultButton.png") {
-        }).setClickHandler(e -> {
+        }).setClickHandler((id,e) -> {
             this.nbGrids = 1;
         });
 
@@ -59,7 +59,7 @@ public class SettingsBingoState extends ScreenState {
                 (width / 10f) + (width / 10f), (height / 6f) + 10,
                 (width / 20f), (height / 10f),
                 true, "2", new ResourceHandle<>("textures/defaultButton.png") {
-        }).setClickHandler(e -> {
+        }).setClickHandler((id,e) -> {
             this.nbGrids = 2;
         });
 
@@ -67,7 +67,7 @@ public class SettingsBingoState extends ScreenState {
                 (width / 10f) + (2 * (width / 10f)), (height / 6f) + 10,
                 (width / 20f), (height / 10f),
                 true, "3", new ResourceHandle<>("textures/defaultButton.png") {
-        }).setClickHandler(e -> {
+        }).setClickHandler((id,e) -> {
             this.nbGrids = 3;
         });
 
@@ -75,7 +75,7 @@ public class SettingsBingoState extends ScreenState {
                 (width / 10f) + (3 * (width / 10f)), (height / 6f) + 10,
                 (width / 20f), (height / 10f),
                 true, "4", new ResourceHandle<>("textures/defaultButton.png") {
-        }).setClickHandler(e -> {
+        }).setClickHandler((id,e) -> {
             this.nbGrids = 4;
         });
 
@@ -83,7 +83,7 @@ public class SettingsBingoState extends ScreenState {
                 (width / 10f) + (4 * (width / 10f)), (height / 6f) + 10,
                 (width / 20f), (height / 10f),
                 true, "5", new ResourceHandle<>("textures/defaultButton.png") {
-        }).setClickHandler(e -> {
+        }).setClickHandler((id,e) -> {
             this.nbGrids = 5;
         });
 
@@ -91,7 +91,7 @@ public class SettingsBingoState extends ScreenState {
                 (width / 10f) + (5 * (width / 10f)), (height / 6f) + 10,
                 (width / 20f), (height / 10f),
                 true, "6", new ResourceHandle<>("textures/defaultButton.png") {
-        }).setClickHandler(e -> {
+        }).setClickHandler((id,e) -> {
             this.nbGrids = 6;
         });
 
@@ -99,26 +99,26 @@ public class SettingsBingoState extends ScreenState {
                 (width / 10f), (height / 6f) + (2 * height / 6f),
                 (width / 20f), (height / 10f),
                 true, "E", new ResourceHandle<>("textures/defaultButton.png") {
-        }).setClickHandler(e -> this.difficulty = 1);
+        }).setClickHandler((id,e) -> this.difficulty = 1);
 
         GuiElement option2Button2 = new Button(8,
                 (width / 10f) + (width / 10f), (height / 6f) + (2 * height / 6f),
                 (width / 20f), (height / 10f),
                 true, "N", new ResourceHandle<>("textures/defaultButton.png") {
-        }).setClickHandler(e -> this.difficulty = 2);
+        }).setClickHandler((id,e) -> this.difficulty = 2);
 
         GuiElement option2Button3 = new Button(9,
                 (width / 10f) + 2 * (width / 10f), (height / 6f) + (2 * height / 6f),
                 (width / 20f), (height / 10f),
                 true, "H", new ResourceHandle<>("textures/defaultButton.png") {
-        }).setClickHandler(e -> this.difficulty = 3);
+        }).setClickHandler((id,e) -> this.difficulty = 3);
 
 
         GuiElement startButton = new Button(10,
                 (width / 2f), (height / 4f) + 2 * (height / 4f),
                 (width / 5f), (height / 10f),
                 true, "Start", new ResourceHandle<>("textures/defaultButton.png") {
-        }).setClickHandler(e -> {
+        }).setClickHandler((id,e) -> {
             if (this.difficulty != 0 && this.nbGrids != 0) {
               Game.instance().getStateEngine().popState();
             }
@@ -128,7 +128,7 @@ public class SettingsBingoState extends ScreenState {
                 (width / 20f), (height - (height / 20f) - (height / 10f)),
                 (height / 10f), (height / 10f),
                 false, "Back", new ResourceHandle<Texture>("textures/defaultButton.png") {
-        }).setClickHandler(e -> {
+        }).setClickHandler((id,e) -> {
             Game.instance().getStateEngine().popState();
             Game.instance().getStateEngine().popState();
         });
