@@ -51,14 +51,14 @@ public class SudokuState extends ScreenState {
         int id = 1;
 
         float btnSize = 80.05f;
-        float x = (width / 2) - (9 * btnSize / 2);
-        for (int i = 0; i < 9; ++i, x += btnSize) {
+        float x = (width / 2) - (Sudoku.SIZE * btnSize / 2);
+        for (int i = 0; i < Sudoku.SIZE; ++i, x += btnSize) {
             if (i % 3 == 0) {
                 x += 4;
             }
 
-            float y = (height / 2) - (9 * btnSize / 2);
-            for (int j = 0; j < 9; ++j, ++id, y += btnSize) {
+            float y = (height / 2) - (Sudoku.SIZE * btnSize / 2);
+            for (int j = 0; j < Sudoku.SIZE; ++j, ++id, y += btnSize) {
                 if (j % 3 == 0) {
                     y += 4;
                 }
@@ -105,9 +105,10 @@ public class SudokuState extends ScreenState {
             }
         }
 
-        for (int i = 0; i < 9; i++) {
+        for (int i = 0; i < Sudoku.SIZE; i++) {
             int value = i + 1;
-            GuiElement candidateValueButton = new Button(++id, (width / 2) - (9 * btnSize / 2) + (btnSize * i) + 8, height - btnSize, btnSize, btnSize, true, String.valueOf(value), new ResourceHandle<>("textures/candidateValuesTextures.png") {}) {
+            GuiElement candidateValueButton = new Button(++id, (width / 2) - (Sudoku.SIZE * btnSize / 2) + (btnSize * i) + 8, height - btnSize, btnSize, btnSize, true, String.valueOf(value), new ResourceHandle<>("textures/candidateValuesTextures.png") {
+            }) {
                 @Override
                 public boolean isVisible() {
                     if (selectedX != -1 && selectedY != -1) {

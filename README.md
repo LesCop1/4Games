@@ -5,6 +5,6 @@ The four games are :
 - Naval Battle
 - Poker
 - Sudoku
-- Bingo
+- Loto
 
 > Some of those games will be available in single and multiplayer.

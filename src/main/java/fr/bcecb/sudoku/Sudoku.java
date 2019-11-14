@@ -6,7 +6,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public class Sudoku {
-    private static final int SIZE = 9;
+    public static final int SIZE = 9;
     private static final int SIZE_BOX = (int) Math.floor(Math.sqrt(SIZE));
     private static final Random RANDOM = new Random();
     private static final Collector<?, ?, ?> SHUFFLER = Collectors.collectingAndThen(

@@ -67,8 +67,6 @@ public final class Game {
                 EVENT_BUS.post(new GameEvent.Tick());
                 stateEngine.update();
 
-                stateEngine.update();
-
                 --delta;
             }
 
