@@ -4,7 +4,7 @@ import com.google.common.base.MoreObjects;
 import com.google.common.base.Objects;
 import com.google.common.reflect.TypeToken;
 
-public class ResourceHandle<R extends IResource> {
+public abstract class ResourceHandle<R extends IResource> {
     private final String handle;
 
     public ResourceHandle(String handle) {

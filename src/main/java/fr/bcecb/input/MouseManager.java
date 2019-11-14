@@ -33,7 +33,7 @@ public class MouseManager {
     }
 
     private void mouseScrollCallback(long window, double x, double y) {
-        Event event = new MouseEvent.Scroll((float)x, (float)y);
+        Event event = new MouseEvent.Scroll((float) x, (float) y);
         Game.EVENT_BUS.post(event);
     }
 }

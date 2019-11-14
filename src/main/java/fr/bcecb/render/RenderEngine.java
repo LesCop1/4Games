@@ -2,7 +2,10 @@ package fr.bcecb.render;
 
 import fr.bcecb.resources.*;
 import fr.bcecb.state.StateEngine;
-import fr.bcecb.util.*;
+import fr.bcecb.util.Log;
+import fr.bcecb.util.Resources;
+import fr.bcecb.util.TextRendering;
+import fr.bcecb.util.TransformStack;
 import org.joml.Matrix4f;
 import org.lwjgl.opengl.GL;
 import org.lwjgl.stb.STBTTAlignedQuad;
@@ -128,7 +131,6 @@ public class RenderEngine {
             transform.pushTransform();
             {
                 transform.translate(-(width / 2.0f) / window.getContentScaleX(), -(height / 2.0f) / window.getContentScaleY());
-                transform.color(Constants.COLOR_BLACK);
                 drawText(fontHandle, text, x, y, scale);
             }
             transform.popTransform();
