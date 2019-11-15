@@ -218,17 +218,19 @@ public class Poker {
          *
          * @param pokerInstance The current poker Instance
          */
+        // donc la ta la derniere version de dev sur la branche poker. et genre ce qui est en dessous faut juste le relier a des btns
+        //dacco:)
         private void play(Poker pokerInstance) {
             if (this.playing) {
-                if (Button.Bet.onclick) {
-                    actionBet(pokerInstance, 50);
-                } else if (Button.Follow.onclick) {
-                    actionFollow(pokerInstance);
-                } else if (Button.check.onclick) {
-                    actionCheck();
-                } else if (Button.Leave.onclick) {
-                    actionLeave();
-                }
+//                if (Button.Bet.onclick) {
+//                    actionBet(pokerInstance, 50);
+//                } else if (Button.Follow.onclick) {
+//                    actionFollow(pokerInstance);
+//                } else if (Button.check.onclick) {
+//                    actionCheck();
+//                } else if (Button.Leave.onclick) {
+//                    actionLeave();
+//                }
             }
         }
 
