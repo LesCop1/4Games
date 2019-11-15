@@ -29,7 +29,7 @@ public final class Game {
 
     private static final Game INSTANCE = new Game();
 
-    public ResourceHandle<Texture> currentProfile = new ResourceHandle<>("textures/defaultProfile.png") {};
+    public ResourceHandle<Texture> currentProfile = new ResourceHandle<>("textures/defaultProfile.jpg") {};
 
     private Game() {
         if (!glfwInit()) {
