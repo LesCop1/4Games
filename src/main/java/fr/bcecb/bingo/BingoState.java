@@ -88,9 +88,9 @@ public class BingoState extends ScreenState {
                     dispList();
                     this.ticks = 0;
                 }
-            } else ((Text) gameStatus).setText("Perdu");
+            } else ((Text) gameStatus).setText("You Loose !");
 
-        } else ((Text) gameStatus).setText("Gagné");
+        } else ((Text) gameStatus).setText("Bingo !");
 // push winstate
 
     }
