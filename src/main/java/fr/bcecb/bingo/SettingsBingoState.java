@@ -133,16 +133,7 @@ public class SettingsBingoState extends ScreenState {
             Game.instance().getStateEngine().popState();
         });
 
-        addGuiElement(option1Button1);
-        addGuiElement(option1Button2);
-        addGuiElement(option1Button3);
-        addGuiElement(option1Button4);
-        addGuiElement(option1Button5);
-        addGuiElement(option1Button6);
-        addGuiElement(option2Button1);
-        addGuiElement(option2Button2);
-        addGuiElement(option2Button3);
-        addGuiElement(startButton);
-        addGuiElement(backButton);
+        addGuiElement(option1Button1,option1Button2,option1Button3,option1Button4,option1Button5,option1Button6,option2Button1,option2Button2,option2Button3);
+        addGuiElement(startButton,backButton);
     }
 }
