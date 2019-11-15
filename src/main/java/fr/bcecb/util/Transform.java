@@ -27,6 +27,11 @@ public class Transform {
         return this;
     }
 
+    public Transform rotateZ(float angle) {
+        this.model.rotateZ((float) Math.toRadians(angle));
+        return this;
+    }
+
     public Transform scale(float x, float y) {
         this.model.scaleXY(x, y);
         return this;
