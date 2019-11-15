@@ -44,8 +44,7 @@ public class SudokuState extends ScreenState {
             }
         };
 
-        GuiElement backButton = new Button(-1, (width / 20f), (height - (height / 20f) - (height / 10f)), (height / 10f), (height / 10f), false, "Back", Resources.DEFAULT_BUTTON_TEXTURE)
-                .setClickHandler((id, event) -> Game.instance().getStateEngine().popState());
+        GuiElement backButton = new Button(-1, (width / 20f), (height - (height / 20f) - (height / 10f)), (height / 10f), (height / 10f), false, "Back", Resources.DEFAULT_BUTTON_TEXTURE);
 
         Button caseButton;
         int id = 1;
