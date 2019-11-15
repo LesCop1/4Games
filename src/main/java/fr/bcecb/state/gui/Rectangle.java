@@ -11,8 +11,17 @@ public class Rectangle extends GuiElement {
         this(id, x, y, width, height, null);
     }
 
+    public Rectangle(int id, float x, float y, float width, float height, boolean centered) {
+        this(id, x, y, width, height, centered, null);
+    }
+
     public Rectangle(int id, float x, float y, float width, float height, Vector4f color) {
-        super(id, x, y, width, height);
+        this(id, x, y, width, height, false, color);
+    }
+
+
+    public Rectangle(int id, float x, float y, float width, float height, boolean centered, Vector4f color) {
+        super(id, x - (centered ? (width / 2) : 0), y - (centered ? (height / 2) : 0), width, height);
         this.color = MoreObjects.firstNonNull(color, new Vector4f(1.0f));
     }
 

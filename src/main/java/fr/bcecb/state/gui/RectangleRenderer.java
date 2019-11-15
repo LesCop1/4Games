@@ -25,8 +25,10 @@ public class RectangleRenderer extends Renderer<Rectangle> {
 
         transform.pushTransform();
         {
+            transform.translate(rect.getX(), rect.getY());
+            transform.translate(rect.getWidth() / 2.0f, rect.getHeight() / 2.0f);
             transform.color(rect.getColor());
-            engine.drawRect(null, rect.getX(), rect.getY(), rect.getWidth(), rect.getHeight());
+            engine.drawRect(null, 0, 0, rect.getWidth(), rect.getHeight(), true);
         }
         transform.popTransform();
     }
