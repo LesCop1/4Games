@@ -2,7 +2,10 @@ package fr.bcecb.render;
 
 import fr.bcecb.resources.*;
 import fr.bcecb.state.StateEngine;
-import fr.bcecb.util.*;
+import fr.bcecb.util.Log;
+import fr.bcecb.util.Resources;
+import fr.bcecb.util.TextRendering;
+import fr.bcecb.util.TransformStack;
 import org.joml.Matrix4f;
 import org.lwjgl.opengl.GL;
 import org.lwjgl.stb.STBTTAlignedQuad;
@@ -21,6 +24,7 @@ public class RenderEngine {
     private final Window window;
 
     private final Mesh baseMesh;
+    private final Mesh.ReusableBuilder lineMeshBuilder = new Mesh.ReusableBuilder(2);
     private final Mesh.ReusableBuilder textMeshBuilder = new Mesh.ReusableBuilder(4);
 
     private final Matrix4f projection = new Matrix4f();
@@ -45,7 +49,7 @@ public class RenderEngine {
         baseMeshBuilder.uv(1.0f, 1.0f).vertex(1.0f, 1.0f);
         baseMeshBuilder.uv(0.0f, 1.0f).vertex(0.0f, 1.0f);
 
-        this.baseMesh = baseMeshBuilder.build();
+        this.baseMesh = baseMeshBuilder.build(GL_TRIANGLE_FAN);
     }
 
     public void cleanUp() {
@@ -128,7 +132,6 @@ public class RenderEngine {
             transform.pushTransform();
             {
                 transform.translate(-(width / 2.0f) / window.getContentScaleX(), -(height / 2.0f) / window.getContentScaleY());
-                transform.color(Constants.COLOR_BLACK);
                 drawText(fontHandle, text, x, y, scale);
             }
             transform.popTransform();
@@ -173,12 +176,33 @@ public class RenderEngine {
                             textMeshBuilder.uv(quad.s1(), quad.t1()).vertex(quad.x1(), quad.y1());
                             textMeshBuilder.uv(quad.s0(), quad.t1()).vertex(quad.x0(), quad.y1());
 
-                            draw(textMeshBuilder.build(), Resources.FONT_SHADER);
+                            draw(textMeshBuilder.build(GL_TRIANGLE_FAN), Resources.FONT_SHADER);
                         }
                     }
                 }
                 font.unbind();
             }
+        }
+        transform.popTransform();
+    }
+
+    public void drawLine(float x1, float y1, float x2, float y2, float thickness) {
+        transform.pushTransform();
+        {
+            glEnable(GL_LINE_SMOOTH);
+            glLineWidth(thickness);
+            lineMeshBuilder.reset();
+            lineMeshBuilder.vertex(x1, y1);
+            lineMeshBuilder.vertex(x2, y2);
+
+            Texture texture = resourceManager.getResource(Resources.DEFAULT_TEXTURE);
+
+            texture.bind();
+            {
+                draw(lineMeshBuilder.build(GL_LINES), Resources.DEFAULT_SHADER);
+            }
+            texture.unbind();
+            glDisable(GL_LINE_SMOOTH);
         }
         transform.popTransform();
     }
@@ -201,7 +225,7 @@ public class RenderEngine {
         shader.uniformMat4("model", transform.model);
         shader.uniformVec4("override_Color", transform.color);
         shader.unbind();
-        mesh.draw(GL_TRIANGLE_FAN, shader);
+        mesh.draw(shader);
     }
 
     public Window getWindow() {

@@ -1,16 +1,17 @@
 package fr.bcecb.state.gui;
 
-import com.google.common.base.MoreObjects;
 import fr.bcecb.event.MouseEvent;
 import fr.bcecb.render.animation.Animation;
 import fr.bcecb.render.animation.BounceAnimation;
 import fr.bcecb.resources.ResourceHandle;
 import fr.bcecb.resources.Texture;
-import fr.bcecb.util.Resources;
+import fr.bcecb.util.Constants;
+import org.joml.Vector4f;
 
 public class Button extends GuiElement {
     private String title;
     private float titleScale;
+    private Vector4f titleColor;
     private ResourceHandle<Texture> texture;
     private ResourceHandle<Texture> hoverTexture;
     private Animation<Float> hoverAnimation = new BounceAnimation(1.0f, 0.1f, 3.0f);
@@ -59,8 +60,9 @@ public class Button extends GuiElement {
         super(id, x - (centered ? (width / 2) : 0), y - (centered ? (height / 2) : 0), width, height);
         this.title = title;
         this.titleScale = Math.min(titleScale, 1.0f);
-        this.texture = MoreObjects.firstNonNull(texture, Resources.DEFAULT_TEXTURE);
-        this.hoverTexture = MoreObjects.firstNonNull(onHoverTexture, Resources.DEFAULT_TEXTURE);
+        this.titleColor = Constants.COLOR_BLACK;
+        this.texture = texture;
+        this.hoverTexture = onHoverTexture;
     }
 
     public Animation<Float> getHoverAnimation() {
@@ -69,7 +71,7 @@ public class Button extends GuiElement {
 
     @Override
     public void onUpdate() {
-        if (isHovered()) {
+        if (isVisible() && !isDisabled() && isHovered()) {
             hoverAnimation.update();
         } else hoverAnimation.reset();
     }
@@ -102,6 +104,14 @@ public class Button extends GuiElement {
 
     public void setTitleScale(float titleScale) {
         this.titleScale = titleScale;
+    }
+
+    public Vector4f getTitleColor() {
+        return titleColor;
+    }
+
+    public void setTitleColor(Vector4f titleColor) {
+        this.titleColor = titleColor;
     }
 
     public ResourceHandle<Texture> getTexture() {

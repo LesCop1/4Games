@@ -10,16 +10,18 @@ import java.nio.FloatBuffer;
 import static org.lwjgl.opengl.GL41.*;
 
 public final class Mesh {
+    private final int mode;
     private final int vertexCount;
 
     private final int vao;
     private final int vbo;
 
-    private Mesh(int vertexCount) {
-        this(vertexCount, null);
+    private Mesh(int mode, int vertexCount) {
+        this(mode, vertexCount, null);
     }
 
-    private Mesh(int vertexCount, @Nullable FloatBuffer vertices) {
+    private Mesh(int mode, int vertexCount, @Nullable FloatBuffer vertices) {
+        this.mode = mode;
         this.vertexCount = vertexCount;
 
         this.vao = glGenVertexArrays();
@@ -50,15 +52,15 @@ public final class Mesh {
         glBindVertexArray(0);
     }
 
-    public void draw(int mode, @Nonnull Shader shader) {
+    public void draw(@Nonnull Shader shader) {
         shader.bind();
         {
-            draw(mode);
+            draw();
         }
         shader.unbind();
     }
 
-    public void draw(int mode) {
+    public void draw() {
         glBindVertexArray(vao);
         {
             glDrawArrays(mode, 0, vertexCount);
@@ -129,11 +131,11 @@ public final class Mesh {
             return this;
         }
 
-        public Mesh build() {
+        public Mesh build(int mode) {
             this.vertexBuffer.limit(8 * vertexCount);
             this.vertexBuffer.position(0);
 
-            return new Mesh(vertexCount, vertexBuffer);
+            return new Mesh(mode, vertexCount, vertexBuffer);
         }
     }
 
@@ -145,9 +147,9 @@ public final class Mesh {
         }
 
         @Override
-        public Mesh build() {
+        public Mesh build(int mode) {
             if (mesh == null) {
-                this.mesh = new Mesh(vertexCount);
+                this.mesh = new Mesh(mode, vertexCount);
             }
 
             glBindVertexArray(mesh.vao);

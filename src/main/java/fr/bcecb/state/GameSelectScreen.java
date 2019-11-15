@@ -7,6 +7,7 @@ import fr.bcecb.state.gui.Button;
 import fr.bcecb.state.gui.CircleButton;
 import fr.bcecb.state.gui.GuiElement;
 import fr.bcecb.state.gui.ScreenState;
+import fr.bcecb.sudoku.DifficultySelectScreen;
 import fr.bcecb.util.Resources;
 
 public class GameSelectScreen extends ScreenState {
@@ -19,7 +20,8 @@ public class GameSelectScreen extends ScreenState {
         int width = Window.getCurrentWindow().getWidth();
         int height = Window.getCurrentWindow().getHeight();
 
-        final GuiElement sudokuGameButton = new Button(10, (width / 4f), (height / 2f) - (height / 10f), (width / 8f), (height / 10f), true, "Sudoku", Resources.DEFAULT_BUTTON_TEXTURE);
+        final GuiElement sudokuGameButton = new Button(10, (width / 4f), (height / 2f) - (height / 10f), (width / 8f), (height / 10f), true, "Sudoku", Resources.DEFAULT_BUTTON_TEXTURE)
+                .setClickHandler((id, e) -> Game.instance().getStateEngine().pushState(new DifficultySelectScreen()));
 
         final GuiElement bingoGameButton = new Button(11, (width / 4f), (height / 2f) + (height / 10f), (width / 8f), (height / 10f), true, "Bingo", Resources.DEFAULT_BUTTON_TEXTURE);
 

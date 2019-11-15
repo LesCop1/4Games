@@ -17,7 +17,7 @@ public class ButtonRenderer extends Renderer<Button> {
 
     @Override
     public ResourceHandle<Texture> getTexture(Button button) {
-        return button.isHovered() ? button.getHoverTexture() : button.getTexture();
+        return button.isHovered() && button.getHoverTexture() != null ? button.getHoverTexture() : button.getTexture();
     }
 
     @Override
@@ -27,7 +27,7 @@ public class ButtonRenderer extends Renderer<Button> {
 
         transform.pushTransform();
         {
-            float hoverAnimationScale = button.isHovered() ? button.getHoverAnimation().getInterpolatedValue(partialTick) : 1.0f;
+            float hoverAnimationScale = !button.isDisabled() && button.isHovered() ? button.getHoverAnimation().getInterpolatedValue(partialTick) : 1.0f;
 
             transform.translate(button.getX(), button.getY());
             transform.translate(button.getWidth() / 2.0f, button.getHeight() / 2.0f);
@@ -36,7 +36,12 @@ public class ButtonRenderer extends Renderer<Button> {
             renderEngine.drawRect(getTexture(button), 0, 0, button.getWidth(), button.getHeight(), true);
 
             if (!Strings.isNullOrEmpty(button.getTitle())) {
-                renderEngine.drawCenteredText(Resources.DEFAULT_FONT, button.getTitle(), 0, 0, button.getTitleScale());
+                transform.pushTransform();
+                {
+                    transform.color(button.getTitleColor());
+                    renderEngine.drawCenteredText(Resources.DEFAULT_FONT, button.getTitle(), 0, 0, button.getTitleScale());
+                }
+                transform.popTransform();
             }
         }
         transform.popTransform();
