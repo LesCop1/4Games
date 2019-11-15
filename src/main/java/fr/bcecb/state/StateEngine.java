@@ -86,11 +86,9 @@ public class StateEngine {
             if (state instanceof ScreenState) {
                 screenState = (ScreenState) state;
                 screenState.onClick(event);
-
-                if (event.isCancelled()) break;
             }
 
-            if (state.shouldPauseBelow()) break;
+            if (state.shouldPauseBelow() || event.isCancelled()) break;
         }
     }
 
@@ -102,7 +100,7 @@ public class StateEngine {
                 screenState = (ScreenState) state;
                 screenState.onHover(event);
 
-                if (event.isCancelled()) break;
+                if (state.shouldPauseBelow() || event.isCancelled()) break;
             }
         }
     }
@@ -115,9 +113,7 @@ public class StateEngine {
                 screenState = (ScreenState) state;
                 screenState.onScroll(event);
 
-                if (event.isCancelled()) break;
-
-                if (state.shouldPauseBelow()) break;
+                if (state.shouldPauseBelow() || event.isCancelled()) break;
             }
         }
     }
