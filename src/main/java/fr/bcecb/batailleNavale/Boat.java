@@ -4,6 +4,7 @@ public class Boat {
     private final Boat.Type type;
     private final boolean[] hits;
     private boolean horizontal;
+    private String name;
 
     private int x, y;
 
@@ -16,6 +17,10 @@ public class Boat {
     public void setPosition(int x, int y) {
         this.x = x;
         this.y = y;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public int getX() {
@@ -57,6 +62,8 @@ public class Boat {
     public Type getType() {
         return type;
     }
+
+
 
     enum Type { 
         AIRCRAFT_CARRIER("A", 5), //AircraftCarrier
