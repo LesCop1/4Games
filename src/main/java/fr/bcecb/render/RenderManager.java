@@ -21,6 +21,7 @@ public class RenderManager {
         registerRenderer(RoundedButton.class, new RoundedButtonRenderer(this));
         registerRenderer(Image.class, new ImageRenderer(this));
         registerRenderer(CircleImage.class, new CircleImageRenderer(this));
+        registerRenderer(RoundedImage.class, new RoundedImageRenderer(this));
         registerRenderer(Text.class, new TextRenderer(this));
         registerRenderer(Rectangle.class, new RectangleRenderer(this));
         registerRenderer(Slider.class, new SliderRenderer(this));
