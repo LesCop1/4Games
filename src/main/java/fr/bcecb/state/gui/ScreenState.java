@@ -7,22 +7,35 @@ import fr.bcecb.resources.Texture;
 import fr.bcecb.state.State;
 import fr.bcecb.util.Resources;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.Map;
+import java.util.TreeMap;
 
 import static fr.bcecb.event.MouseEvent.Click.Type.RELEASED;
 
 public abstract class ScreenState extends State {
     private final Map<Integer, GuiElement> guiElements = new TreeMap<>(Comparator.naturalOrder());
     private ResourceHandle<Texture> backgroundTexture = Resources.DEFAULT_BACKGROUND_TEXTURE;
+    private boolean hasBackground = true;
 
     public ScreenState(String name) {
         super(name);
+    }
+
+    public ScreenState(String name, boolean hasBackground) {
+        super(name);
+        this.hasBackground = hasBackground;
     }
 
     public final void addGuiElement(GuiElement... elements) {
         for (GuiElement element : elements) {
             guiElements.put(element.getId(), element);
         }
+    }
+
+    public boolean hasBackground() {
+        return hasBackground;
     }
 
     public final void clearGuiElements() {

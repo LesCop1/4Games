@@ -19,10 +19,12 @@ public class ScreenStateRenderer extends Renderer<ScreenState> {
 
     @Override
     public void render(ScreenState state, float partialTick) {
-        ResourceHandle<Texture> backgroundTexture = getTexture(state);
-        RenderEngine engine = renderManager.getRenderEngine();
 
-        engine.drawBackground(backgroundTexture);
+        if (state.hasBackground()) {
+            ResourceHandle<Texture> backgroundTexture = getTexture(state);
+            RenderEngine engine = renderManager.getRenderEngine();
+            engine.drawBackground(backgroundTexture);
+        }
 
         for (GuiElement element : state.getGuiElements()) {
             if (element.isVisible()) {
