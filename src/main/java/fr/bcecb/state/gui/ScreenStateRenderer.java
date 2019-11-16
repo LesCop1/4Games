@@ -1,6 +1,5 @@
 package fr.bcecb.state.gui;
 
-import fr.bcecb.render.RenderEngine;
 import fr.bcecb.render.RenderManager;
 import fr.bcecb.render.Renderer;
 import fr.bcecb.resources.ResourceHandle;
@@ -22,13 +21,12 @@ public class ScreenStateRenderer extends Renderer<ScreenState> {
 
         if (state.hasBackground()) {
             ResourceHandle<Texture> backgroundTexture = getTexture(state);
-            RenderEngine engine = renderManager.getRenderEngine();
-            engine.drawBackground(backgroundTexture);
+            renderManager.drawBackground(backgroundTexture, state.width, state.height);
         }
 
         for (GuiElement element : state.getGuiElements()) {
             if (element.isVisible()) {
-                Renderer<GuiElement> guiElementRenderer = renderManager.getRendererFor(element);
+                Renderer<GuiElement> guiElementRenderer = renderManager.getRendererRegistry().getRendererFor(element);
 
                 if (guiElementRenderer != null) {
                     guiElementRenderer.render(element, partialTick);

@@ -2,12 +2,10 @@ package fr.bcecb.resources;
 
 import fr.bcecb.util.Log;
 import fr.bcecb.util.Resources;
-import org.lwjgl.system.MemoryStack;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
-import java.nio.IntBuffer;
 
 import static org.lwjgl.opengl.GL45.*;
 import static org.lwjgl.stb.STBImage.*;
@@ -40,22 +38,20 @@ public class Texture extends GLResource {
     @Override
     public int create(InputStream inputStream) throws IOException {
         ByteBuffer image;
-        try (MemoryStack stack = MemoryStack.stackPush()) {
-            IntBuffer w = stack.mallocInt(1);
-            IntBuffer h = stack.mallocInt(1);
-            IntBuffer channels = stack.mallocInt(1);
+        int[] width = new int[1];
+        int[] height = new int[1];
+        int[] channels = new int[1];
 
-            ByteBuffer imageBuffer = Resources.readBytes(inputStream);
-            image = stbi_load_from_memory(imageBuffer, w, h, channels, 4);
+        ByteBuffer imageBuffer = Resources.readBytes(inputStream);
+        image = stbi_load_from_memory(imageBuffer, width, height, channels, 4);
 
-            if (image == null) {
-                Log.SYSTEM.warning("Couldn't load texture : " + stbi_failure_reason());
-                return 0;
-            }
-
-            width = w.get();
-            height = h.get();
+        if (image == null) {
+            Log.SYSTEM.warning("Couldn't load texture : " + stbi_failure_reason());
+            return 0;
         }
+
+        this.width = width[0];
+        this.height = height[0];
 
         int texture = generate(image, GL_RGBA);
         stbi_image_free(image);

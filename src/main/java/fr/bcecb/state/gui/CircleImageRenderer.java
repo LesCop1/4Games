@@ -1,6 +1,5 @@
 package fr.bcecb.state.gui;
 
-import fr.bcecb.render.RenderEngine;
 import fr.bcecb.render.RenderManager;
 import fr.bcecb.render.Renderer;
 import fr.bcecb.resources.ResourceHandle;
@@ -18,7 +17,6 @@ public class CircleImageRenderer extends Renderer<CircleImage> {
 
     @Override
     public void render(CircleImage circleImage, float partialTick) {
-        RenderEngine engine = renderManager.getRenderEngine();
-        engine.drawCircle(getTexture(circleImage), circleImage.getX(), circleImage.getY(), circleImage.getRadius());
+        renderManager.drawCircle(getTexture(circleImage), circleImage.getX(), circleImage.getY(), circleImage.getRadius());
     }
 }

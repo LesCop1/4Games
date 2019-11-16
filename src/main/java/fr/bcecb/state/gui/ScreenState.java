@@ -15,6 +15,9 @@ import java.util.TreeMap;
 import static fr.bcecb.event.MouseEvent.Click.Type.RELEASED;
 
 public abstract class ScreenState extends State {
+    protected int width;
+    protected int height;
+
     private final Map<Integer, GuiElement> guiElements = new TreeMap<>(Comparator.naturalOrder());
     private ResourceHandle<Texture> backgroundTexture = Resources.DEFAULT_BACKGROUND_TEXTURE;
     private boolean hasBackground = true;
@@ -90,10 +93,6 @@ public abstract class ScreenState extends State {
             if (!event.isCancelled() && event.getType() == RELEASED && element.checkBounds(event.getX(), event.getY())) {
                 element.onClick(event);
 
-                if (element.getClickHandler() != null) {
-                    element.getClickHandler().accept(element.getId(), event);
-                }
-
                 event.setCancelled(true);
             }
         }
@@ -108,10 +107,6 @@ public abstract class ScreenState extends State {
             if (element.isHovered()) {
                 element.onHover(event);
 
-                if (element.getHoverHandler() != null) {
-                    element.getHoverHandler().accept(element.getId(), event);
-                }
-
                 event.setCancelled(true);
             }
         }
@@ -124,13 +119,16 @@ public abstract class ScreenState extends State {
             if (element.isHovered()) {
                 element.onScroll(event);
 
-                if (element.getScrollHandler() != null) {
-                    element.getScrollHandler().accept(element.getId(), event);
-                }
-
                 event.setCancelled(true);
             }
         }
+    }
+
+    public void initGui(int width, int height) {
+        this.width = width;
+        this.height = height;
+
+        this.initGui();
     }
 
     public abstract void initGui();

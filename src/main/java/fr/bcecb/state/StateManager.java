@@ -2,9 +2,11 @@ package fr.bcecb.state;
 
 import com.google.common.eventbus.Subscribe;
 import fr.bcecb.Game;
-import fr.bcecb.event.*;
-import fr.bcecb.render.RenderManager;
+import fr.bcecb.event.Event;
+import fr.bcecb.event.MouseEvent;
+import fr.bcecb.event.StateEvent;
 import fr.bcecb.render.Renderer;
+import fr.bcecb.render.RendererRegistry;
 import fr.bcecb.state.gui.ScreenState;
 import fr.bcecb.util.Log;
 
@@ -12,12 +14,21 @@ import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.Iterator;
 
-public class StateEngine {
+public class StateManager {
+    private final Game game;
+
+    private int width;
+    private int height;
+
     private final Deque<State> stateStack = new ArrayDeque<>();
 
-    private boolean shouldRebuildGUI = false;
+    public StateManager(Game game, int width, int height) {
+        this.game = game;
+        this.width = width;
+        this.height = height;
 
-    public StateEngine() {
+        pushState(new MainMenuScreen());
+
         Game.EVENT_BUS.register(this);
     }
 
@@ -29,7 +40,7 @@ public class StateEngine {
             if (state instanceof ScreenState) {
                 ScreenState screenState = (ScreenState) state;
                 screenState.clearGuiElements();
-                screenState.initGui();
+                screenState.initGui(this.width, this.height);
             }
 
             stateStack.push(state);
@@ -46,37 +57,31 @@ public class StateEngine {
                 stateStack.pop().onExit();
 
                 if (stateStack.isEmpty()) {
-                    Event event1 = new GameEvent.Close();
-                    Game.EVENT_BUS.post(event1);
+                    this.game.stop();
                 }
+            }
+        }
+    }
+
+    public void rebuildGui(int width, int height) {
+        this.width = width;
+        this.height = height;
+
+        for (State state : stateStack) {
+            if (state instanceof ScreenState) {
+                ScreenState screenState = (ScreenState) state;
+                screenState.clearGuiElements();
+                screenState.initGui(width, height);
             }
         }
     }
 
     public void update() {
-        if (shouldRebuildGUI) {
-            ScreenState screenState;
-            for (State state : stateStack) {
-                if (state instanceof ScreenState) {
-                    screenState = (ScreenState) state;
-                    screenState.clearGuiElements();
-                    screenState.initGui();
-                }
-            }
-
-            this.shouldRebuildGUI = false;
-        }
-
         for (State state : stateStack) {
             state.onUpdate();
 
             if (state.shouldPauseBelow()) break;
         }
-    }
-
-    @Subscribe
-    private void handleWindowResizeEvent(WindowEvent.Size event) {
-        this.shouldRebuildGUI = true;
     }
 
     @Subscribe
@@ -118,19 +123,19 @@ public class StateEngine {
         }
     }
 
-    public void render(RenderManager renderManager, float partialTick) {
-        renderState(renderManager, stateStack.iterator(), partialTick);
+    public void render(RendererRegistry rendererRegistry, float partialTick) {
+        renderState(rendererRegistry, stateStack.iterator(), partialTick);
     }
 
-    private void renderState(RenderManager renderManager, Iterator<State> stateIterator, float partialTick) {
+    private void renderState(RendererRegistry rendererRegistry, Iterator<State> stateIterator, float partialTick) {
         if (stateIterator.hasNext()) {
             State state = stateIterator.next();
 
             if (state.shouldRenderBelow()) {
-                renderState(renderManager, stateIterator, partialTick);
+                renderState(rendererRegistry, stateIterator, partialTick);
             }
 
-            Renderer<State> renderer = renderManager.getRendererFor(state);
+            Renderer<State> renderer = rendererRegistry.getRendererFor(state);
 
             if (renderer != null) {
                 renderer.render(state, partialTick);
