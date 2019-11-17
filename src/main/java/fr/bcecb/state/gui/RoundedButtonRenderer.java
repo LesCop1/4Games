@@ -1,10 +1,11 @@
 package fr.bcecb.state.gui;
 
-import fr.bcecb.render.RenderEngine;
 import fr.bcecb.render.RenderManager;
 import fr.bcecb.render.Renderer;
 import fr.bcecb.resources.ResourceHandle;
 import fr.bcecb.resources.Texture;
+import fr.bcecb.util.Render;
+import fr.bcecb.util.Transform;
 
 public class RoundedButtonRenderer extends Renderer<RoundedButton> {
     public RoundedButtonRenderer(RenderManager renderManager) {
@@ -18,8 +19,11 @@ public class RoundedButtonRenderer extends Renderer<RoundedButton> {
 
     @Override
     public void render(RoundedButton roundedButton, float partialTick) {
-        RenderEngine engine = renderManager.getRenderEngine();
-
-        engine.drawRoundedRect(getTexture(roundedButton), roundedButton.getX(), roundedButton.getY(), roundedButton.getWidth(), roundedButton.getHeight(), roundedButton.getRadius());
+        Transform transform = Render.pushTransform();
+        {
+            transform.translate(roundedButton.getX(), roundedButton.getY());
+            renderManager.drawRoundedRect(getTexture(roundedButton), 0, 0, roundedButton.getWidth(), roundedButton.getHeight(), roundedButton.getRadius());
+        }
+        Render.popTransform();
     }
 }

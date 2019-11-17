@@ -63,6 +63,39 @@ public class RenderManager implements AutoCloseable {
         Render.popTransform();
     }
 
+    public void drawRoundedRect(ResourceHandle<Texture> textureHandle, float minX, float minY, float maxX, float maxY, float radius) {
+        drawRoundedRect(textureHandle, minX, minY, maxX, maxY, radius, false);
+    }
+
+    public void drawRoundedRect(ResourceHandle<Texture> textureHandle, float minX, float minY, float maxX, float maxY, float radius, boolean centered) {
+        Transform transform = Render.pushTransform();
+        Shader shader = resourceManager.getResource(Resources.ROUNDED_SHADER);
+
+        radius = Math.min(radius, Math.min((maxX - minX) / 2, (maxY - minY) / 2));
+
+        shader.bind();
+        {
+            shader.uniformFloat("uiWidth", maxX - minX);
+            shader.uniformFloat("uiHeight", maxY - minY);
+            shader.uniformFloat("radius", radius);
+        }
+        shader.unbind();
+
+        {
+            if (centered) {
+                float width = Math.abs(maxX - minX);
+                float height = Math.abs(maxY - minY);
+                transform.translate(-(width / 2), -(height / 2));
+            }
+
+            transform.translate(minX, minY);
+            transform.scale(maxX - minX, maxY - minY);
+
+            draw(Resources.ROUNDED_SHADER, textureHandle);
+        }
+        Render.popTransform();
+    }
+
     public void drawRect(ResourceHandle<Texture> textureHandle, float minX, float minY, float maxX, float maxY) {
         drawRect(textureHandle, minX, minY, maxX, maxY, false);
     }

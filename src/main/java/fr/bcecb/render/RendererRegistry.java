@@ -14,12 +14,16 @@ public class RendererRegistry {
         this.resourceManager = resourceManager;
 
         registerRenderer(ScreenState.class, new ScreenStateRenderer(renderManager));
+        registerRenderer(Button.class, new ButtonRenderer(renderManager));
         registerRenderer(CircleButton.class, new CircleButtonRenderer(renderManager));
+        registerRenderer(RoundedButton.class, new RoundedButtonRenderer(renderManager));
         registerRenderer(Image.class, new ImageRenderer(renderManager));
         registerRenderer(CircleImage.class, new CircleImageRenderer(renderManager));
+        registerRenderer(RoundedImage.class, new RoundedImageRenderer(renderManager));
         registerRenderer(Text.class, new TextRenderer(renderManager));
         registerRenderer(Line.class, new LineRenderer(renderManager));
-        registerRenderer(Button.class, new ButtonRenderer(renderManager));
+        registerRenderer(Slider.class, new SliderRenderer(renderManager));
+        registerRenderer(ProgressBar.class, new ProgressBarRenderer(renderManager));
     }
 
     private <T extends IRenderable> void registerRenderer(Class<T> clazz, Renderer<T> renderer) {

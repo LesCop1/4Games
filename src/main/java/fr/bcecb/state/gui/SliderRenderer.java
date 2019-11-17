@@ -1,11 +1,11 @@
 package fr.bcecb.state.gui;
 
-import fr.bcecb.render.RenderEngine;
 import fr.bcecb.render.RenderManager;
 import fr.bcecb.render.Renderer;
 import fr.bcecb.resources.ResourceHandle;
 import fr.bcecb.resources.Texture;
-import fr.bcecb.util.TransformStack;
+import fr.bcecb.util.Render;
+import fr.bcecb.util.Transform;
 
 public class SliderRenderer extends Renderer<Slider> {
     public SliderRenderer(RenderManager renderManager) {
@@ -19,30 +19,27 @@ public class SliderRenderer extends Renderer<Slider> {
 
     @Override
     public void render(Slider slider, float partialTick) {
-        RenderEngine engine = renderManager.getRenderEngine();
-        TransformStack transform = engine.getTransform();
-
         float offset = slider.getHeight() / 4;
 
-        transform.pushTransform();
+        Transform transform = Render.pushTransform();
         {
             transform.translate(slider.getX(), slider.getY());
 
-            transform.pushTransform();
+            Render.pushTransform();
             {
                 transform.color(slider.getOutsideColor());
-                engine.drawRoundedRect(null, 0, offset, slider.getWidth(), slider.getHeight() - offset, Float.MAX_VALUE);
+                renderManager.drawRoundedRect(null, 0, offset, slider.getWidth(), slider.getHeight() - offset, Float.MAX_VALUE);
             }
-            transform.popTransform();
+            Render.popTransform();
 
-            transform.pushTransform();
+            Render.pushTransform();
             {
                 transform.color(slider.getButtonColor());
-                engine.drawCircle(null, slider.getWidth() * slider.getValue(), 0, slider.getHeight() / 2);
+                renderManager.drawCircle(null, slider.getWidth() * slider.getValue(), 0, slider.getHeight() / 2);
             }
-            transform.popTransform();
+            Render.popTransform();
         }
-        transform.popTransform();
+        Render.popTransform();
 
     }
 }

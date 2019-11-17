@@ -1,12 +1,11 @@
 package fr.bcecb.state.gui;
 
-import fr.bcecb.render.RenderEngine;
 import fr.bcecb.render.RenderManager;
 import fr.bcecb.render.Renderer;
 import fr.bcecb.resources.ResourceHandle;
 import fr.bcecb.resources.Texture;
-import fr.bcecb.util.Resources;
-import fr.bcecb.util.TransformStack;
+import fr.bcecb.util.Render;
+import fr.bcecb.util.Transform;
 
 public class ProgressBarRenderer extends Renderer<ProgressBar> {
     public ProgressBarRenderer(RenderManager renderManager) {
@@ -20,52 +19,49 @@ public class ProgressBarRenderer extends Renderer<ProgressBar> {
 
     @Override
     public void render(ProgressBar progressBar, float partialTick) {
-        RenderEngine engine = renderManager.getRenderEngine();
-        TransformStack transform = engine.getTransform();
-
-        transform.pushTransform();
+        Transform transform = Render.pushTransform();
         {
             transform.translate(progressBar.getX(), progressBar.getY());
 
-            transform.pushTransform();
+            Render.pushTransform();
             {
                 transform.color(progressBar.getOutlineColor());
-                engine.drawRoundedRect(null, 0, 0, progressBar.getWidth(), progressBar.getHeight(), Float.MAX_VALUE);
+                renderManager.drawRoundedRect(null, 0, 0, progressBar.getWidth(), progressBar.getHeight(), Float.MAX_VALUE);
             }
-            transform.popTransform();
+            Render.popTransform();
 
             transform.translate(progressBar.getOffset(), progressBar.getOffset());
 
             if (progressBar.getValue() != 1.0f) {
-                transform.pushTransform();
+                Render.pushTransform();
                 {
                     transform.color(progressBar.getDefaultColor());
-                    engine.drawRoundedRect(null, 0, 0,
+                    renderManager.drawRoundedRect(null, 0, 0,
                             progressBar.getWidth() - (2 * progressBar.getOffset()),
                             progressBar.getHeight() - (2 * progressBar.getOffset()), Float.MAX_VALUE);
                 }
-                transform.popTransform();
+                Render.popTransform();
             }
 
             if (progressBar.getValue() != 0.0f) {
-                transform.pushTransform();
+                Render.pushTransform();
                 {
                     transform.color(progressBar.getCompletedColor());
-                    engine.drawRoundedRect(null, 0, 0,
+                    renderManager.drawRoundedRect(null, 0, 0,
                             (progressBar.getWidth() - (2 * progressBar.getOffset())) * progressBar.getValue(),
                             progressBar.getHeight() - (2 * progressBar.getOffset()), Float.MAX_VALUE);
                 }
-                transform.popTransform();
+                Render.popTransform();
             }
 
-            transform.pushTransform();
+            Render.pushTransform();
             {
                 transform.translate((progressBar.getWidth() - (2 * progressBar.getOffset())) / 2, (progressBar.getHeight() - (2 * progressBar.getOffset())) / 2);
                 transform.color(progressBar.getTextColor());
-                engine.drawCenteredText(Resources.DEFAULT_FONT, progressBar.printValue(), 0, 0, 0.5f);
+                renderManager.getFontRenderer().drawStringBoxed(progressBar.printValue(), 0, 0, progressBar.getWidth(), progressBar.getHeight());
             }
-            transform.popTransform();
+            Render.popTransform();
         }
-        transform.popTransform();
+        Render.popTransform();
     }
 }
