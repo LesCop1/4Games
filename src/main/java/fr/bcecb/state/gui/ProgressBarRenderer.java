@@ -30,7 +30,7 @@ public class ProgressBarRenderer extends Renderer<ProgressBar> {
             transform.pushTransform();
             {
                 transform.color(progressBar.getOutlineColor());
-                engine.drawRoundedRect(null, 0, 0, progressBar.getWidth(), progressBar.getHeight(), 0);
+                engine.drawRoundedRect(null, 0, 0, progressBar.getWidth(), progressBar.getHeight(), Float.MAX_VALUE);
             }
             transform.popTransform();
 
@@ -42,7 +42,7 @@ public class ProgressBarRenderer extends Renderer<ProgressBar> {
                     transform.color(progressBar.getDefaultColor());
                     engine.drawRoundedRect(null, 0, 0,
                             progressBar.getWidth() - (2 * progressBar.getOffset()),
-                            progressBar.getHeight() - (2 * progressBar.getOffset()), 0);
+                            progressBar.getHeight() - (2 * progressBar.getOffset()), Float.MAX_VALUE);
                 }
                 transform.popTransform();
             }
@@ -53,7 +53,7 @@ public class ProgressBarRenderer extends Renderer<ProgressBar> {
                     transform.color(progressBar.getCompletedColor());
                     engine.drawRoundedRect(null, 0, 0,
                             (progressBar.getWidth() - (2 * progressBar.getOffset())) * progressBar.getValue(),
-                            progressBar.getHeight() - (2 * progressBar.getOffset()), 0);
+                            progressBar.getHeight() - (2 * progressBar.getOffset()), Float.MAX_VALUE);
                 }
                 transform.popTransform();
             }

@@ -1,10 +1,13 @@
 package fr.bcecb.state.gui;
 
 import fr.bcecb.event.MouseEvent;
+import fr.bcecb.util.Constants;
+import org.joml.Vector4f;
 
 public class Slider extends GuiElement {
-    private int value = 0;
-    private int maxValue = 99;
+    private float value = 0.0f;
+    private Vector4f outsideColor = Constants.COLOR_GREY;
+    private Vector4f buttonColor = Constants.COLOR_GREEN;
 
     public Slider(int id, float x, float y, float width, float height) {
         super(id, x, y, width, height);
@@ -41,8 +44,16 @@ public class Slider extends GuiElement {
 
     }
 
-    public int getValue() {
+    public float getValue() {
         return value;
+    }
+
+    public Vector4f getOutsideColor() {
+        return outsideColor;
+    }
+
+    public Vector4f getButtonColor() {
+        return buttonColor;
     }
 
     public void setValue(int value) {
