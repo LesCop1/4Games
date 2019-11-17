@@ -5,9 +5,7 @@ import fr.bcecb.event.EventExceptionHandler;
 import fr.bcecb.input.InputManager;
 import fr.bcecb.render.RenderManager;
 import fr.bcecb.render.Window;
-import fr.bcecb.resources.ResourceHandle;
 import fr.bcecb.resources.ResourceManager;
-import fr.bcecb.resources.Texture;
 import fr.bcecb.state.StateManager;
 import fr.bcecb.util.Log;
 import fr.bcecb.util.Render;
@@ -32,8 +30,6 @@ public final class Game implements AutoCloseable {
     private boolean running = false;
 
     private static final Game INSTANCE = new Game();
-
-    public ResourceHandle<Texture> currentProfile = new ResourceHandle<>("textures/defaultProfile.jpg") {};
 
     private Game() {
         if (!glfwInit()) {

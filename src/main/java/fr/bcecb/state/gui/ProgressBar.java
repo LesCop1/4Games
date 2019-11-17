@@ -39,6 +39,11 @@ public class ProgressBar extends GuiElement {
     }
 
     @Override
+    public void onDrag(MouseEvent.Click clickEvent, MouseEvent.Move moveEvent) {
+
+    }
+
+    @Override
     public void onHover(MouseEvent.Move event) {
 
     }

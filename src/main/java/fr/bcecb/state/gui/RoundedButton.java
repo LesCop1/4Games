@@ -11,10 +11,6 @@ public class RoundedButton extends GuiElement {
     private ResourceHandle<Texture> texture;
     private ResourceHandle<Texture> onHoverTexture;
 
-    public RoundedButton(int id, float x, float y, float width, float height, float radius) {
-        this(id, x, y, width, height, radius, null);
-    }
-
     public RoundedButton(int id, float x, float y, float width, float height, float radius, ResourceHandle<Texture> texture) {
         this(id, x, y, width, height, radius, texture, null);
     }
@@ -37,6 +33,11 @@ public class RoundedButton extends GuiElement {
     }
 
     @Override
+    public void onDrag(MouseEvent.Click clickEvent, MouseEvent.Move moveEvent) {
+
+    }
+
+    @Override
     public void onHover(MouseEvent.Move event) {
 
     }
@@ -48,7 +49,7 @@ public class RoundedButton extends GuiElement {
 
     // TODO
     @Override
-    boolean checkBounds(float x, float y) {
+    public boolean checkBounds(float x, float y) {
         return super.checkBounds(x, y);
     }
 
