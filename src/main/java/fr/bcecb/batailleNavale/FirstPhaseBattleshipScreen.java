@@ -1,7 +1,9 @@
 package fr.bcecb.batailleNavale;
 
 import fr.bcecb.Game;
+import fr.bcecb.event.KeyboardEvent;
 import fr.bcecb.event.MouseEvent;
+import fr.bcecb.input.Key;
 import fr.bcecb.render.Window;
 import fr.bcecb.resources.ResourceHandle;
 import fr.bcecb.state.gui.Button;
@@ -14,6 +16,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class FirstPhaseBattleshipScreen extends ScreenState {
+    private static final ResourceHandle<Texture> defaultTexture = new ResourceHandle<>("textures/BatailleNavale/caseBattleship.png") {};
+
     private Battleship battleship;
     private Boat boat;
 
@@ -34,10 +38,16 @@ public class FirstPhaseBattleshipScreen extends ScreenState {
         int width = Window.getCurrentWindow().getWidth();
         int height = Window.getCurrentWindow().getHeight();
 
+        battleship.initGrid();
+
         setBackgroundTexture(new ResourceHandle<>("textures/BatailleNavale/background_battleship.jpg") {
         });
 
-        Button caseButton;
+        Game.instance().getInputManager().isKeyDown(Key.BATTLESHIP_SWAP);
+            battleship.swapOrientation(boat);
+
+
+
         int id = 1;
         int btnSize = 42;
         float x = (width / 2) - (9 * btnSize / 2);
@@ -46,17 +56,12 @@ public class FirstPhaseBattleshipScreen extends ScreenState {
             for (int j = 0; j < 10; ++j, ++id, y += btnSize) {
                 int caseX = i;
                 int caseY = j;
-                caseButton = new Button(id, x, y, btnSize, btnSize, false, "") {
+                final Button caseButton = new Button(id, x, y, btnSize, btnSize, false, "") {
                     @Override
                     public void onClick(MouseEvent.Click event) {
                         super.onClick(event);
 
-                        if (event.getButton() == GLFW.GLFW_MOUSE_BUTTON_RIGHT) {
-                            battleship.getCurrentPlayerBoard()[caseX][caseY] = boat;
-                        }
 
-                        if(event.getButton() == GLFW.GLFW_KEY_Z || event.getButton() == GLFW.GLFW_KEY_S) boat.setHorizontal(false);
-                        if(event.getButton() == GLFW.GLFW_KEY_Q || event.getButton() == GLFW.GLFW_KEY_D) boat.setHorizontal(true);
 
                         if (selectedBoat != "" && !battleship.cannotPlace(boat, caseX, caseY)
                                 && !boatPut.contains(selectedBoat)) {
@@ -69,17 +74,12 @@ public class FirstPhaseBattleshipScreen extends ScreenState {
 
                     @Override
                     public boolean isDisabled() {
-                        if(getTitle()!= ""){
-                            return true;
-                        }else{
-                            return false;
-                        }
+                        return battleship.getCurrentPlayerBoard()[caseX][caseY] != 0;
                     }
 
                     @Override
                     public ResourceHandle<Texture> getTexture() {
-                        return new ResourceHandle<>("textures/BatailleNavale/caseBattleship.png") {
-                        };
+                        return battleship.getCurrentPlayerBoard()[caseX][caseY] != 0 ? new ResourceHandle<>("textures/BatailleNavale/A.png") {} : defaultTexture;
                     }
                 };
                 addGuiElement(caseButton);
@@ -97,7 +97,7 @@ public class FirstPhaseBattleshipScreen extends ScreenState {
         addGuiElement(backButton);
 
         Button a = new Button(102, (width / 20f), 100, (height / 10f), (height / 10f), false, "A",
-                new ResourceHandle<Texture>("textures/BatailleNavale/Aircraft-Carrier.png") {
+                new ResourceHandle<Texture>("textures/BatailleNavale/A.png") {
                 }) {
             @Override
             public void onClick(MouseEvent.Click event) {
@@ -109,7 +109,7 @@ public class FirstPhaseBattleshipScreen extends ScreenState {
         addGuiElement(a);
 
         Button b = new Button(103, (width / 20f), 200, (height / 10f), (height / 10f), false, "B",
-                new ResourceHandle<Texture>("textures/BatailleNavale/Cruiser.png") {
+                new ResourceHandle<Texture>("textures/BatailleNavale/C.png") {
                 }) {
             @Override
             public void onClick(MouseEvent.Click event) {
@@ -121,7 +121,7 @@ public class FirstPhaseBattleshipScreen extends ScreenState {
         addGuiElement(b);
 
         Button f = new Button(104, (width / 20f), 300, (height / 10f), (height / 10f), false, "F",
-                new ResourceHandle<Texture>("textures/BatailleNavale/Frigate.png") {
+                new ResourceHandle<Texture>("textures/BatailleNavale/F.png") {
                 }) {
             @Override
             public void onClick(MouseEvent.Click event) {
@@ -133,7 +133,7 @@ public class FirstPhaseBattleshipScreen extends ScreenState {
         addGuiElement(f);
 
         Button s = new Button(105, (width / 20f), 400, (height / 10f), (height / 10f), false, "S",
-                new ResourceHandle<Texture>("textures/BatailleNavale/Submarine.png") {
+                new ResourceHandle<Texture>("textures/BatailleNavale/S.png") {
                 }) {
             @Override
             public void onClick(MouseEvent.Click event) {
@@ -145,7 +145,7 @@ public class FirstPhaseBattleshipScreen extends ScreenState {
         addGuiElement(s);
 
         Button t = new Button(106, (width / 20f), 500, (height / 10f), (height / 10f), false, "T",
-                new ResourceHandle<Texture>("textures/BatailleNavale/Torpedo.png") {
+                new ResourceHandle<Texture>("textures/BatailleNavale/T.png") {
                 }) {
             @Override
             public void onClick(MouseEvent.Click event) {
