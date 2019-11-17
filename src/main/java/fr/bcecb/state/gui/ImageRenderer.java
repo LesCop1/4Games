@@ -24,23 +24,29 @@ public class ImageRenderer extends Renderer<Image> {
         Transform transform = Render.pushTransform();
         {
             transform.translate(image.getX(), image.getY());
+            renderManager.drawRect(null, 0, 0, image.getWidth(), image.getHeight());
 
             if (image.keepRatio()) {
-                float width = image.getWidth();
-                float height = image.getHeight();
-                float imageAspectRatio = width / height;
-
                 Texture texture = renderManager.getResourceManager().getResourceOrDefault(getTexture(image), Resources.DEFAULT_TEXTURE);
-                float imageWidth = texture.getWidth();
-                float imageHeight = texture.getHeight();
-                float textureAspectRatio = imageWidth / imageHeight;
+                float originalWidth = texture.getWidth();
+                float originalHeight = texture.getHeight();
+                float boundWidth = image.getWidth();
+                float boundHeight = image.getHeight();
+                float newWidth = originalWidth;
+                float newHeight = originalHeight;
 
-                float aspectRatio = imageAspectRatio > textureAspectRatio ? width / imageWidth : height / imageHeight;
+                if (originalWidth > boundWidth) {
+                    newWidth = boundWidth;
+                    newHeight = (newWidth * originalHeight) / originalWidth;
+                }
 
-                transform.translate(width / 2.0f, height / 2.0f);
-                transform.scale(aspectRatio, aspectRatio);
+                if (newHeight > boundHeight) {
+                    newHeight = boundHeight;
+                    newWidth = (newHeight * originalWidth) / originalHeight;
+                }
 
-                renderManager.drawRect(getTexture(image), 0, 0, imageWidth, imageHeight, true);
+                transform.translate((boundWidth - newWidth) / 2f, (boundHeight - newHeight) / 2f);
+                renderManager.drawRect(getTexture(image), 0, 0, newWidth, newHeight);
             } else {
                 renderManager.drawRect(getTexture(image), 0, 0, image.getWidth(), image.getHeight());
             }
