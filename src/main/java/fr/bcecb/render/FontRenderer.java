@@ -6,7 +6,10 @@ import fr.bcecb.resources.ResourceManager;
 import fr.bcecb.util.Render;
 import fr.bcecb.util.Resources;
 import fr.bcecb.util.Transform;
+import org.lwjgl.BufferUtils;
 import org.lwjgl.stb.STBTTAlignedQuad;
+
+import java.nio.IntBuffer;
 
 import static org.lwjgl.opengl.GL11.GL_TRIANGLE_FAN;
 import static org.lwjgl.stb.STBTruetype.*;
@@ -28,11 +31,25 @@ public class FontRenderer implements AutoCloseable {
     }
 
     public void drawStringBoxed(String string, float x, float y, float width, float height) {
-        this.drawString(string, x, y, 1.0f, true); /* TODO Scale text to fit box */
+        float scale = 1.0f;
+        while (this.getStringWidth(string) * this.getFontScale(scale) > width) {
+            scale = scale - 0.001f;
+        }
+        this.drawString(string, x, y, scale, true); /* TODO Scale text to fit box */
     }
 
     public void drawString(String string, float x, float y, boolean centered) {
         this.drawString(string, x, y, 1.0f, centered);
+    }
+
+    public void test(String string, float x, float y, float width, float height) {
+        float scale = 100.0f;
+
+        while (((this.getStringWidth(string) * this.getFontScale(scale) / 10f) > width - 5f) ||
+                (this.getFontScale(scale) * this.getFontHeight() / 10f) > height - 5f) {
+            scale = scale - 0.1f;
+        }
+        this.drawString(string, x, y, scale, true);
     }
 
     public void drawString(String string, float x, float y, float scale, boolean centered) {
@@ -47,8 +64,8 @@ public class FontRenderer implements AutoCloseable {
                     transform.scale(fontScale, fontScale);
 
                     if (centered) {
-                        float xOffset = this.getStringWidth(string) * fontScale / 2.0f;
-                        float yOffset = (-this.getFontHeight() / 2.0f) * fontScale / 2.0f;
+                        float xOffset = (this.getStringWidth(string) * fontScale) / (2.0f * scale);
+                        float yOffset = (-this.getFontHeight() / 2.0f) * fontScale / (1.5f * scale);
 
                         transform.translate(-xOffset, -yOffset);
                     }
