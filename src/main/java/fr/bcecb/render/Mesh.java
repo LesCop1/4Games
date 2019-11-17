@@ -9,7 +9,7 @@ import java.nio.FloatBuffer;
 
 import static org.lwjgl.opengl.GL41.*;
 
-public final class Mesh {
+public final class Mesh implements AutoCloseable {
     private final int mode;
     private final int vertexCount;
 
@@ -25,11 +25,11 @@ public final class Mesh {
         this.vertexCount = vertexCount;
 
         this.vao = glGenVertexArrays();
-        glBindVertexArray(vao);
+        glBindVertexArray(this.vao);
         {
             this.vbo = glGenBuffers();
             {
-                glBindBuffer(GL_ARRAY_BUFFER, vbo);
+                glBindBuffer(GL_ARRAY_BUFFER, this.vbo);
                 if (vertices != null) {
                     glBufferData(GL_ARRAY_BUFFER, vertices, GL_STATIC_DRAW);
                 } else {
@@ -61,11 +61,17 @@ public final class Mesh {
     }
 
     public void draw() {
-        glBindVertexArray(vao);
+        glBindVertexArray(this.vao);
         {
-            glDrawArrays(mode, 0, vertexCount);
+            glDrawArrays(this.mode, 0, this.vertexCount);
         }
         glBindVertexArray(0);
+    }
+
+    @Override
+    public void close() {
+        glDeleteBuffers(this.vbo);
+        glDeleteVertexArrays(this.vao);
     }
 
     public static class Builder {
@@ -139,7 +145,7 @@ public final class Mesh {
         }
     }
 
-    public static class ReusableBuilder extends Builder {
+    public static class ReusableBuilder extends Builder implements AutoCloseable {
         private Mesh mesh;
 
         public ReusableBuilder(int maxVertexCount) {
@@ -161,6 +167,11 @@ public final class Mesh {
             glBindVertexArray(0);
 
             return mesh;
+        }
+
+        @Override
+        public void close() {
+            this.mesh.close();
         }
     }
 }

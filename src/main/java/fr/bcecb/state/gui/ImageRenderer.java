@@ -1,12 +1,12 @@
 package fr.bcecb.state.gui;
 
-import fr.bcecb.render.RenderEngine;
 import fr.bcecb.render.RenderManager;
 import fr.bcecb.render.Renderer;
 import fr.bcecb.resources.ResourceHandle;
 import fr.bcecb.resources.Texture;
+import fr.bcecb.util.Render;
 import fr.bcecb.util.Resources;
-import fr.bcecb.util.TransformStack;
+import fr.bcecb.util.Transform;
 
 public class ImageRenderer extends Renderer<Image> {
 
@@ -21,10 +21,7 @@ public class ImageRenderer extends Renderer<Image> {
 
     @Override
     public void render(Image image, float partialTick) {
-        RenderEngine engine = renderManager.getRenderEngine();
-        TransformStack transform = engine.getTransform();
-
-        transform.pushTransform();
+        Transform transform = Render.pushTransform();
         {
             transform.translate(image.getX(), image.getY());
 
@@ -43,11 +40,11 @@ public class ImageRenderer extends Renderer<Image> {
                 transform.translate(width / 2.0f, height / 2.0f);
                 transform.scale(aspectRatio, aspectRatio);
 
-                engine.drawRect(getTexture(image), 0, 0, imageWidth, imageHeight, true);
+                renderManager.drawRect(getTexture(image), 0, 0, imageWidth, imageHeight, true);
             } else {
-                engine.drawRect(getTexture(image), 0, 0, image.getWidth(), image.getHeight());
+                renderManager.drawRect(getTexture(image), 0, 0, image.getWidth(), image.getHeight());
             }
         }
-        transform.popTransform();
+        Render.popTransform();
     }
 }

@@ -31,6 +31,8 @@ public class FirstPhaseBattleshipScreen extends ScreenState {
     protected FirstPhaseBattleshipScreen(Battleship battleship) {
         super("game-battleship.firstphase");
         this.battleship = battleship;
+
+        setBackgroundTexture(new ResourceHandle<>("textures/battleshipScreen.png") {});
     }
 
     @Override
@@ -85,6 +87,7 @@ public class FirstPhaseBattleshipScreen extends ScreenState {
                 addGuiElement(caseButton);
             }
         }
+
 
         final GuiElement backButton = new Button(999, 0, 0, 50 / ((float) 1920 / width), 50 / ((float) 1920 / width), false, new ResourceHandle<>("textures/back_button.png") {
         }) {
@@ -158,6 +161,5 @@ public class FirstPhaseBattleshipScreen extends ScreenState {
     }
 
     public void clickButton(int id, MouseEvent.Click event) {
-
     }
 }
