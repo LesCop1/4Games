@@ -1,6 +1,5 @@
 package fr.bcecb.state.gui;
 
-import fr.bcecb.render.RenderEngine;
 import fr.bcecb.render.RenderManager;
 import fr.bcecb.render.Renderer;
 import fr.bcecb.resources.ResourceHandle;
@@ -19,7 +18,6 @@ public class CircleButtonRenderer extends Renderer<CircleButton> {
 
     @Override
     public void render(CircleButton button, float partialTick) {
-        RenderEngine engine = renderManager.getRenderEngine();
-        engine.drawCircle(getTexture(button), button.getX(), button.getY(), button.getRadius());
+        renderManager.drawCircle(getTexture(button), button.getX(), button.getY(), button.getRadius());
     }
 }

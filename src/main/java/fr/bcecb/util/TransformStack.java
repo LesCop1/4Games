@@ -37,7 +37,6 @@ public class TransformStack extends Transform {
         return this;
     }
 
-    @SuppressWarnings("NonFinalFieldReferencedInHashCode")
     public int hashCode() {
         final int prime = 31;
         int result = super.hashCode();
