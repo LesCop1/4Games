@@ -9,15 +9,15 @@ import fr.bcecb.state.gui.GuiElement;
 import fr.bcecb.state.gui.ScreenState;
 import org.lwjgl.glfw.GLFW;
 import fr.bcecb.resources.Texture;
-import fr.bcecb.state.gui.Text;
-import fr.bcecb.util.Constants;
-import fr.bcecb.util.Resources;
-import org.joml.Vector4f;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class FirstPhaseBattleshipScreen extends ScreenState {
     private Battleship battleship;
     private Boat boat;
-    private String name;
+
+    private List<String> boatPut = new ArrayList<>();
 
     private int selectedX = -1;
     private int selectedY = -1;
@@ -55,21 +55,31 @@ public class FirstPhaseBattleshipScreen extends ScreenState {
                             battleship.getCurrentPlayerBoard()[caseX][caseY] = boat;
                         }
 
-                        if (selectedBoat != "" && !battleship.cannotPlace(boat,caseX,caseY)) {
+                        if(event.getButton() == GLFW.GLFW_KEY_Z || event.getButton() == GLFW.GLFW_KEY_S) boat.setHorizontal(false);
+                        if(event.getButton() == GLFW.GLFW_KEY_Q || event.getButton() == GLFW.GLFW_KEY_D) boat.setHorizontal(true);
+
+                        if (selectedBoat != "" && !battleship.cannotPlace(boat, caseX, caseY)
+                                && !boatPut.contains(selectedBoat)) {
+                            boatPut.add(selectedBoat);
                             setTitle(selectedBoat);
-                            battleship.putBoat(boat,caseX,caseY);
+                            battleship.putBoat(boat, caseX, caseY);
                             selectedBoat = "";
                         }
                     }
 
                     @Override
                     public boolean isDisabled() {
-                        return getTitle() != "";
+                        if(getTitle()!= ""){
+                            return true;
+                        }else{
+                            return false;
+                        }
                     }
 
                     @Override
                     public ResourceHandle<Texture> getTexture() {
-                        return new ResourceHandle<>("textures/BatailleNavale/caseBattleship.png") {};
+                        return new ResourceHandle<>("textures/BatailleNavale/caseBattleship.png") {
+                        };
                     }
                 };
                 addGuiElement(caseButton);
@@ -77,12 +87,18 @@ public class FirstPhaseBattleshipScreen extends ScreenState {
         }
 
         final GuiElement backButton = new Button(999, 0, 0, 50 / ((float) 1920 / width), 50 / ((float) 1920 / width), false, new ResourceHandle<>("textures/back_button.png") {
-        });
-        backButton.setClickHandler((id2, e) -> doubleBack());
+        }) {
+            @Override
+            public void onClick(MouseEvent.Click event) {
+                Game.instance().getStateEngine().popState();
+                Game.instance().getStateEngine().popState();
+            }
+        };
         addGuiElement(backButton);
 
-        Button a = new Button(102, (width / 20f), 100, (height / 10f), (height / 10f), false, "a",
-                new ResourceHandle<Texture>("textures/BatailleNavale/a.png") {}) {
+        Button a = new Button(102, (width / 20f), 100, (height / 10f), (height / 10f), false, "A",
+                new ResourceHandle<Texture>("textures/BatailleNavale/Aircraft-Carrier.png") {
+                }) {
             @Override
             public void onClick(MouseEvent.Click event) {
                 super.onClick(event);
@@ -92,8 +108,9 @@ public class FirstPhaseBattleshipScreen extends ScreenState {
         };
         addGuiElement(a);
 
-        Button b = new Button(103, (width / 20f), 200, (height / 10f), (height / 10f), false, "b",
-                new ResourceHandle<Texture>("textures/BatailleNavale/b.png") {}) {
+        Button b = new Button(103, (width / 20f), 200, (height / 10f), (height / 10f), false, "B",
+                new ResourceHandle<Texture>("textures/BatailleNavale/Cruiser.png") {
+                }) {
             @Override
             public void onClick(MouseEvent.Click event) {
                 super.onClick(event);
@@ -103,28 +120,33 @@ public class FirstPhaseBattleshipScreen extends ScreenState {
         };
         addGuiElement(b);
 
-        Button c = new Button(104, (width / 20f), 300, (height / 10f), (height / 10f), false, "c",
-                new ResourceHandle<Texture>("textures/BatailleNavale/c.png") {}) {
+        Button f = new Button(104, (width / 20f), 300, (height / 10f), (height / 10f), false, "F",
+                new ResourceHandle<Texture>("textures/BatailleNavale/Frigate.png") {
+                }) {
             @Override
             public void onClick(MouseEvent.Click event) {
                 super.onClick(event);
                 selectedBoat = getTitle();
+                boat = new Boat(Boat.Type.FRIGATE);
             }
         };
-        addGuiElement(c);
+        addGuiElement(f);
 
-        Button d = new Button(105, (width / 20f), 400, (height / 10f), (height / 10f), false, "d",
-                new ResourceHandle<Texture>("textures/BatailleNavale/d.png") {}) {
+        Button s = new Button(105, (width / 20f), 400, (height / 10f), (height / 10f), false, "S",
+                new ResourceHandle<Texture>("textures/BatailleNavale/Submarine.png") {
+                }) {
             @Override
             public void onClick(MouseEvent.Click event) {
                 super.onClick(event);
                 selectedBoat = getTitle();
+                boat = new Boat(Boat.Type.SUBMARINE);
             }
         };
-        addGuiElement(d);
+        addGuiElement(s);
 
-        Button f = new Button(106, (width / 20f), 500, (height / 10f), (height / 10f), false, "f",
-                new ResourceHandle<Texture>("textures/BatailleNavale/e.png") {}) {
+        Button t = new Button(106, (width / 20f), 500, (height / 10f), (height / 10f), false, "T",
+                new ResourceHandle<Texture>("textures/BatailleNavale/Torpedo.png") {
+                }) {
             @Override
             public void onClick(MouseEvent.Click event) {
                 super.onClick(event);
@@ -132,15 +154,10 @@ public class FirstPhaseBattleshipScreen extends ScreenState {
                 boat = new Boat(Boat.Type.TORPEDO);
             }
         };
-        addGuiElement(f);
+        addGuiElement(t);
     }
 
     public void clickButton(int id, MouseEvent.Click event) {
 
-    }
-
-    public void doubleBack() {
-        Game.instance().getStateEngine().popState();
-        Game.instance().getStateEngine().popState();
     }
 }
