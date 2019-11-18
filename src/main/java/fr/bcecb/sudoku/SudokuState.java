@@ -2,7 +2,6 @@ package fr.bcecb.sudoku;
 
 import fr.bcecb.Game;
 import fr.bcecb.event.MouseEvent;
-import fr.bcecb.render.Window;
 import fr.bcecb.resources.ResourceHandle;
 import fr.bcecb.resources.Texture;
 import fr.bcecb.state.gui.Button;
@@ -34,38 +33,33 @@ public class SudokuState extends ScreenState {
 
     @Override
     public void initGui() {
-        float width = Window.getCurrentWindow().getWidth();
-        float height = Window.getCurrentWindow().getHeight();
-
-        GuiElement text = new Text(0, 10, 10, "done", Constants.COLOR_BLACK, false) {
+        GuiElement text = new Text(0, 10, 10, false, "done") {
             @Override
             public boolean isVisible() {
                 return sudoku.winCondition();
             }
         };
 
-        GuiElement backButton = new Button(-1, (width / 20f), (height - (height / 20f) - (height / 10f)), (height / 10f), (height / 10f), false, "Back", Resources.DEFAULT_BUTTON_TEXTURE)
-                .setClickHandler((id, event) -> Game.instance().getStateEngine().popState());
+        GuiElement backButton = new Button(-1, (width / 20f), (height - (height / 20f) - (height / 10f)), (height / 10f), (height / 10f), false, "Back", Resources.DEFAULT_BUTTON_TEXTURE) {
+            @Override
+            public void onClick(MouseEvent.Click event) {
+                Game.instance().getStateManager().popState();
+            }
+        };
 
         Button caseButton;
         int id = 1;
 
-        float btnSize = 80.05f;
-        float x = (width / 2) - (Sudoku.SIZE * btnSize / 2);
-        for (int i = 0; i < Sudoku.SIZE; ++i, x += btnSize) {
-            if (i % 3 == 0) {
-                x += 4;
-            }
+        float btnSize = 20f;
+        float x = (width / 2f) - (9 * btnSize / 2) - 4;
+        for (int i = 0; i < 9; ++i, x += btnSize + (i != 0 && i % 3 == 0 ? 4 : 0)) {
 
-            float y = (height / 2) - (Sudoku.SIZE * btnSize / 2);
-            for (int j = 0; j < Sudoku.SIZE; ++j, ++id, y += btnSize) {
-                if (j % 3 == 0) {
-                    y += 4;
-                }
+            float y = (height / 2f) - (9 * btnSize / 2) - 4;
+            for (int j = 0; j < 9; ++j, ++id, y += btnSize + (j != 0 && j % 3 == 0 ? 4 : 0)) {
 
                 int caseX = i;
                 int caseY = j;
-                caseButton = new Button(id, x, y, btnSize, btnSize, true, "") {
+                caseButton = new Button(id, x, y, btnSize, btnSize, false) {
                     @Override
                     public void onClick(MouseEvent.Click event) {
                         super.onClick(event);
@@ -105,10 +99,9 @@ public class SudokuState extends ScreenState {
             }
         }
 
-        for (int i = 0; i < Sudoku.SIZE; i++) {
+        for (int i = 0; i < 9; i++) {
             int value = i + 1;
-            GuiElement candidateValueButton = new Button(++id, (width / 2) - (Sudoku.SIZE * btnSize / 2) + (btnSize * i) + 8, height - btnSize, btnSize, btnSize, true, String.valueOf(value), new ResourceHandle<>("textures/candidateValuesTextures.png") {
-            }) {
+            GuiElement candidateValueButton = new Button(++id, (width / 2f) - (9 * btnSize / 2) + (btnSize * i) + 8, height - btnSize, btnSize, btnSize, true, String.valueOf(value), new ResourceHandle<>("textures/candidateValuesTextures.png") {}) {
                 @Override
                 public boolean isVisible() {
                     if (selectedX != -1 && selectedY != -1) {
