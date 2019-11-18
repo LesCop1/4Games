@@ -48,6 +48,12 @@ public class StateManager {
         }
     }
 
+    public void popMultipleState(int num) {
+        for (int i = 0; i < num; i++) {
+            popState();
+        }
+    }
+
     public void popState() {
         if (!stateStack.isEmpty()) {
             Event event = new StateEvent.Exit(stateStack.peek());
