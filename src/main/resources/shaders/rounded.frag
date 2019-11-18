@@ -15,7 +15,7 @@ uniform float radius;
 void main(void) {
     vec4 tex = texture(textureSampler, pass_UV);
 
-    float smoothness = 0.7;
+    float smoothness = 0.3;
     float alpha = tex.a;
 
     if (radius > 0.0) {

@@ -23,7 +23,7 @@ public class TextRenderer extends Renderer<Text> {
         Transform transform = Render.pushTransform();
         {
             transform.color(text.getColor());
-            renderManager.getFontRenderer().drawString(text.getText(), text.getX(), text.getY(), text.isCentered());
+            renderManager.getFontRenderer().drawString(text.getText(), text.getX(), text.getY(), text.getScale(), text.isCentered());
         }
         Render.popTransform();
     }
