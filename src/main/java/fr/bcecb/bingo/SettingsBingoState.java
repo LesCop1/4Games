@@ -37,7 +37,6 @@ public class SettingsBingoState extends ScreenState {
     @Override
     public void onExit() {
         super.onExit();
-        Game.instance().getStateManager().pushState(new BingoState(this.nbGrids, this.difficulty));
 
         // clignotement ( le state pop puis le jeu s'affiche, laisse apparaître le menu de sélection de jeu le temps  d'une fraction de seconde
     }
@@ -84,7 +83,8 @@ public class SettingsBingoState extends ScreenState {
             @Override
             public void onClick(MouseEvent.Click event) {
                 if (difficulty != 0 && nbGrids != 0) {
-                    Game.instance().getStateManager().popState();
+                    Game.instance().getStateManager().pushState(new BingoState(nbGrids, difficulty));
+
                 }
             }
         };
@@ -96,7 +96,6 @@ public class SettingsBingoState extends ScreenState {
         }){
             @Override
             public void onClick(MouseEvent.Click event) {
-                Game.instance().getStateManager().popState();
                 Game.instance().getStateManager().popState();
             }
         };
