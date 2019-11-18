@@ -20,6 +20,10 @@ public class Battleship { //Gère tous les aspects d'une partie, création de la
         }
     }
 
+    public int getCurrentPlayer() {
+        return currentPlayer;
+    }
+
     public int getNextPlayer() {
         return (this.currentPlayer + 1) % 2;
     }

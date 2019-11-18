@@ -42,7 +42,7 @@ public class GameSelectScreen extends ScreenState {
         GuiElement bsGameButton = new Button(12, (width / 4f) * 3, (height / 2f) - (height / 10f), (width / 8f), (height / 10f), true, "Battle Ship", Resources.DEFAULT_BUTTON_TEXTURE) {
             @Override
             public void onClick(MouseEvent.Click event) {
-                Game.instance().getStateManager().pushState(new FirstPhaseBattleshipScreen());
+                Game.instance().getStateManager().pushState(new BattleshipScreen());
             }
         };
 

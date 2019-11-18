@@ -9,6 +9,7 @@ import fr.bcecb.resources.ResourceHandle;
 import fr.bcecb.state.gui.Button;
 import fr.bcecb.state.gui.GuiElement;
 import fr.bcecb.state.gui.ScreenState;
+import fr.bcecb.state.gui.Text;
 import org.lwjgl.glfw.GLFW;
 import fr.bcecb.resources.Texture;
 
@@ -16,13 +17,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class FirstPhaseBattleshipScreen extends ScreenState {
-    private static final ResourceHandle<Texture> defaultTexture = new ResourceHandle<>("textures/BatailleNavale/caseBattleship.png") {};
+    private static final ResourceHandle<Texture> defaultTexture = new ResourceHandle<>("textures/BatailleNavale/caseBattleship.png") {
+    };
 
-    private Battleship battleship = new Battleship();
-//    private Battleship battleship;
+    private Battleship battleship;
     private Boat boat;
 
     private List<String> boatPut = new ArrayList<>();
+
+    private int whichPlayer;
+    private int[][] saveGridPlayer1;
+    private int[][] saveGridPlayer2;
+
 
     private int selectedX = -1;
     private int selectedY = -1;
@@ -31,31 +37,27 @@ public class FirstPhaseBattleshipScreen extends ScreenState {
 
     private String changeOrientation = "Horizontale";
 
-//    public FirstPhaseBattleshipScreen(Battleship battleship) {
-//        super("game-battleship.firstphase");
-//        this.battleship = battleship;
-//
-//        setBackgroundTexture(new ResourceHandle<>("textures/battleshipScreen.png") {});
-//    }
-
-    public FirstPhaseBattleshipScreen() {
+    public FirstPhaseBattleshipScreen(Battleship battleship, int whichPlayer, int[][] gridPlayer1, int[][] gridPlayer2) {
         super("game-battleship.firstphase");
-        setBackgroundTexture(new ResourceHandle<>("textures/battleshipScreen.png") {});
+        this.battleship = battleship;
+        this.whichPlayer = whichPlayer;
+        saveGridPlayer1=gridPlayer1;
+        saveGridPlayer2=gridPlayer2;
+        setBackgroundTexture(new ResourceHandle<>("textures/battleshipScreen.png") {
+        });
     }
 
     @Override
     public void initGui() {
         battleship.initGrid();
-
         setBackgroundTexture(new ResourceHandle<>("textures/BatailleNavale/background_battleship.jpg") {
         });
-        if(Game.instance().getInputManager().isKeyDown(Key.BATTLESHIP_SWAP_H)) battleship.swapOrientation(boat);
         Button caseButton;
         int id = 1;
         float btnSize = 25f;
-        float x = (width / 2f) - (9 * btnSize / 2);
+        float x = (width / 2f) - (9 * btnSize / 2) - 4;
         for (int i = 0; i < 10; ++i, x += btnSize) {
-            float y = (height / 2f) - (9 * btnSize / 2);
+            float y = (height / 2f) - (9 * btnSize / 2) - 4;
             for (int j = 0; j < 10; ++j, ++id, y += btnSize) {
                 int caseX = i;
                 int caseY = j;
@@ -64,12 +66,19 @@ public class FirstPhaseBattleshipScreen extends ScreenState {
                     public void onClick(MouseEvent.Click event) {
                         super.onClick(event);
 
+                        if (event.getButton() == GLFW.GLFW_MOUSE_BUTTON_RIGHT) {
+                            battleship.swapOrientation(boat);
+                        }
+
                         if (selectedBoat != "" && !battleship.cannotPlace(boat, caseX, caseY)
                                 && !boatPut.contains(selectedBoat)) {
                             boatPut.add(selectedBoat);
-//                            setTitle(selectedBoat);
                             battleship.putBoat(boat, caseX, caseY);
                             selectedBoat = "";
+                        }
+
+                        if (boatPut.size() == 5) {
+                            onExit();
                         }
                     }
 
@@ -84,11 +93,16 @@ public class FirstPhaseBattleshipScreen extends ScreenState {
                     }
 
                     public ResourceHandle<Texture> whichTexture(int num) {
-                        if(num == 5) return new ResourceHandle<>("textures/BatailleNavale/A.png") {};
-                        if(num == 4) return new ResourceHandle<>("textures/BatailleNavale/C.png") {};
-                        if(num == 31) return new ResourceHandle<>("textures/BatailleNavale/F.png") {};
-                        if(num == 30) return new ResourceHandle<>("textures/BatailleNavale/S.png") {};
-                        if(num == 2) return new ResourceHandle<>("textures/BatailleNavale/T.png") {};
+                        if (num == 5) return new ResourceHandle<>("textures/BatailleNavale/A.png") {
+                        };
+                        if (num == 4) return new ResourceHandle<>("textures/BatailleNavale/C.png") {
+                        };
+                        if (num == 31) return new ResourceHandle<>("textures/BatailleNavale/F.png") {
+                        };
+                        if (num == 30) return new ResourceHandle<>("textures/BatailleNavale/S.png") {
+                        };
+                        if (num == 2) return new ResourceHandle<>("textures/BatailleNavale/T.png") {
+                        };
                         return defaultTexture;
                     }
                 };
@@ -100,8 +114,8 @@ public class FirstPhaseBattleshipScreen extends ScreenState {
         }) {
             @Override
             public void onClick(MouseEvent.Click event) {
-//                Game.instance().getStateEngine().popState();
-//                Game.instance().getStateEngine().popState();
+                Game.instance().getStateManager().popState();
+                Game.instance().getStateManager().popState();
             }
         };
         addGuiElement(backButton);
@@ -167,6 +181,13 @@ public class FirstPhaseBattleshipScreen extends ScreenState {
         addGuiElement(t);
     }
 
-    public void clickButton(int id, MouseEvent.Click event) {
+    @Override
+    public void onExit() {
+        super.onExit();
+        if (whichPlayer==1) {
+            Game.instance().getStateManager().pushState(new BattleshipScreen(battleship.getCurrentPlayerBoard(), saveGridPlayer2, 2));
+        } else {
+            Game.instance().getStateManager().pushState(new BattleshipScreen(saveGridPlayer1, battleship.getCurrentPlayerBoard(), 3));
+        }
     }
 }
