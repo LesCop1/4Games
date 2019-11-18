@@ -8,7 +8,7 @@ import java.util.Map;
 
 public class RendererRegistry {
     private final ResourceManager resourceManager;
-    private final Map<Class<? extends IRenderable>, Renderer<? extends IRenderable>> renderers = new HashMap<>();
+    private final Map<Class<? extends IRenderable>, Renderer> renderers = new HashMap<>();
 
     public RendererRegistry(RenderManager renderManager, ResourceManager resourceManager) {
         this.resourceManager = resourceManager;
@@ -22,11 +22,13 @@ public class RendererRegistry {
         registerRenderer(RoundedImage.class, new RoundedImageRenderer(renderManager));
         registerRenderer(Text.class, new TextRenderer(renderManager));
         registerRenderer(Line.class, new LineRenderer(renderManager));
+        registerRenderer(Rectangle.class, new RectangleRenderer(renderManager));
+        registerRenderer(RoundedRectangle.class, new RoundedRectangleRenderer(renderManager));
         registerRenderer(Slider.class, new SliderRenderer(renderManager));
         registerRenderer(ProgressBar.class, new ProgressBarRenderer(renderManager));
     }
 
-    private <T extends IRenderable> void registerRenderer(Class<T> clazz, Renderer<T> renderer) {
+    private <T extends IRenderable> void registerRenderer(Class<T> clazz, Renderer renderer) {
         renderers.put(clazz, renderer);
     }
 
