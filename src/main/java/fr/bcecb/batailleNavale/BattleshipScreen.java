@@ -18,7 +18,7 @@ public class BattleshipScreen extends ScreenState {
     @Override
     public void onEnter() {
         super.onEnter();
-        Game.instance().getStateManager().pushState(new FirstPhaseBattleshipScreen(battleship));
+//        Game.instance().getStateManager().pushState(new FirstPhaseBattleshipScreen(battleship));
 
         setBackgroundTexture(new ResourceHandle<>("textures/mainMenuBG.png") {});
     }

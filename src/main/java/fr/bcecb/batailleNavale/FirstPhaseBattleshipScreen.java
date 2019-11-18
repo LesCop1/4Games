@@ -18,7 +18,8 @@ import java.util.List;
 public class FirstPhaseBattleshipScreen extends ScreenState {
     private static final ResourceHandle<Texture> defaultTexture = new ResourceHandle<>("textures/BatailleNavale/caseBattleship.png") {};
 
-    private Battleship battleship;
+    private Battleship battleship = new Battleship();
+//    private Battleship battleship;
     private Boat boat;
 
     private List<String> boatPut = new ArrayList<>();
@@ -28,47 +29,45 @@ public class FirstPhaseBattleshipScreen extends ScreenState {
 
     private String selectedBoat = "";
 
-    protected FirstPhaseBattleshipScreen(Battleship battleship) {
-        super("game-battleship.firstphase");
-        this.battleship = battleship;
+    private String changeOrientation = "Horizontale";
 
+//    public FirstPhaseBattleshipScreen(Battleship battleship) {
+//        super("game-battleship.firstphase");
+//        this.battleship = battleship;
+//
+//        setBackgroundTexture(new ResourceHandle<>("textures/battleshipScreen.png") {});
+//    }
+
+    public FirstPhaseBattleshipScreen() {
+        super("game-battleship.firstphase");
         setBackgroundTexture(new ResourceHandle<>("textures/battleshipScreen.png") {});
     }
 
     @Override
     public void initGui() {
-        int width = Window.getCurrentWindow().getWidth();
-        int height = Window.getCurrentWindow().getHeight();
-
         battleship.initGrid();
 
         setBackgroundTexture(new ResourceHandle<>("textures/BatailleNavale/background_battleship.jpg") {
         });
-
-        Game.instance().getInputManager().isKeyDown(Key.BATTLESHIP_SWAP);
-            battleship.swapOrientation(boat);
-
-
-
+        if(Game.instance().getInputManager().isKeyDown(Key.BATTLESHIP_SWAP_H)) battleship.swapOrientation(boat);
+        Button caseButton;
         int id = 1;
-        int btnSize = 42;
-        float x = (width / 2) - (9 * btnSize / 2);
+        float btnSize = 25f;
+        float x = (width / 2f) - (9 * btnSize / 2);
         for (int i = 0; i < 10; ++i, x += btnSize) {
-            float y = (height / 2) - (9 * btnSize / 2);
+            float y = (height / 2f) - (9 * btnSize / 2);
             for (int j = 0; j < 10; ++j, ++id, y += btnSize) {
                 int caseX = i;
                 int caseY = j;
-                final Button caseButton = new Button(id, x, y, btnSize, btnSize, false, "") {
+                caseButton = new Button(id, x, y, btnSize, btnSize, false) {
                     @Override
                     public void onClick(MouseEvent.Click event) {
                         super.onClick(event);
 
-
-
                         if (selectedBoat != "" && !battleship.cannotPlace(boat, caseX, caseY)
                                 && !boatPut.contains(selectedBoat)) {
                             boatPut.add(selectedBoat);
-                            setTitle(selectedBoat);
+//                            setTitle(selectedBoat);
                             battleship.putBoat(boat, caseX, caseY);
                             selectedBoat = "";
                         }
@@ -81,25 +80,33 @@ public class FirstPhaseBattleshipScreen extends ScreenState {
 
                     @Override
                     public ResourceHandle<Texture> getTexture() {
-                        return battleship.getCurrentPlayerBoard()[caseX][caseY] != 0 ? new ResourceHandle<>("textures/BatailleNavale/A.png") {} : defaultTexture;
+                        return battleship.getCurrentPlayerBoard()[caseX][caseY] != 0 ? whichTexture(battleship.getCurrentPlayerBoard()[caseX][caseY]) : defaultTexture;
+                    }
+
+                    public ResourceHandle<Texture> whichTexture(int num) {
+                        if(num == 5) return new ResourceHandle<>("textures/BatailleNavale/A.png") {};
+                        if(num == 4) return new ResourceHandle<>("textures/BatailleNavale/C.png") {};
+                        if(num == 31) return new ResourceHandle<>("textures/BatailleNavale/F.png") {};
+                        if(num == 30) return new ResourceHandle<>("textures/BatailleNavale/S.png") {};
+                        if(num == 2) return new ResourceHandle<>("textures/BatailleNavale/T.png") {};
+                        return defaultTexture;
                     }
                 };
                 addGuiElement(caseButton);
             }
         }
 
-
         final GuiElement backButton = new Button(999, 0, 0, 50 / ((float) 1920 / width), 50 / ((float) 1920 / width), false, new ResourceHandle<>("textures/back_button.png") {
         }) {
             @Override
             public void onClick(MouseEvent.Click event) {
-                Game.instance().getStateEngine().popState();
-                Game.instance().getStateEngine().popState();
+//                Game.instance().getStateEngine().popState();
+//                Game.instance().getStateEngine().popState();
             }
         };
         addGuiElement(backButton);
 
-        Button a = new Button(102, (width / 20f), 100, (height / 10f), (height / 10f), false, "A",
+        Button a = new Button(102, (width / 20f), 50, (height / 10f), (height / 10f), false, "A",
                 new ResourceHandle<Texture>("textures/BatailleNavale/A.png") {
                 }) {
             @Override
@@ -111,7 +118,7 @@ public class FirstPhaseBattleshipScreen extends ScreenState {
         };
         addGuiElement(a);
 
-        Button b = new Button(103, (width / 20f), 200, (height / 10f), (height / 10f), false, "B",
+        Button c = new Button(103, (width / 20f), 100, (height / 10f), (height / 10f), false, "C",
                 new ResourceHandle<Texture>("textures/BatailleNavale/C.png") {
                 }) {
             @Override
@@ -121,9 +128,9 @@ public class FirstPhaseBattleshipScreen extends ScreenState {
                 boat = new Boat(Boat.Type.CRUISER);
             }
         };
-        addGuiElement(b);
+        addGuiElement(c);
 
-        Button f = new Button(104, (width / 20f), 300, (height / 10f), (height / 10f), false, "F",
+        Button f = new Button(104, (width / 20f), 150, (height / 10f), (height / 10f), false, "F",
                 new ResourceHandle<Texture>("textures/BatailleNavale/F.png") {
                 }) {
             @Override
@@ -135,7 +142,7 @@ public class FirstPhaseBattleshipScreen extends ScreenState {
         };
         addGuiElement(f);
 
-        Button s = new Button(105, (width / 20f), 400, (height / 10f), (height / 10f), false, "S",
+        Button s = new Button(105, (width / 20f), 200, (height / 10f), (height / 10f), false, "S",
                 new ResourceHandle<Texture>("textures/BatailleNavale/S.png") {
                 }) {
             @Override
@@ -147,7 +154,7 @@ public class FirstPhaseBattleshipScreen extends ScreenState {
         };
         addGuiElement(s);
 
-        Button t = new Button(106, (width / 20f), 500, (height / 10f), (height / 10f), false, "T",
+        Button t = new Button(106, (width / 20f), 250, (height / 10f), (height / 10f), false, "T",
                 new ResourceHandle<Texture>("textures/BatailleNavale/T.png") {
                 }) {
             @Override

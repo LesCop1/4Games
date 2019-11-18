@@ -2,6 +2,7 @@ package fr.bcecb.state;
 
 import fr.bcecb.Game;
 import fr.bcecb.batailleNavale.BattleshipScreen;
+import fr.bcecb.batailleNavale.FirstPhaseBattleshipScreen;
 import fr.bcecb.event.MouseEvent;
 import fr.bcecb.state.gui.Button;
 import fr.bcecb.state.gui.CircleButton;
@@ -41,7 +42,7 @@ public class GameSelectScreen extends ScreenState {
         GuiElement bsGameButton = new Button(12, (width / 4f) * 3, (height / 2f) - (height / 10f), (width / 8f), (height / 10f), true, "Battle Ship", Resources.DEFAULT_BUTTON_TEXTURE) {
             @Override
             public void onClick(MouseEvent.Click event) {
-                Game.instance().getStateManager().pushState(new BattleshipScreen());
+                Game.instance().getStateManager().pushState(new FirstPhaseBattleshipScreen());
             }
         };
 

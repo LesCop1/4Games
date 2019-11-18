@@ -9,7 +9,9 @@ public enum Key {
     FULLSCREEN(GLFW_KEY_F),
     BACK(GLFW_KEY_ESCAPE),
     LEFT(GLFW_KEY_LEFT),
-    RIGHT(GLFW_KEY_RIGHT);
+    RIGHT(GLFW_KEY_RIGHT),
+    BATTLESHIP_SWAP_H(GLFW_KEY_Z),
+    BATTLESHIP_SWAP_V(GLFW_KEY_A);
 
     private final int glfwKey;
 
