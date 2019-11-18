@@ -5,10 +5,8 @@ import java.util.List;
 
 public class Player {
     private List<Grid> grids = new ArrayList<>();
-    private boolean win;
 
     public Player(int nbGrid) {
-        this.win = false;
         for (int i = 0; i < nbGrid; i++) {
             addGrid();
         }
@@ -17,9 +15,9 @@ public class Player {
     public boolean checkWin() {
         for (Grid g :
                 grids) {
-            if (g.checkWin()) this.win = true;
+            if (g.checkWin()) return true;
         }
-        return this.win;
+        return false;
     }
 
     private void addGrid() {

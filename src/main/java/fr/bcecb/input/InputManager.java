@@ -39,8 +39,8 @@ public class InputManager implements AutoCloseable {
         float lastMouseY = this.mouseY;
 
         if (this.mouseX != x || this.mouseY != y) {
-            this.mouseX = (float) x / this.window.getGuiScale();
-            this.mouseY = (float) y / this.window.getGuiScale();
+            this.mouseX = (float) x * this.window.getScaledWidth() / this.window.getWidth();
+            this.mouseY = (float) y * this.window.getScaledHeight() / this.window.getHeight();
 
             Event event = new MouseEvent.Move(this, this.mouseX, this.mouseY, lastMouseX - this.mouseX, lastMouseY - this.mouseY);
             Game.EVENT_BUS.post(event);

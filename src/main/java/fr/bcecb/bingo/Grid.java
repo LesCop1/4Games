@@ -49,20 +49,20 @@ public class Grid {
             while (compteur < 4) {
                 int randCol = rand.nextInt(8);
                 if (i == 0) {
-                    if (this.grid[i][randCol] != 0 && (this.grid[1][randCol] != 0 || this.grid[2][randCol] != 0)) {
-                        this.grid[i][randCol] = 0;
+                    if (this.grid[i][randCol] != -1 && (this.grid[1][randCol] != -1 || this.grid[2][randCol] != -1)) {
+                        this.grid[i][randCol] = -1;
                         compteur++;
                     }
                 }
                 if (i == 1) {
-                    if (this.grid[i][randCol] != 0 && (this.grid[0][randCol] != 0 || this.grid[2][randCol] != 0)) {
-                        this.grid[i][randCol] = 0;
+                    if (this.grid[i][randCol] != -1 && (this.grid[0][randCol] != -1 || this.grid[2][randCol] != -1)) {
+                        this.grid[i][randCol] = -1;
                         compteur++;
                     }
                 }
                 if (i == 2) {
-                    if (this.grid[i][randCol] != 0 && (this.grid[0][randCol] != 0 || this.grid[1][randCol] != 0)) {
-                        this.grid[i][randCol] = 0;
+                    if (this.grid[i][randCol] != -1 && (this.grid[0][randCol] != -1 || this.grid[1][randCol] != -1)) {
+                        this.grid[i][randCol] = -1;
                         compteur++;
                     }
                 }

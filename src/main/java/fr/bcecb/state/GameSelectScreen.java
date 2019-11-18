@@ -2,6 +2,7 @@ package fr.bcecb.state;
 
 import fr.bcecb.Game;
 import fr.bcecb.batailleNavale.BattleshipScreen;
+import fr.bcecb.bingo.SettingsBingoState;
 import fr.bcecb.event.MouseEvent;
 import fr.bcecb.state.gui.Button;
 import fr.bcecb.state.gui.CircleButton;
@@ -27,7 +28,7 @@ public class GameSelectScreen extends ScreenState {
         GuiElement bingoGameButton = new Button(11, (width / 4f), (height / 2f) + (height / 10f), (width / 8f), (height / 10f), true, "Bingo", Resources.DEFAULT_BUTTON_TEXTURE) {
             @Override
             public void onClick(MouseEvent.Click event) {
-                super.onClick(event);
+                Game.instance().getStateManager().pushState(new SettingsBingoState());
             }
         };
 

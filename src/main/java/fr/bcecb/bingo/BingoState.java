@@ -1,7 +1,7 @@
 package fr.bcecb.bingo;
 
 import fr.bcecb.Game;
-import fr.bcecb.render.Window;
+import fr.bcecb.event.MouseEvent;
 import fr.bcecb.resources.ResourceHandle;
 import fr.bcecb.resources.Texture;
 import fr.bcecb.state.gui.Button;
@@ -12,6 +12,8 @@ import fr.bcecb.state.gui.Text;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+
+import static java.sql.Types.NULL;
 
 public class BingoState extends ScreenState {
     private static final ResourceHandle<Texture> CASE_TEXTURE = new ResourceHandle<>("textures/bingo/caseBG.png") {
@@ -80,44 +82,28 @@ public class BingoState extends ScreenState {
     @Override
     public void onUpdate() {
         super.onUpdate();
-        if (!player.checkWin()) {
-            if (numberList.size() > 0) {
-                if (++ticks > tickMultiplier * 60) {
-                    dropball();
-                    System.out.println("Boule :" + this.lastDrop);
-                    dispList();
-                    this.ticks = 0;
-                }
-            } else ((Text) gameStatus).setText("You Loose !");
-
-        } else ((Text) gameStatus).setText("Bingo !");
+        if (numberList.size() > 0) {
+            if (++ticks > tickMultiplier * 60) {
+                dropball();
+                System.out.println("Boule :" + this.lastDrop);
+                dispList();
+                this.ticks = 0;
+            }
+        }
 // push winstate
 
     }
 
     private void dropball() {
-        ((Text) gameStatus).setText("Playing");
         Random rand = new Random();
         int randInt = rand.nextInt(numberList.size()); // random de la taille de la liste
 
         this.lastDrop = numberList.get(randInt);
-        ((Text) ball).setText(Integer.toString(this.lastDrop));
-        //System.out.println("((Text) ball).getText() = " + ((Text) ball).getText());
-        addGuiElement(ball);
         numberList.remove(randInt);
-    }
-
-    public void checkCase(int btnID) {
-        if (((Button) getGuiElementById(btnID)).getTitle().equals(((Integer) this.lastDrop).toString())) {
-            ((Button) getGuiElementById(btnID)).setTexture(CASE_CHECKED_TEXTURE);
-            ((Button) getGuiElementById(btnID)).setHoverTexture(CASE_CHECKED_TEXTURE);
-        }
     }
 
     @Override
     public void initGui() {
-        int width = Window.getCurrentWindow().getWidth();
-        int height = Window.getCurrentWindow().getHeight();
         setBackgroundTexture(new ResourceHandle<>("textures/bingo/bingoBG.png") {
         });
 
@@ -138,38 +124,91 @@ public class BingoState extends ScreenState {
             drawGrid(gridX, gridY, gridW, gridH, i);
         }
 
-        this.ball = new Text(2000,1 * (startX+gridW), 1 * (height / 10f), "", 5f, false);
-        this.gameStatus = new Text(2001, 2 * (width / 8f), 1 * (height / 10f), "Starting", 5f, true);
+        this.ball = new Text(2000, 1 * (startX + gridW), 1 * (height / 10f), false, null, 5f) {
+            @Override
+            public String getText() {
+                return lastDrop != 0 ? Integer.toString(lastDrop) : "";
+            }
+        };
+
+
+        this.gameStatus = new Text(2001, 2 * (width / 8f), 1 * (height / 10f), false, "Starting", 5f) {
+            @Override
+            public String getText() {
+                return updateGameStatus();
+            }
+        };
 
         final GuiElement backButton = new Button(2002,
-                (width / 20f), (height - (height / 20f) - (height / 10f)), (height / 10f), (height / 10f), false, "Back")
-                .setClickHandler((id, e) -> Game.instance().getStateEngine().popState());
+                (width / 20f), (height - (height / 20f) - (height / 10f)), (height / 10f), (height / 10f), false, "Back") {
+            @Override
+            public void onClick(MouseEvent.Click event) {
+                Game.instance().getStateManager().popState();
+            }
+        };
 
-        addGuiElement(backButton, this.gameStatus);
+        addGuiElement(backButton, this.gameStatus, ball);
     }
 
     private void drawGrid(float gridX, float gridY, float gridW, float gridH, int numGrid) {
-        int caseID = (100 * numGrid);
+        int id = (100 * numGrid);
 
         for (int i = 0; i < 3; i++) {
-            for (int j = 0; j < 9; j++, caseID++) {
-                final Button caseX = new Button(caseID,
-                        (gridX + j * (gridW / 9)), (gridY + i * (gridH / 3)),
-                        (gridW / 10), (gridH / 3), false, Integer.toString(this.player.getGrid(numGrid).getValue(i, j)), CASE_TEXTURE);
+            for (int j = 0; j < 9; j++, id++) {
+                int caseX = i;
+                int caseY = j;
+                int caseId = id;
+                final Button caseButton = new Button(caseId, (gridX + j * (gridW / 9)), (gridY + i * (gridH / 3)), (gridW / 10), (gridH / 3), false) {
+                    @Override
+                    public ResourceHandle<Texture> getTexture() {
+                        int value = getValue();
+                        return value != 0 ? CASE_TEXTURE : CASE_CHECKED_TEXTURE;
+                    }
 
-                caseX.setHoverTexture(CASE_HOVERED_TEXTURE);
+                    @Override
+                    public ResourceHandle<Texture> getHoverTexture() {
+                        int value = getValue();
+                        return value == 0 ? CASE_CHECKED_TEXTURE : value > 0 ? CASE_HOVERED_TEXTURE : CASE_TEXTURE;
+                    }
 
-                if (caseX.getTitle().equals("0")) {
-                    caseX.setDisabled(true);
-                }
+                    @Override
+                    public String getTitle() {
+                        int value = getValue();
+                        return value > 0 ? String.valueOf(value) : null;
+                    }
 
-                caseX.setClickHandler((id, e) -> {
-                    checkCase(caseX.getId());
-                });
+                    @Override
+                    public void onClick(MouseEvent.Click event) {
+                        super.onClick(event);
+                        if (BingoState.this.player.getGrid(numGrid).getGrid()[caseX][caseY] == lastDrop) {
+                            BingoState.this.player.getGrid(numGrid).getGrid()[caseX][caseY] = 0;
+                        }
+                    }
 
-                addGuiElement(caseX);
+                    @Override
+                    public boolean isDisabled() {
+                        return getValue() <= 0;
+                    }
+
+                    private int getValue() {
+                        return BingoState.this.player.getGrid(numGrid).getValue(caseX, caseY);
+                    }
+                };
+
+                addGuiElement(caseButton);
             }
         }
+    }
+
+    public String updateGameStatus() {
+        if(lastDrop == NULL){
+            return "Starting";
+        }
+        if (player.checkWin()) {
+            return "Bingo !";
+        } else if (numberList.isEmpty() && !player.checkWin()) {
+            return "You Loose !";
+        } else return "Playing";
     }
 
     @Override

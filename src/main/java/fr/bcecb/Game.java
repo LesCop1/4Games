@@ -33,7 +33,11 @@ public final class Game implements AutoCloseable {
 
     private static final Game INSTANCE = new Game();
 
-    public ResourceHandle<Texture> currentProfile = new ResourceHandle<>("textures/defaultProfile.jpg") {};
+    public ResourceHandle<Texture> currentProfile = new ResourceHandle<>("textures/defaultProfile.jpg") {
+    };
+    private int[] highScores; // 0 = Sudoku ; 1 = BattleShip ; 3 = Bingo ; 4 = Poker ;
+    private int tokenBalance, nbGames, nbSuccess, nbLoose, timeSpent;
+
 
     private Game() {
         if (!glfwInit()) {
@@ -106,6 +110,44 @@ public final class Game implements AutoCloseable {
 
     public ResourceManager getResourceManager() {
         return resourceManager;
+    }
+
+    public int getHighScore(int index) {
+        return highScores[index];
+    }
+
+    public void setHighScore(int index,int score){
+        this.highScores[index] = score;
+    }
+
+    public int getTokenBalance() {
+        return tokenBalance;
+    }
+
+    public int getNbGames() {
+        return nbGames;
+    }
+
+    public int getNbSuccess() {
+        return nbSuccess;
+    }
+
+    public int getNbLoose() {
+        return nbLoose;
+    }
+
+    public void addTokenSold(int amount) {
+        this.tokenBalance += amount;
+    }
+
+    public void increaseNbSuccess() {
+        this.nbSuccess++;
+        this.nbGames++;
+    }
+
+    public void increaseNbLoose(int nbLoose) {
+        this.nbLoose = nbLoose;
+        this.nbGames++;
     }
 
     public static Game instance() {
