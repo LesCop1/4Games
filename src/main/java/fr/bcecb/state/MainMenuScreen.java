@@ -2,19 +2,23 @@ package fr.bcecb.state;
 
 import fr.bcecb.Game;
 import fr.bcecb.event.MouseEvent;
-import fr.bcecb.resources.ResourceHandle;
-import fr.bcecb.state.gui.*;
+import fr.bcecb.state.gui.Button;
+import fr.bcecb.state.gui.CircleButton;
+import fr.bcecb.state.gui.Image;
+import fr.bcecb.state.gui.ScreenState;
 import fr.bcecb.util.Constants;
 import fr.bcecb.util.Resources;
 
 public class MainMenuScreen extends ScreenState {
+    boolean tr = true;
+
     public MainMenuScreen() {
         super("main_menu");
     }
 
     @Override
     public void initGui() {
-        //Image logoImage = new Image(100, Resources.DEFAULT_LOGO_TEXTURE, (width / 2f), (height / 8f), 50, 50, true, true);
+        Image logoImage = new Image(100, Resources.DEFAULT_LOGO_TEXTURE, (width / 2f), (height / 8f), 50, 50, true, true);
 
         Button playButton = new Button(1, (width / 2f), (height / 2f) - (height / 10f) - (height / 10f), 50, 25, true, "Play", Resources.DEFAULT_BUTTON_TEXTURE) {
             @Override
@@ -58,10 +62,6 @@ public class MainMenuScreen extends ScreenState {
             }
         };
 
-        RoundedButton te = new RoundedButton(12, 10, 10, 100, 100, 10, null);
-        RoundedImage ae = new RoundedImage(524, new ResourceHandle<>("textures/defaultBackground.png") {
-        }, 100, 100, 10, 100, true, false, 5f);
-
-        addGuiElement(te, ae, playButton, profileButton, achievementButton, shopButton, aboutButton, quitButton);
+        addGuiElement(logoImage, playButton, profileButton, achievementButton, shopButton, aboutButton, quitButton);
     }
 }

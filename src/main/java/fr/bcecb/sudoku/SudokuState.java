@@ -4,10 +4,10 @@ import fr.bcecb.Game;
 import fr.bcecb.event.MouseEvent;
 import fr.bcecb.resources.ResourceHandle;
 import fr.bcecb.resources.Texture;
+import fr.bcecb.state.EndGameState;
 import fr.bcecb.state.gui.Button;
 import fr.bcecb.state.gui.GuiElement;
 import fr.bcecb.state.gui.ScreenState;
-import fr.bcecb.state.gui.Text;
 import fr.bcecb.util.Constants;
 import fr.bcecb.util.Resources;
 import org.joml.Vector4f;
@@ -33,12 +33,6 @@ public class SudokuState extends ScreenState {
 
     @Override
     public void initGui() {
-        GuiElement text = new Text(0, 10, 10, false, "done") {
-            @Override
-            public boolean isVisible() {
-                return sudoku.winCondition();
-            }
-        };
 
         GuiElement backButton = new Button(-1, (width / 20f), (height - (height / 20f) - (height / 10f)), (height / 10f), (height / 10f), false, "Back", Resources.DEFAULT_BUTTON_TEXTURE) {
             @Override
@@ -129,7 +123,15 @@ public class SudokuState extends ScreenState {
             addGuiElement(candidateValueButton);
         }
 
-        addGuiElement(text, backButton);
+        addGuiElement(backButton);
+    }
+
+    @Override
+    public void onUpdate() {
+        super.onUpdate();
+        if (sudoku.winCondition()) {
+            Game.instance().getStateManager().pushState(new EndGameState(Constants.GameType.SUDOKU, 4535L, 34));
+        }
     }
 }
 
