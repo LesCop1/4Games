@@ -11,11 +11,13 @@ import java.util.List;
  */
 public class Poker {
     private static final int DEFAULT_BANKROLL = 500;
-    private static final int START_NUM_CARD = 2;
+    public static final int START_NUM_CARD = 2;
     private static final int STARTING_SMALL_BLIND = DEFAULT_BANKROLL / 100;
     private static final int BLIND_GAME_INCREASE = 5;
 
     private int playerAmount;
+
+
     private HashMap<Integer, Player> players = new HashMap<>();
     private Deck deck;
     private Deck table;
@@ -23,6 +25,11 @@ public class Poker {
     private int numGame;
     private int startingGamePlayer;
     private int currentSmallBlind;
+
+    public int getCurrentPlayer() {
+        return currentPlayer;
+    }
+
     private int currentPlayer;
     private int currentHighestBet;
     private int numTurns;
@@ -49,10 +56,14 @@ public class Poker {
         updateGame();
     }
 
+    public HashMap<Integer, Player> getPlayers() {
+        return players;
+    }
+
     /**
      * Initialize the poker game
      */
-    private void initGame() {
+    public void initGame() {
         // Create a new deck, with the right numbers of cards and shuffle it.
         this.deck = new Deck();
         this.deck.init();
@@ -176,11 +187,12 @@ public class Poker {
         return this.currentHighestBet;
     }
 
+
     private void setCurrentHighestBet(int currentHighestBet) {
         this.currentHighestBet = currentHighestBet;
     }
 
-    private static class Player {
+    public class Player {
         // Combination points
         private static final int COMBINATION_POINTS_ROYAL_FLUSH = 10000;
         private static final int COMBINATION_POINTS_STRAIGHT_FLUSH = 9000;
@@ -200,6 +212,14 @@ public class Poker {
         private int onTable;
         private int lastBet;
         private int points;
+
+        public Deck getHand() {
+            return hand;
+        }
+
+        public int getPoint() {
+            return points;
+        }
 
         /**
          * Initialize a player, reset every variable

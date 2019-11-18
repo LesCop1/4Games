@@ -2,6 +2,7 @@ package fr.bcecb.state;
 
 import fr.bcecb.Game;
 import fr.bcecb.batailleNavale.BattleshipScreen;
+import fr.bcecb.poker.PokerScreenState;
 import fr.bcecb.poker.PokerState;
 import fr.bcecb.render.Window;
 import fr.bcecb.state.gui.Button;
@@ -33,7 +34,7 @@ public class GameSelectScreen extends ScreenState {
                 .setClickHandler((id, e) -> Game.instance().getStateEngine().pushState(new BattleshipScreen()));
 
         final GuiElement pokerGameButton = new Button(13, (width / 4f) * 3, (height / 2f) + (height / 10f), (width / 8f), (height / 10f), true, "Poker", Resources.DEFAULT_BUTTON_TEXTURE)
-                .setClickHandler((id, e) -> Game.instance().getStateEngine().pushState(new PokerState(4)));
+                .setClickHandler((id, e) -> Game.instance().getStateEngine().pushState(new PokerScreenState()));
         final GuiElement backButton = new Button(14, (width / 20f), (height - (height / 20f) - (height / 10f)), (height / 10f), (height / 10f), false, "Back", Resources.DEFAULT_BUTTON_TEXTURE)
                 .setClickHandler((id, e) -> Game.instance().getStateEngine().popState());
 
