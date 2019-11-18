@@ -7,6 +7,7 @@ import fr.bcecb.resources.Texture;
 public class Image extends GuiElement {
     private ResourceHandle<Texture> image;
     private boolean keepRatio;
+    private float rotation = 0f;
 
     public Image(int id, ResourceHandle<Texture> image, float x, float y, float width, float height, boolean keepRatio) {
         this(id, image, x, y, width, height, keepRatio, false);
@@ -32,6 +33,14 @@ public class Image extends GuiElement {
 
     public void setKeepRatio(boolean keepRatio) {
         this.keepRatio = keepRatio;
+    }
+
+    public float getRotation() {
+        return rotation;
+    }
+
+    public void setRotation(float rotation) {
+        this.rotation = rotation;
     }
 
     @Override

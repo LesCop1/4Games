@@ -24,7 +24,7 @@ public class ImageRenderer extends Renderer<Image> {
         Transform transform = Render.pushTransform();
         {
             transform.translate(image.getX(), image.getY());
-            renderManager.drawRect(null, 0, 0, image.getWidth(), image.getHeight());
+            transform.rotateZ((float) Math.toRadians(image.getRotation()));
 
             if (image.keepRatio()) {
                 Texture texture = renderManager.getResourceManager().getResourceOrDefault(getTexture(image), Resources.DEFAULT_TEXTURE);
