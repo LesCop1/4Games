@@ -25,8 +25,9 @@ public class BattleshipScreen extends ScreenState {
     private Boat boat;
     private int[][] gridPlayer1;
     private int[][] gridPlayer2;
-    private int idGrid = 1;
+    private int[][] gridTemp;
     private int whichPlayer = 1;
+    private boolean shoot = false;
     
     private Map<Integer, Boat> hm = new HashMap<Integer, Boat>();
 
@@ -34,25 +35,22 @@ public class BattleshipScreen extends ScreenState {
         super("game-battleship");
     }
 
-    public BattleshipScreen(int[][] grid1, int[][] grid2, int idGrid) {
+    public BattleshipScreen(int[][] grid1, int[][] grid2, int whichPlayer) {
         super("game-battleship");
-        if (idGrid == 2) {
-            gridPlayer1 = grid1;
-            gridPlayer2 = grid2;
-            this.idGrid = idGrid;
-            whichPlayer++;
-        } else if (idGrid == 3) {
-            gridPlayer1 = grid1;
-            gridPlayer2 = grid2;
-            this.idGrid = idGrid;
-        }
+        gridPlayer1 = grid1;
+        gridPlayer2 = grid2;
+        this.whichPlayer = whichPlayer;
     }
 
     @Override
     public void onEnter() {
         super.onEnter();
-        if (idGrid < 3)
+        if (whichPlayer < 3)
             Game.instance().getStateManager().pushState(new FirstPhaseBattleshipScreen(battleship, whichPlayer, gridPlayer1, gridPlayer2));
+        else {
+            whichPlayer-=2; //On repasse au joueur 1 quand tous les bateaux sont placés
+            gridTemp=gridPlayer2;
+        }
     }
 
     @Override
@@ -79,33 +77,53 @@ public class BattleshipScreen extends ScreenState {
                     public void onClick(MouseEvent.Click event) {
                         super.onClick(event);
 
-                        if (event.getButton() == GLFW.GLFW_MOUSE_BUTTON_RIGHT) {
-                            boat = hm.get(gridPlayer1[caseX][caseY]);
-                            System.out.println(gridPlayer1[caseX][caseY]);
-                            if (battleship.shoot(boat, gridPlayer1, caseX, caseY))
-                                gridPlayer1[caseX][caseY] = 100; //Touché
-                            else gridPlayer1[caseX][caseY] = 200; //Coulé
-
+                        if (!shoot && event.getButton() == GLFW.GLFW_MOUSE_BUTTON_RIGHT) {
+                            boat = hm.get(gridTemp[caseX][caseY]);
+                            System.out.println(gridTemp[caseX][caseY]);
+                            if (battleship.shoot(boat, gridTemp, caseX, caseY))
+                                gridTemp[caseX][caseY] = 100; //Touché
+                            else gridTemp[caseX][caseY] = 200; //Coulé
+                            shoot = true;
                         }
                     }
 
                     @Override
                     public boolean isDisabled() {
-                        return gridPlayer1[caseX][caseY] > 5;
+                        return gridTemp[caseX][caseY] > 5;
                     }
 
                     @Override
                     public ResourceHandle<Texture> getTexture() {
-                        return gridPlayer1[caseX][caseY] > 5 ? changeTexture() : defaultTexture;
+                        return gridTemp[caseX][caseY] > 5 ? changeTexture() : defaultTexture;
                     }
 
                     public ResourceHandle<Texture> changeTexture() {
-                        return gridPlayer1[caseX][caseY] == 200 ? sink : touch;
+                        return gridTemp[caseX][caseY] == 200 ? sink : touch;
                     }
                 };
                 addGuiElement(caseButton);
             }
         }
+
+        Button changePlayer = new Button(102, (width / 20f), 50, (height / 10f), (height / 10f), false, "Joueur Suivant",
+                new ResourceHandle<Texture>("textures/defaultButton.png") {
+                }) {
+            @Override
+            public void onClick(MouseEvent.Click event) {
+                super.onClick(event);
+                if(whichPlayer==1){
+                    gridPlayer2=gridTemp;
+                    gridTemp=gridPlayer1;
+                    whichPlayer++;
+                }else{
+                    gridPlayer1=gridTemp;
+                    gridTemp=gridPlayer2;
+                    whichPlayer--;
+                }
+                shoot = false;
+            }
+        };
+        addGuiElement(changePlayer);
 
         final GuiElement backButton = new Button(999, 0, 0, 50 / ((float) 1920 / width), 50 / ((float) 1920 / width), false, new ResourceHandle<>("textures/back_button.png") {
         }) {
