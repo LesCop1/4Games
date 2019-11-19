@@ -4,6 +4,7 @@ import fr.bcecb.Game;
 import fr.bcecb.event.MouseEvent;
 import fr.bcecb.resources.ResourceHandle;
 import fr.bcecb.resources.Texture;
+import fr.bcecb.state.StateManager;
 import fr.bcecb.state.gui.Button;
 import fr.bcecb.state.gui.GuiElement;
 import fr.bcecb.state.gui.ScreenState;
@@ -33,8 +34,8 @@ public class BingoState extends ScreenState {
     private GuiElement ball;
     private GuiElement gameStatus;
 
-    public BingoState(int nbGrids, int difficulty) {
-        super("bingo");
+    public BingoState(StateManager stateManager, int nbGrids, int difficulty) {
+        super(stateManager, "bingo");
         this.nbGrids = nbGrids;
         switch (difficulty) {
             case 1:
@@ -148,6 +149,11 @@ public class BingoState extends ScreenState {
         };
 
         addGuiElement(backButton, this.gameStatus, ball);
+    }
+
+    @Override
+    public boolean mouseClicked(int id) {
+        return false;
     }
 
     private void drawGrid(float gridX, float gridY, float gridW, float gridH, int numGrid) {

@@ -4,6 +4,7 @@ import fr.bcecb.Game;
 import fr.bcecb.event.MouseEvent;
 import fr.bcecb.resources.ResourceHandle;
 import fr.bcecb.resources.Texture;
+import fr.bcecb.state.StateManager;
 import fr.bcecb.state.gui.Button;
 import fr.bcecb.state.gui.GuiElement;
 import fr.bcecb.state.gui.ScreenState;
@@ -14,8 +15,8 @@ public class SettingsBingoState extends ScreenState {
     private ResourceHandle<Texture> BUTTON_TEXTURE = new ResourceHandle<>("textures/defaultButton.png") {
     };
 
-    public SettingsBingoState() {
-        super("bingoSettings");
+    public SettingsBingoState(StateManager stateManager) {
+        super(stateManager, "bingoSettings");
 
     }
 
@@ -83,7 +84,7 @@ public class SettingsBingoState extends ScreenState {
             @Override
             public void onClick(MouseEvent.Click event) {
                 if (difficulty != 0 && nbGrids != 0) {
-                    Game.instance().getStateManager().pushState(new BingoState(nbGrids, difficulty));
+                    Game.instance().getStateManager().pushState(new BingoState(stateManager, nbGrids, difficulty));
 
                 }
             }
@@ -101,5 +102,10 @@ public class SettingsBingoState extends ScreenState {
         };
 
         addGuiElement(startButton,backButton);
+    }
+
+    @Override
+    public boolean mouseClicked(int id) {
+        return false;
     }
 }
