@@ -54,7 +54,7 @@ public class FirstPhaseBattleshipScreen extends ScreenState {
         });
         Button caseButton;
         int id = 1;
-        float btnSize = 25f;
+        float btnSize = 24.9f;
         float x = (width / 2f) - (9 * btnSize / 2) - 4;
         for (int i = 0; i < 10; ++i, x += btnSize) {
             float y = (height / 2f) - (9 * btnSize / 2) - 4;
@@ -97,11 +97,11 @@ public class FirstPhaseBattleshipScreen extends ScreenState {
                         };
                         if (num == 4) return new ResourceHandle<>("textures/BatailleNavale/C.png") {
                         };
-                        if (num == 31) return new ResourceHandle<>("textures/BatailleNavale/F.png") {
+                        if (num == 3) return new ResourceHandle<>("textures/BatailleNavale/F.png") {
                         };
-                        if (num == 30) return new ResourceHandle<>("textures/BatailleNavale/S.png") {
+                        if (num == 2) return new ResourceHandle<>("textures/BatailleNavale/S.png") {
                         };
-                        if (num == 2) return new ResourceHandle<>("textures/BatailleNavale/T.png") {
+                        if (num == 1) return new ResourceHandle<>("textures/BatailleNavale/T.png") {
                         };
                         return defaultTexture;
                     }
@@ -114,7 +114,6 @@ public class FirstPhaseBattleshipScreen extends ScreenState {
         }) {
             @Override
             public void onClick(MouseEvent.Click event) {
-                Game.instance().getStateManager().popState();
                 Game.instance().getStateManager().popState();
             }
         };

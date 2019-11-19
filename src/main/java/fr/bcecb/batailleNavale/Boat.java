@@ -2,14 +2,14 @@ package fr.bcecb.batailleNavale;
 
 public class Boat {
     private final Boat.Type type;
-    private final boolean[] hits;
+    private int hits;
     private boolean horizontal;
 
     private int x, y;
 
     public Boat(Boat.Type type) {
         this.type = type;
-        this.hits = new boolean[type.getSize()];
+        this.hits = 0;
         this.horizontal = true;
     }
 
@@ -26,19 +26,17 @@ public class Boat {
         return y;
     }
 
-    public boolean[] getHits() {
+    public int getHits() {
         return hits;
     }
 
-    public void hit(int i) {
-        hits[i] = true;
+    public void hits() {
+        hits+=1;
     }
 
     public boolean isAlive() {
-        for (boolean hit : hits) {
-            if (!hit) return true; //Le bateau n'a pas été touché à cet endroit, il est encore vivant
-        }
-        return false;
+        if(hits==type.getSize()) return false;
+        else return true;
     }
 
     public boolean isHorizontal() {
@@ -57,13 +55,12 @@ public class Boat {
         return type;
     }
 
-
     enum Type {
         AIRCRAFT_CARRIER("A", 5, 5), //AircraftCarrier
         CRUISER("C", 4, 4), //Cruiser
-        FRIGATE("F", 3, 31), //Frigate
-        SUBMARINE("S", 3, 30), //Submarine
-        TORPEDO("T", 2, 2); //Torpedo
+        FRIGATE("F", 3, 3), //Frigate
+        SUBMARINE("S", 3, 2), //Submarine
+        TORPEDO("T", 2, 1); //Torpedo
 
         private final String name;
         private final int sizeBoat;
@@ -75,7 +72,9 @@ public class Boat {
             this.id = id;
         }
 
-        public int getId() { return id;}
+        public int getId() {
+            return id;
+        }
 
         public String getName() {
             return name;

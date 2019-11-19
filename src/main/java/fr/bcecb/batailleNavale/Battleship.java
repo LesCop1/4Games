@@ -30,24 +30,13 @@ public class Battleship { //Gère tous les aspects d'une partie, création de la
 
     public void putBoat(Boat boat, int x, int y) { //Place les bateaux
         if (cannotPlace(boat, x, y)) return;
-
         if (boat.isHorizontal()) {
-            while (x + boat.getSize() >= 10) { //Si on veut placer un bateau sur une case qui fait que le bateau dépasse à gauche
-                --x; //On le décale vers la droite
-            }
-
             boat.setPosition(x, y);
-
             for (int i = 0; i < boat.getSize(); i++) {
                 getCurrentPlayerBoard()[x + i][y] = boat.getType().getId();
             }
         } else {
-            while (y + boat.getSize() >= 10) { //Pareil que pour x mais en vertical
-                --y;
-            }
-
             boat.setPosition(x, y);
-
             for (int i = 0; i < boat.getSize(); i++) {
                 getCurrentPlayerBoard()[x][y + i] = boat.getType().getId();
             }
@@ -72,17 +61,12 @@ public class Battleship { //Gère tous les aspects d'une partie, création de la
         else boat.setHorizontal(true);
     }
 
-//    public boolean shoot(int x, int y) {
-//        Boat boat = getNextPlayerBoard()[x][y];
-//        if (boat == null) return false;
-//        else {
-//            int hitPosition = boat.isHorizontal() ? boat.getX() - x : boat.getY() - y;
-//            if (boat.getHits()[hitPosition]) return false;
-//            else boat.hit(hitPosition);
-//        }
-//        int hitPosition = boat.isHorizontal() ? boat.getX() - x : boat.getY() - y;
-//        if (boat.getHits()[hitPosition]) return false;
-//        else boat.hit(hitPosition);
-//        return true;
-//    }
+    public boolean shoot(Boat boat, int[][] board, int x, int y) {
+        if (boat == null) return false;
+        else if (board[x][y] > 0 || board[x][y] < 6){
+            boat.hits();
+            return true;
+        }
+        return false;
+    }
 }
