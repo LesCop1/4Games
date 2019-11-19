@@ -49,11 +49,11 @@ public class Poker {
     /**
      * This function is called every event and update the game
      */
-    public void update() {
+    public void update(fr.bcecb.state.gui.Button button) {
         if (!this.isGameInit) {
             initGame();
         }
-        updateGame();
+        updateGame(fr.bcecb.state.gui.Button button);
     }
 
     public HashMap<Integer, Player> getPlayers() {
@@ -108,9 +108,9 @@ public class Poker {
     /**
      * Update the game logic
      */
-    private void updateGame() {
+    public void updateGame(fr.bcecb.state.gui.Button button) {
         // Let the players play and switch to the next one
-        this.players.get(this.currentPlayer).play(this);
+        this.players.get(this.currentPlayer).play(this, button);
         this.currentPlayer = this.currentPlayer++ % this.playerAmount;
         updateTurn();
 
@@ -240,17 +240,17 @@ public class Poker {
          */
         // donc la ta la derniere version de dev sur la branche poker. et genre ce qui est en dessous faut juste le relier a des btns
         //dacco:)
-        private void play(Poker pokerInstance) {
+        private void play(Poker pokerInstance, fr.bcecb.state.gui.Button button) {
             if (this.playing) {
-//                if (Button.Bet.onclick) {
-//                    actionBet(pokerInstance, 50);
-//                } else if (Button.Follow.onclick) {
-//                    actionFollow(pokerInstance);
-//                } else if (Button.check.onclick) {
-//                    actionCheck();
-//                } else if (Button.Leave.onclick) {
-//                    actionLeave();
-//                }
+                if (button.getTitle().equals("Relancer")) {
+                    actionBet(pokerInstance, 50);
+                } else if (button.getTitle().equals("Suivre")) {
+                    actionFollow(pokerInstance);
+                } else if (button.getTitle().equals("Check")) {
+                    actionCheck();
+                } else if (button.getTitle().equals("Se coucher")) {
+                    actionLeave();
+                }
             }
         }
 

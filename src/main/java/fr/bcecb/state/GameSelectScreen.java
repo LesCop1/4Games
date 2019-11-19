@@ -3,6 +3,7 @@ package fr.bcecb.state;
 import fr.bcecb.Game;
 import fr.bcecb.batailleNavale.BattleshipScreen;
 import fr.bcecb.event.MouseEvent;
+import fr.bcecb.poker.PokerScreenState;
 import fr.bcecb.state.gui.Button;
 import fr.bcecb.state.gui.CircleButton;
 import fr.bcecb.state.gui.GuiElement;
@@ -48,7 +49,8 @@ public class GameSelectScreen extends ScreenState {
         GuiElement pokerGameButton = new Button(13, (width / 4f) * 3, (height / 2f) + (height / 10f), (width / 8f), (height / 10f), true, "Poker", Resources.DEFAULT_BUTTON_TEXTURE) {
             @Override
             public void onClick(MouseEvent.Click event) {
-                super.onClick(event);
+                Game.instance().getStateManager().pushState(new PokerScreenState());
+                ;
             }
         };
 
