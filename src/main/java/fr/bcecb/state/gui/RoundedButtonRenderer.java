@@ -4,7 +4,7 @@ import fr.bcecb.render.RenderManager;
 import fr.bcecb.render.Renderer;
 import fr.bcecb.resources.ResourceHandle;
 import fr.bcecb.resources.Texture;
-import fr.bcecb.util.Render;
+import fr.bcecb.util.RenderHelper;
 import fr.bcecb.util.Transform;
 
 public class RoundedButtonRenderer extends Renderer<RoundedButton> {
@@ -19,11 +19,11 @@ public class RoundedButtonRenderer extends Renderer<RoundedButton> {
 
     @Override
     public void render(RoundedButton roundedButton, float partialTick) {
-        Transform transform = Render.pushTransform();
+        Transform transform = RenderHelper.pushTransform();
         {
             transform.translate(roundedButton.getX(), roundedButton.getY());
             renderManager.drawRoundedRect(getTexture(roundedButton), 0, 0, roundedButton.getWidth(), roundedButton.getHeight(), roundedButton.getRadius());
         }
-        Render.popTransform();
+        RenderHelper.popTransform();
     }
 }

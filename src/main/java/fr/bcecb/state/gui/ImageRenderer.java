@@ -4,7 +4,7 @@ import fr.bcecb.render.RenderManager;
 import fr.bcecb.render.Renderer;
 import fr.bcecb.resources.ResourceHandle;
 import fr.bcecb.resources.Texture;
-import fr.bcecb.util.Render;
+import fr.bcecb.util.RenderHelper;
 import fr.bcecb.util.Resources;
 import fr.bcecb.util.Transform;
 
@@ -21,7 +21,7 @@ public class ImageRenderer extends Renderer<Image> {
 
     @Override
     public void render(Image image, float partialTick) {
-        Transform transform = Render.pushTransform();
+        Transform transform = RenderHelper.pushTransform();
         {
             transform.translate(image.getX(), image.getY());
             transform.rotateZ((float) Math.toRadians(image.getRotation()));
@@ -51,6 +51,6 @@ public class ImageRenderer extends Renderer<Image> {
                 renderManager.drawRect(getTexture(image), 0, 0, image.getWidth(), image.getHeight());
             }
         }
-        Render.popTransform();
+        RenderHelper.popTransform();
     }
 }

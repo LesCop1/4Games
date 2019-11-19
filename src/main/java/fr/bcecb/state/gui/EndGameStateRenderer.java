@@ -4,7 +4,7 @@ import fr.bcecb.render.RenderManager;
 import fr.bcecb.resources.ResourceHandle;
 import fr.bcecb.resources.Texture;
 import fr.bcecb.state.EndGameState;
-import fr.bcecb.util.Render;
+import fr.bcecb.util.RenderHelper;
 import fr.bcecb.util.Transform;
 
 public class EndGameStateRenderer extends ScreenStateRenderer {
@@ -27,12 +27,12 @@ public class EndGameStateRenderer extends ScreenStateRenderer {
     }
 
     public void render(EndGameState endGameState, float partialTick) {
-        Transform transform = Render.pushTransform();
+        Transform transform = RenderHelper.pushTransform();
         {
             transform.translate(endGameState.width / 2f, endGameState.height / 2f);
             renderManager.drawRoundedRect(null, 0, 0, endGameState.getBackgroundWidth(), endGameState.getBackgroundHeight(), 5f, true);
         }
-        Render.popTransform();
+        RenderHelper.popTransform();
 
         super.render(endGameState, partialTick);
     }

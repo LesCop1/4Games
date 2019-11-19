@@ -3,7 +3,7 @@ package fr.bcecb.render;
 import fr.bcecb.resources.Font;
 import fr.bcecb.resources.ResourceHandle;
 import fr.bcecb.resources.ResourceManager;
-import fr.bcecb.util.Render;
+import fr.bcecb.util.RenderHelper;
 import fr.bcecb.util.Resources;
 import fr.bcecb.util.Transform;
 import org.lwjgl.stb.STBTTAlignedQuad;
@@ -50,7 +50,7 @@ public class FontRenderer implements AutoCloseable {
     }
 
     public void drawString(String string, float x, float y, float scale, boolean centered) {
-        Transform transform = Render.pushTransform();
+        Transform transform = RenderHelper.pushTransform();
         {
             if (font != null) {
                 float fontScale = this.getFontScale(scale);
@@ -97,7 +97,7 @@ public class FontRenderer implements AutoCloseable {
                 font.unbind();
             }
         }
-        Render.popTransform();
+        RenderHelper.popTransform();
     }
 
     public int getStringWidth(String string) {

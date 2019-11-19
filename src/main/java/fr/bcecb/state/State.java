@@ -3,9 +3,12 @@ package fr.bcecb.state;
 import fr.bcecb.render.IRenderable;
 
 public abstract class State implements IRenderable {
+    protected final StateManager stateManager;
+
     private final String name;
 
-    protected State(String name) {
+    protected State(StateManager stateManager, String name) {
+        this.stateManager = stateManager;
         this.name = name;
     }
 

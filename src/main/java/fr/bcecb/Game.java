@@ -8,7 +8,7 @@ import fr.bcecb.render.Window;
 import fr.bcecb.resources.ResourceManager;
 import fr.bcecb.state.StateManager;
 import fr.bcecb.util.Log;
-import fr.bcecb.util.Render;
+import fr.bcecb.util.RenderHelper;
 
 import static org.lwjgl.glfw.GLFW.glfwGetTime;
 import static org.lwjgl.glfw.GLFW.glfwInit;
@@ -43,7 +43,7 @@ public final class Game implements AutoCloseable {
         this.stateManager = new StateManager(this, this.window.getScaledWidth(), this.window.getScaledHeight());
         this.renderManager = new RenderManager(this.resourceManager);
 
-        this.inputManager = new InputManager(this.window);
+        this.inputManager = new InputManager(this, this.window);
     }
 
     private void start() {
@@ -66,7 +66,7 @@ public final class Game implements AutoCloseable {
                 --delta;
             }
 
-            Render.setupProjection(window.getFramebufferWidth(), window.getFramebufferHeight(), window.getGuiScale());
+            RenderHelper.setupProjection(window.getFramebufferWidth(), window.getFramebufferHeight(), window.getGuiScale());
             this.renderManager.render(this.stateManager, delta);
 
             this.window.update();

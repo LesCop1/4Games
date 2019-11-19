@@ -4,7 +4,7 @@ import fr.bcecb.render.RenderManager;
 import fr.bcecb.render.Renderer;
 import fr.bcecb.resources.ResourceHandle;
 import fr.bcecb.resources.Texture;
-import fr.bcecb.util.Render;
+import fr.bcecb.util.RenderHelper;
 import fr.bcecb.util.Transform;
 
 public class RectangleRenderer extends Renderer<Rectangle> {
@@ -19,12 +19,12 @@ public class RectangleRenderer extends Renderer<Rectangle> {
 
     @Override
     public void render(Rectangle rectangle, float partialTick) {
-        Transform transform = Render.pushTransform();
+        Transform transform = RenderHelper.pushTransform();
         {
             transform.translate(rectangle.getX(), rectangle.getY());
             transform.color(rectangle.getColor());
             renderManager.drawRect(getTexture(rectangle), 0, 0, rectangle.getWidth(), rectangle.getHeight());
         }
-        Render.popTransform();
+        RenderHelper.popTransform();
     }
 }

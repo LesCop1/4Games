@@ -4,7 +4,7 @@ import fr.bcecb.render.RenderManager;
 import fr.bcecb.render.Renderer;
 import fr.bcecb.resources.ResourceHandle;
 import fr.bcecb.resources.Texture;
-import fr.bcecb.util.Render;
+import fr.bcecb.util.RenderHelper;
 import fr.bcecb.util.Transform;
 
 public class RoundedRectangleRenderer extends Renderer<RoundedRectangle> {
@@ -19,12 +19,12 @@ public class RoundedRectangleRenderer extends Renderer<RoundedRectangle> {
 
     @Override
     public void render(RoundedRectangle roundedRectangle, float partialTick) {
-        Transform transform = Render.pushTransform();
+        Transform transform = RenderHelper.pushTransform();
         {
             transform.translate(roundedRectangle.getX(), roundedRectangle.getY());
             transform.color(roundedRectangle.getColor());
             renderManager.drawRoundedRect(null, 0, 0, roundedRectangle.getWidth(), roundedRectangle.getHeight(), roundedRectangle.getRadius());
         }
-        Render.popTransform();
+        RenderHelper.popTransform();
     }
 }

@@ -4,7 +4,7 @@ import fr.bcecb.render.RenderManager;
 import fr.bcecb.render.Renderer;
 import fr.bcecb.resources.ResourceHandle;
 import fr.bcecb.resources.Texture;
-import fr.bcecb.util.Render;
+import fr.bcecb.util.RenderHelper;
 import fr.bcecb.util.Resources;
 import fr.bcecb.util.Transform;
 
@@ -20,7 +20,7 @@ public class RoundedImageRenderer extends Renderer<RoundedImage> {
 
     @Override
     public void render(RoundedImage roundedImage, float partialTick) {
-        Transform transform = Render.pushTransform();
+        Transform transform = RenderHelper.pushTransform();
         {
             transform.translate(roundedImage.getX(), roundedImage.getY());
 
@@ -49,6 +49,6 @@ public class RoundedImageRenderer extends Renderer<RoundedImage> {
                 renderManager.drawRoundedRect(getTexture(roundedImage), 0, 0, roundedImage.getWidth(), roundedImage.getHeight(), roundedImage.getRadius());
             }
         }
-        Render.popTransform();
+        RenderHelper.popTransform();
     }
 }
