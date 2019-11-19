@@ -41,8 +41,8 @@ public class FirstPhaseBattleshipScreen extends ScreenState {
         super("game-battleship.firstphase");
         this.battleship = battleship;
         this.whichPlayer = whichPlayer;
-        saveGridPlayer1=gridPlayer1;
-        saveGridPlayer2=gridPlayer2;
+        saveGridPlayer1 = gridPlayer1;
+        saveGridPlayer2 = gridPlayer2;
         setBackgroundTexture(new ResourceHandle<>("textures/battleshipScreen.png") {
         });
     }
@@ -76,14 +76,11 @@ public class FirstPhaseBattleshipScreen extends ScreenState {
                             battleship.putBoat(boat, caseX, caseY);
                             selectedBoat = "";
                         }
-
-                        if (boatPut.size() == 5) {
-                            onExit();
-                        }
                     }
 
                     @Override
                     public boolean isDisabled() {
+                        if (boatPut.size() == 5) return true;
                         return battleship.getCurrentPlayerBoard()[caseX][caseY] != 0;
                     }
 
@@ -119,6 +116,23 @@ public class FirstPhaseBattleshipScreen extends ScreenState {
         };
         addGuiElement(backButton);
 
+        Button putFinish = new Button(107, 4.5f * (width / 5f), 50, (height / 10f), (height / 10f), false, "Joueur Suivant",
+                new ResourceHandle<Texture>("textures/defaultButton.png") {
+                }) {
+            @Override
+            public void onClick(MouseEvent.Click event) {
+                super.onClick(event);
+                onExit();
+            }
+
+            @Override
+            public boolean isVisible() {
+                if (boatPut.size() == 5) return true;
+                else return false;
+            }
+        };
+        addGuiElement(putFinish);
+
         Button a = new Button(102, (width / 20f), 50, (height / 10f), (height / 10f), false, "A",
                 new ResourceHandle<Texture>("textures/BatailleNavale/A.png") {
                 }) {
@@ -127,6 +141,14 @@ public class FirstPhaseBattleshipScreen extends ScreenState {
                 super.onClick(event);
                 selectedBoat = getTitle();
                 boat = new Boat(Boat.Type.AIRCRAFT_CARRIER);
+            }
+
+            @Override
+            public boolean isVisible() {
+                for (String val : boatPut){
+                    if(val==getTitle()) return false;
+                }
+                return true;
             }
         };
         addGuiElement(a);
@@ -140,6 +162,14 @@ public class FirstPhaseBattleshipScreen extends ScreenState {
                 selectedBoat = getTitle();
                 boat = new Boat(Boat.Type.CRUISER);
             }
+
+            @Override
+            public boolean isVisible() {
+                for (String val : boatPut){
+                    if(val==getTitle()) return false;
+                }
+                return true;
+            }
         };
         addGuiElement(c);
 
@@ -151,6 +181,14 @@ public class FirstPhaseBattleshipScreen extends ScreenState {
                 super.onClick(event);
                 selectedBoat = getTitle();
                 boat = new Boat(Boat.Type.FRIGATE);
+            }
+
+            @Override
+            public boolean isVisible() {
+                for (String val : boatPut){
+                    if(val==getTitle()) return false;
+                }
+                return true;
             }
         };
         addGuiElement(f);
@@ -164,6 +202,14 @@ public class FirstPhaseBattleshipScreen extends ScreenState {
                 selectedBoat = getTitle();
                 boat = new Boat(Boat.Type.SUBMARINE);
             }
+
+            @Override
+            public boolean isVisible() {
+                for (String val : boatPut){
+                    if(val==getTitle()) return false;
+                }
+                return true;
+            }
         };
         addGuiElement(s);
 
@@ -176,6 +222,14 @@ public class FirstPhaseBattleshipScreen extends ScreenState {
                 selectedBoat = getTitle();
                 boat = new Boat(Boat.Type.TORPEDO);
             }
+
+            @Override
+            public boolean isVisible() {
+                for (String val : boatPut){
+                    if(val==getTitle()) return false;
+                }
+                return true;
+            }
         };
         addGuiElement(t);
     }
@@ -183,7 +237,7 @@ public class FirstPhaseBattleshipScreen extends ScreenState {
     @Override
     public void onExit() {
         super.onExit();
-        if (whichPlayer==1) {
+        if (whichPlayer == 1) {
             Game.instance().getStateManager().pushState(new BattleshipScreen(battleship.getCurrentPlayerBoard(), saveGridPlayer2, 2));
         } else {
             Game.instance().getStateManager().pushState(new BattleshipScreen(saveGridPlayer1, battleship.getCurrentPlayerBoard(), 3));

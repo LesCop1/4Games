@@ -79,7 +79,6 @@ public class BattleshipScreen extends ScreenState {
 
                         if (!shoot && event.getButton() == GLFW.GLFW_MOUSE_BUTTON_RIGHT) {
                             boat = hm.get(gridTemp[caseX][caseY]);
-                            System.out.println(gridTemp[caseX][caseY]);
                             if (battleship.shoot(boat, gridTemp, caseX, caseY))
                                 gridTemp[caseX][caseY] = 100; //Touché
                             else gridTemp[caseX][caseY] = 200; //Coulé
@@ -89,6 +88,7 @@ public class BattleshipScreen extends ScreenState {
 
                     @Override
                     public boolean isDisabled() {
+                        if(shoot) return true;
                         return gridTemp[caseX][caseY] > 5;
                     }
 
@@ -121,6 +121,12 @@ public class BattleshipScreen extends ScreenState {
                     whichPlayer--;
                 }
                 shoot = false;
+            }
+
+            @Override
+            public boolean isVisible() {
+                if (shoot==true) return true;
+                else return false;
             }
         };
         addGuiElement(changePlayer);
