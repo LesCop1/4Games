@@ -53,7 +53,7 @@ public class Poker {
         if (!this.isGameInit) {
             initGame();
         }
-        updateGame(fr.bcecb.state.gui.Button button);
+        updateGame(button);
     }
 
     public HashMap<Integer, Player> getPlayers() {
