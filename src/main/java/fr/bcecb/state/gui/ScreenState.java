@@ -14,13 +14,10 @@ import java.util.TreeMap;
 
 public abstract class ScreenState extends State {
     protected static final int BACK_BUTTON_ID = -1;
-
+    private final Map<Integer, GuiElement> guiElements = new TreeMap<>(Comparator.naturalOrder());
     protected int width;
     protected int height;
-
     private GuiElement selection;
-
-    private final Map<Integer, GuiElement> guiElements = new TreeMap<>(Comparator.naturalOrder());
     private ResourceHandle<Texture> backgroundTexture = Resources.DEFAULT_BACKGROUND_TEXTURE;
 
     public ScreenState(StateManager stateManager, String name) {
@@ -41,18 +38,20 @@ public abstract class ScreenState extends State {
         guiElements.clear();
     }
 
-    public final GuiElement getGuiElementById(int id) { return guiElements.get(id); }
+    public final GuiElement getGuiElementById(int id) {
+        return guiElements.get(id);
+    }
 
     public final Collection<GuiElement> getGuiElements() {
         return guiElements.values();
     }
 
-    public void setBackgroundTexture(ResourceHandle<Texture> backgroundTexture) {
-        this.backgroundTexture = backgroundTexture;
-    }
-
     public ResourceHandle<Texture> getBackgroundTexture() {
         return backgroundTexture;
+    }
+
+    public void setBackgroundTexture(ResourceHandle<Texture> backgroundTexture) {
+        this.backgroundTexture = backgroundTexture;
     }
 
     @Override
@@ -84,14 +83,15 @@ public abstract class ScreenState extends State {
         for (GuiElement element : getGuiElements()) {
             if (!element.isVisible() || element.isDisabled()) continue;
 
-            if (element.checkBounds(x, y))
+            if (element.checkBounds(x, y)) {
                 if (element.getId() == BACK_BUTTON_ID) {
                     Game.instance().getStateManager().popState();
                     return true;
                 }
 
-            if (mouseClicked(element.getId())) {
-                return true;
+                if (mouseClicked(element.getId())) {
+                    return true;
+                }
             }
         }
 

@@ -1,5 +1,6 @@
 package fr.bcecb.sudoku;
 
+import com.google.common.base.Stopwatch;
 import fr.bcecb.resources.ResourceHandle;
 import fr.bcecb.resources.Texture;
 import fr.bcecb.state.EndGameState;
@@ -11,17 +12,23 @@ import fr.bcecb.util.Constants;
 import fr.bcecb.util.Resources;
 import org.joml.Vector4f;
 
+import java.util.concurrent.TimeUnit;
+
 public class SudokuState extends ScreenState {
     private static final ResourceHandle<Texture> BACKGROUND = new ResourceHandle<>("textures/sudokuBackground.png") {};
 
     private final Sudoku sudoku;
+    private final int difficulty;
+    private final Stopwatch stopwatch;
 
     private int selectedX = -1;
     private int selectedY = -1;
 
-    public SudokuState(StateManager stateManager, Sudoku.Difficulty difficulty) {
+    public SudokuState(StateManager stateManager, int difficulty) {
         super(stateManager, "sudoku_game");
         this.sudoku = new Sudoku(difficulty);
+        this.difficulty = difficulty;
+        stopwatch = Stopwatch.createStarted();
     }
 
     @Override
@@ -97,8 +104,17 @@ public class SudokuState extends ScreenState {
     public void onUpdate() {
         super.onUpdate();
         if (sudoku.winCondition()) {
-            stateManager.pushState(new EndGameState(stateManager, Constants.GameType.SUDOKU, 4535L, 34));
+            stopwatch.stop();
+            long time = stopwatch.elapsed(TimeUnit.MILLISECONDS);
+            stateManager.pushState(new EndGameState(stateManager, Constants.GameType.SUDOKU, time, calculateMoneyEarned()));
         }
+    }
+
+    private int calculateMoneyEarned() {
+        long time = stopwatch.elapsed(TimeUnit.SECONDS);
+        int minusToken = (int) Math.max(0, Math.floor(time - (this.difficulty * 2)));
+
+        return Math.max(5, (this.difficulty * 10) - minusToken);
     }
 
     private static final class SudokuButton extends Button {

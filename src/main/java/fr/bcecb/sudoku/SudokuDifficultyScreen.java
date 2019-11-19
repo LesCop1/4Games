@@ -30,20 +30,20 @@ public class SudokuDifficultyScreen extends ScreenState {
     @Override
     public boolean mouseClicked(int id) {
         if (id == this.sudokuEasyButton.getId()) {
-            selectMode(Sudoku.Difficulty.EASY);
+            selectMode(20);
             return true;
         } else if (id == this.sudokuNormalButton.getId()) {
-            selectMode(Sudoku.Difficulty.NORMAL);
+            selectMode(40);
             return true;
         } else if (id == this.sudokuHardButton.getId()) {
-            selectMode(Sudoku.Difficulty.HARD);
+            selectMode(60);
             return true;
         }
 
         return false;
     }
 
-    private void selectMode(Sudoku.Difficulty difficulty) {
+    private void selectMode(int difficulty) {
         stateManager.pushState(new SudokuState(stateManager, difficulty));
     }
 }

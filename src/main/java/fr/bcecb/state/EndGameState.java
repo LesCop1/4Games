@@ -22,19 +22,24 @@ public class EndGameState extends ScreenState {
         this.gameType = gameType;
         this.time = time;
         this.moneyEarned = moneyEarned;
+        if (Constants.BEST_TIMES.get(gameType) < this.time) {
+            Constants.BEST_TIMES.put(gameType, this.time);
+        }
+        Constants.BANKROLL += this.moneyEarned;
     }
 
     @Override
     public void initGui() {
         this.backgroundWidth = 200;
         this.backgroundHeight = 150;
+        setBackgroundTexture(null);
 
         Text gameTypeTitle = new Text(1001, (width / 2f), (height / 2f) - 65f, true, this.gameType.getName() + " terminé !");
 
         Text timeTitle = new Text(1002, (width / 2f) - 80f, (height / 2f) - 40f, false, "Votre temps :", 0.7f);
         Text moneyTitle = new Text(1003, (width / 2f) - 80f, (height / 2f) - 25f, false, "Votre argent gagné :", 0.7f);
 
-        Text time = new Text(1004, (width / 2f) + 50f, (height / 2f) - 40f, false, longToTime(this.time), 0.7f);
+        Text time = new Text(1015, (width / 2f) + 50f, (height / 2f) - 40f, false, longToTime(this.time), 0.7f);
         Text money = new Text(1005, (width / 2f) + 50f, (height / 2f) - 25f, false, intToMoney(this.moneyEarned), 0.7f);
 
         RoundedRectangle lineSeparation = new RoundedRectangle(1004, (width / 2f), (height / 2f) - 15f, 180, 1, true, Constants.COLOR_GREY, Float.MAX_VALUE);
@@ -74,8 +79,8 @@ public class EndGameState extends ScreenState {
 
     private String longToTime(long millis) {
         return String.format("%02d:%02d:%02d", TimeUnit.MILLISECONDS.toHours(millis),
-                TimeUnit.MILLISECONDS.toMinutes(millis) - TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(millis)),
-                TimeUnit.MILLISECONDS.toSeconds(millis) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(millis)));
+                TimeUnit.MILLISECONDS.toMinutes(millis) % TimeUnit.HOURS.toMinutes(1),
+                TimeUnit.MILLISECONDS.toSeconds(millis) % TimeUnit.MINUTES.toSeconds(1));
     }
 
     private String intToMoney(int money) {

@@ -14,10 +14,10 @@ public class Constants {
 
     public static final String MONEY_NAME = "FourCoins";
     public static final String MONEY_NAME_SHORT = "FC";
-    public static int BANKROLL = 54;
+    public static int BANKROLL = 0;
 
     public static Map<GameType, Long> BEST_TIMES = new EnumMap<>(GameType.class) {{
-        put(GameType.SUDOKU, 52543L);
+        put(GameType.SUDOKU, 0L);
         put(GameType.BINGO, 52543L);
         put(GameType.BATTLESHIP, 52543L);
         put(GameType.POKER, 52543L);
