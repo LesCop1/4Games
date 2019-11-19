@@ -5,10 +5,12 @@ import fr.bcecb.event.EventExceptionHandler;
 import fr.bcecb.input.InputManager;
 import fr.bcecb.render.RenderManager;
 import fr.bcecb.render.Window;
+import fr.bcecb.resources.ResourceHandle;
 import fr.bcecb.resources.ResourceManager;
+import fr.bcecb.resources.Texture;
 import fr.bcecb.state.StateManager;
 import fr.bcecb.util.Log;
-import fr.bcecb.util.RenderHelper;
+import fr.bcecb.util.Render;
 
 import static org.lwjgl.glfw.GLFW.glfwGetTime;
 import static org.lwjgl.glfw.GLFW.glfwInit;
@@ -31,6 +33,12 @@ public final class Game implements AutoCloseable {
 
     private static final Game INSTANCE = new Game();
 
+    public ResourceHandle<Texture> currentProfile = new ResourceHandle<>("textures/defaultProfile.jpg") {
+    };
+    private int[] highScores; // 0 = Sudoku ; 1 = BattleShip ; 3 = Bingo ; 4 = Poker ;
+    private int tokenBalance, nbGames, nbSuccess, nbLoose, timeSpent;
+
+
     private Game() {
         if (!glfwInit()) {
             Log.SYSTEM.severe("Couldn't initialize GLFW");
@@ -43,7 +51,7 @@ public final class Game implements AutoCloseable {
         this.stateManager = new StateManager(this, this.window.getScaledWidth(), this.window.getScaledHeight());
         this.renderManager = new RenderManager(this.resourceManager);
 
-        this.inputManager = new InputManager(this, this.window);
+        this.inputManager = new InputManager(this.window);
     }
 
     private void start() {
@@ -66,7 +74,7 @@ public final class Game implements AutoCloseable {
                 --delta;
             }
 
-            RenderHelper.setupProjection(window.getFramebufferWidth(), window.getFramebufferHeight(), window.getGuiScale());
+            Render.setupProjection(window.getFramebufferWidth(), window.getFramebufferHeight(), window.getGuiScale());
             this.renderManager.render(this.stateManager, delta);
 
             this.window.update();
@@ -102,6 +110,44 @@ public final class Game implements AutoCloseable {
 
     public ResourceManager getResourceManager() {
         return resourceManager;
+    }
+
+    public int getHighScore(int index) {
+        return highScores[index];
+    }
+
+    public void setHighScore(int index,int score){
+        this.highScores[index] = score;
+    }
+
+    public int getTokenBalance() {
+        return tokenBalance;
+    }
+
+    public int getNbGames() {
+        return nbGames;
+    }
+
+    public int getNbSuccess() {
+        return nbSuccess;
+    }
+
+    public int getNbLoose() {
+        return nbLoose;
+    }
+
+    public void addTokenSold(int amount) {
+        this.tokenBalance += amount;
+    }
+
+    public void increaseNbSuccess() {
+        this.nbSuccess++;
+        this.nbGames++;
+    }
+
+    public void increaseNbLoose(int nbLoose) {
+        this.nbLoose = nbLoose;
+        this.nbGames++;
     }
 
     public static Game instance() {
