@@ -6,11 +6,9 @@ import fr.bcecb.util.ShaderDescriptor;
 import fr.bcecb.util.Shaders;
 import org.joml.Matrix4f;
 import org.joml.Vector4f;
-import org.lwjgl.system.MemoryStack;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.FloatBuffer;
 
 import static org.lwjgl.opengl.GL45.*;
 
@@ -37,11 +35,9 @@ public class Shader extends GLResource {
     }
 
     private void uniformMat4(int location, Matrix4f matrix) {
-        try (MemoryStack stack = MemoryStack.stackPush()) {
-            FloatBuffer fb = stack.mallocFloat(16);
-            matrix.get(fb);
-            glUniformMatrix4fv(location, false, fb);
-        }
+        float[] matrixBuffer = new float[16];
+        matrix.get(matrixBuffer);
+        glUniformMatrix4fv(location, false, matrixBuffer);
     }
 
     @Override

@@ -1,53 +1,154 @@
 package fr.bcecb.render;
 
+import fr.bcecb.resources.ResourceHandle;
 import fr.bcecb.resources.ResourceManager;
-import fr.bcecb.state.gui.*;
+import fr.bcecb.resources.Shader;
+import fr.bcecb.resources.Texture;
+import fr.bcecb.state.StateManager;
+import fr.bcecb.util.*;
 
-import java.util.HashMap;
-import java.util.Map;
+import static org.lwjgl.opengl.GL45.*;
 
-public class RenderManager {
-    private final RenderEngine renderEngine;
+public class RenderManager implements AutoCloseable {
     private final ResourceManager resourceManager;
-    private final Map<Class<? extends IRenderable>, Renderer<? extends IRenderable>> renderers = new HashMap<>();
+    private final RendererRegistry rendererRegistry;
 
-    public RenderManager(RenderEngine renderEngine, ResourceManager resourceManager) {
-        this.renderEngine = renderEngine;
+    private final FontRenderer fontRenderer;
+
+    private final Mesh quadMesh;
+    private final Mesh.ReusableBuilder lineMeshBuilder = new Mesh.ReusableBuilder(2);
+
+    public RenderManager(ResourceManager resourceManager) {
         this.resourceManager = resourceManager;
+        this.rendererRegistry = new RendererRegistry(this, resourceManager);
 
-        registerRenderer(ScreenState.class, new ScreenStateRenderer(this));
-        registerRenderer(CircleButton.class, new CircleButtonRenderer(this));
-        registerRenderer(Image.class, new ImageRenderer(this));
-        registerRenderer(CircleImage.class, new CircleImageRenderer(this));
-        registerRenderer(Text.class, new TextRenderer(this));
-        registerRenderer(Rectangle.class, new RectangleRenderer(this));
+        this.fontRenderer = new FontRenderer(this, resourceManager);
 
-        registerRenderer(Button.class, new ButtonRenderer(this));
+        Log.RENDER.config("Using OpenGL Version {0}", glGetString(GL_VERSION));
+
+        glEnable(GL_MULTISAMPLE);
+        glEnable(GL_TEXTURE_2D);
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+        Mesh.Builder baseMeshBuilder = new Mesh.Builder(4);
+        baseMeshBuilder.uv(0.0f, 0.0f).vertex(0.0f, 0.0f);
+        baseMeshBuilder.uv(1.0f, 0.0f).vertex(1.0f, 0.0f);
+        baseMeshBuilder.uv(1.0f, 1.0f).vertex(1.0f, 1.0f);
+        baseMeshBuilder.uv(0.0f, 1.0f).vertex(0.0f, 1.0f);
+
+        this.quadMesh = baseMeshBuilder.build(GL_TRIANGLE_FAN);
     }
 
-    private <T extends IRenderable> void registerRenderer(Class<T> clazz, Renderer<T> renderer) {
-        renderers.put(clazz, renderer);
+    public void render(StateManager stateEngine, float partialTick) {
+        glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+        glClear(GL_COLOR_BUFFER_BIT);
+
+        stateEngine.render(rendererRegistry, partialTick);
     }
 
-    public <T extends IRenderable, R extends Renderer<T>> R getRendererFor(T object) {
-        return (R) getRendererFor(object.getClass());
-    }
+    public void drawBackground(ResourceHandle<Texture> textureHandle, int width, int height) {
+        Texture texture = resourceManager.getResourceOrDefault(textureHandle, Resources.DEFAULT_TEXTURE);
+        int imageWidth = texture.getWidth();
+        int imageHeight = texture.getHeight();
+        float aspectRatio = MathHelper.upscaleRatio(imageWidth, imageHeight, width, height);
 
-    private <T extends IRenderable, R extends Renderer<T>> R getRendererFor(Class<? extends IRenderable> clazz) {
-        R renderer = (R) this.renderers.get(clazz);
-        if (renderer == null && clazz != IRenderable.class) {
-            renderer = this.getRendererFor((Class<? extends IRenderable>) clazz.getSuperclass());
-            this.renderers.put(clazz, renderer);
+        Transform transform = Render.pushTransform();
+        {
+            transform.translate(width / 2.0f, height / 2.0f);
+            transform.scale(aspectRatio, aspectRatio);
+
+            drawRect(textureHandle, 0, 0, imageWidth, imageHeight, true);
         }
-
-        return renderer;
+        Render.popTransform();
     }
 
-    public RenderEngine getRenderEngine() {
-        return renderEngine;
+    public void drawRect(ResourceHandle<Texture> textureHandle, float minX, float minY, float maxX, float maxY) {
+        drawRect(textureHandle, minX, minY, maxX, maxY, false);
+    }
+
+    public void drawRect(ResourceHandle<Texture> textureHandle, float minX, float minY, float maxX, float maxY, boolean centered) {
+        Transform transform = Render.pushTransform();
+        {
+            if (centered) {
+                float width = Math.abs(maxX - minX);
+                float height = Math.abs(maxY - minY);
+                transform.translate(-(width / 2), -(height / 2));
+            }
+
+            transform.translate(minX, minY);
+            transform.scale(maxX - minX, maxY - minY);
+
+            draw(Resources.DEFAULT_SHADER, textureHandle);
+        }
+        Render.popTransform();
+    }
+
+    public void drawCircle(ResourceHandle<Texture> textureHandle, float x, float y, float radius) {
+        Transform transform = Render.pushTransform();
+        {
+            transform.translate(x, y);
+            transform.scale(radius * 2, radius * 2);
+            draw(Resources.CIRCLE_SHADER, textureHandle);
+        }
+        Render.popTransform();
+    }
+
+    public void drawLine(float x1, float y1, float x2, float y2, float thickness) {
+        glEnable(GL_LINE_SMOOTH);
+        glLineWidth(thickness);
+        lineMeshBuilder.reset();
+        lineMeshBuilder.vertex(x1, y1);
+        lineMeshBuilder.vertex(x2, y2);
+
+        Texture texture = resourceManager.getResource(Resources.DEFAULT_TEXTURE);
+
+        texture.bind();
+        {
+            draw(lineMeshBuilder.build(GL_LINES), Resources.DEFAULT_SHADER);
+        }
+        texture.unbind();
+        glDisable(GL_LINE_SMOOTH);
+    }
+
+    private void draw(ResourceHandle<Shader> shaderResourceHandle, ResourceHandle<Texture> textureHandle) {
+        Texture texture = resourceManager.getResourceOrDefault(textureHandle, Resources.DEFAULT_TEXTURE);
+
+        texture.bind();
+        {
+            draw(quadMesh, shaderResourceHandle);
+        }
+        texture.unbind();
+    }
+
+    public void draw(Mesh mesh, ResourceHandle<Shader> shaderResourceHandle) {
+        Shader shader = resourceManager.getResourceOrDefault(shaderResourceHandle, Resources.DEFAULT_SHADER);
+
+        shader.bind();
+        shader.uniformMat4("projection", Render.getProjection());
+        shader.uniformMat4("model", Render.currentTransform().model);
+        shader.uniformVec4("override_Color", Render.currentTransform().color);
+        shader.unbind();
+        mesh.draw(shader);
+    }
+
+    public FontRenderer getFontRenderer() {
+        return fontRenderer;
     }
 
     public ResourceManager getResourceManager() {
         return resourceManager;
+    }
+
+    public RendererRegistry getRendererRegistry() {
+        return rendererRegistry;
+    }
+
+    @Override
+    public void close() {
+        this.quadMesh.close();
+        this.lineMeshBuilder.close();
+
+        this.fontRenderer.close();
     }
 }

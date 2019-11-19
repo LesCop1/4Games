@@ -11,13 +11,14 @@ import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Map;
 
-public class ResourceManager {
+public class ResourceManager implements AutoCloseable {
     private final Map<Class<? extends IResource>, ResourceHandle> DEFAULT_RESOURCES = Maps.newHashMap();
     private final Map<ResourceHandle, IResource> LOADED_RESOURCES = Maps.newHashMap();
 
     public ResourceManager() {
         DEFAULT_RESOURCES.put(Shader.class, Resources.DEFAULT_SHADER);
         DEFAULT_RESOURCES.put(Texture.class, Resources.DEFAULT_TEXTURE);
+        DEFAULT_RESOURCES.put(Font.class, Resources.DEFAULT_FONT);
     }
 
     public <R extends IResource> R getResourceOrDefault(ResourceHandle<R> handle, ResourceHandle<R> defaultHandle) {
@@ -38,13 +39,15 @@ public class ResourceManager {
         return resource;
     }
 
-    private <R extends IResource> R loadResource(ResourceHandle<R> handle) {
+    public <R extends IResource> R loadResource(ResourceHandle<R> handle) {
         if (handle == null) {
             return null;
         }
 
         if (!resourceExists(handle)) {
-            handle = DEFAULT_RESOURCES.get(handle.getTypeToken().getRawType());
+            ResourceHandle<R> fallbackHandle = DEFAULT_RESOURCES.get(handle.getTypeToken().getRawType());
+            Log.SYSTEM.warning("Resource {0} does not exist. Fallback to {1}", handle, fallbackHandle);
+            handle = fallbackHandle;
         }
 
         try {
@@ -76,7 +79,8 @@ public class ResourceManager {
         return ResourceManager.class.getClassLoader().getResourceAsStream(resource.getHandle());
     }
 
-    public void cleanUp() {
+    @Override
+    public void close() {
         for (IResource resource : LOADED_RESOURCES.values()) {
             resource.dispose();
         }

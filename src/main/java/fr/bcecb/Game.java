@@ -1,27 +1,31 @@
 package fr.bcecb;
 
 import com.google.common.eventbus.EventBus;
-import com.google.common.eventbus.Subscribe;
 import fr.bcecb.event.EventExceptionHandler;
-import fr.bcecb.event.GameEvent;
-import fr.bcecb.render.RenderEngine;
+import fr.bcecb.input.InputManager;
+import fr.bcecb.render.RenderManager;
+import fr.bcecb.render.Window;
 import fr.bcecb.resources.ResourceHandle;
 import fr.bcecb.resources.ResourceManager;
 import fr.bcecb.resources.Texture;
-import fr.bcecb.state.MainMenuScreen;
-import fr.bcecb.state.StateEngine;
+import fr.bcecb.state.StateManager;
 import fr.bcecb.util.Log;
+import fr.bcecb.util.Render;
 
-import static org.lwjgl.glfw.GLFW.*;
+import static org.lwjgl.glfw.GLFW.glfwGetTime;
+import static org.lwjgl.glfw.GLFW.glfwInit;
 
-public final class Game {
-
+public final class Game implements AutoCloseable {
     private static final int ticksPerSecond = 60;
 
     public static final EventBus EVENT_BUS = new EventBus(EventExceptionHandler.getInstance());
 
-    private final RenderEngine renderEngine;
-    private final StateEngine stateEngine;
+    private final Window window;
+
+    private final RenderManager renderManager;
+    private final StateManager stateManager;
+
+    private final InputManager inputManager;
 
     private final ResourceManager resourceManager;
 
@@ -29,30 +33,26 @@ public final class Game {
 
     private static final Game INSTANCE = new Game();
 
-    public ResourceHandle<Texture> currentProfile = new ResourceHandle<>("textures/defaultProfile.jpg") {
-    };
+    public ResourceHandle<Texture> currentProfile = new ResourceHandle<>("textures/defaultProfile.jpg") {};
 
     private Game() {
         if (!glfwInit()) {
             Log.SYSTEM.severe("Couldn't initialize GLFW");
         }
 
-        glfwSetErrorCallback(Log.createErrorCallback());
+        this.window = new Window(this, "4Games", 800, 600);
 
         this.resourceManager = new ResourceManager();
 
-        this.renderEngine = new RenderEngine(resourceManager);
-        this.stateEngine = new StateEngine();
+        this.stateManager = new StateManager(this, this.window.getScaledWidth(), this.window.getScaledHeight());
+        this.renderManager = new RenderManager(this.resourceManager);
 
-        Game.EVENT_BUS.register(this);
+        this.inputManager = new InputManager(this.window);
     }
 
     private void start() {
-        renderEngine.getWindow().show();
         Log.SYSTEM.info("Starting the game");
-        running = true;
-
-        stateEngine.pushState(new MainMenuScreen());
+        this.running = true;
 
         float ticks = 1.0f / ticksPerSecond;
         float currentTime;
@@ -65,33 +65,43 @@ public final class Game {
             lastTime = currentTime;
 
             while (delta >= 1.0) {
-                EVENT_BUS.post(new GameEvent.Tick());
-                stateEngine.update();
+                this.stateManager.update();
 
                 --delta;
             }
 
-            renderEngine.render(stateEngine, delta);
+            Render.setupProjection(window.getFramebufferWidth(), window.getFramebufferHeight(), window.getGuiScale());
+            this.renderManager.render(this.stateManager, delta);
 
-            glfwSwapBuffers(renderEngine.getWindow().getId());
-            glfwPollEvents();
+            this.window.update();
         }
-
-        resourceManager.cleanUp();
-        renderEngine.cleanUp();
     }
 
-    @Subscribe
-    public void stop(GameEvent.Close event) {
-        running = false;
+    @Override
+    public void close() {
+        try {
+            this.renderManager.close();
+            this.resourceManager.close();
+        } finally {
+            this.window.close();
+        }
     }
 
-    public RenderEngine getRenderEngine() {
-        return renderEngine;
+    public void stop() {
+        this.running = false;
     }
 
-    public StateEngine getStateEngine() {
-        return stateEngine;
+    public void updateWindowSize() {
+        this.renderManager.getFontRenderer().setGuiScale(this.window.getGuiScale());
+        this.stateManager.rebuildGui(this.window.getScaledWidth(), this.window.getScaledHeight());
+    }
+
+    public StateManager getStateManager() {
+        return stateManager;
+    }
+
+    public InputManager getInputManager() {
+        return inputManager;
     }
 
     public ResourceManager getResourceManager() {

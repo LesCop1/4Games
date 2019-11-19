@@ -1,67 +1,40 @@
 package fr.bcecb.state.gui;
 
-import com.google.common.base.MoreObjects;
 import fr.bcecb.event.MouseEvent;
 import fr.bcecb.util.Constants;
 import org.joml.Vector4f;
 
 public class Text extends GuiElement {
-    private String text;
-    private float scale;
-    private Vector4f color;
-    private boolean centered;
+    private final String text;
+    private final float scale;
 
-    public Text(int id, float x, float y, String text, boolean centered) {
-        this(id, x, y, text, null, centered);
-        this.text = text;
+    private final boolean centered;
+
+    public Text(int id, float x, float y, boolean centered, String text) {
+        this(id, x, y, centered, text, 1.0f);
     }
 
-    public Text(int id, float x, float y, String text, Vector4f color, boolean centered) {
-        this(id, x, y, text, 1.0f, color, centered);
-    }
-
-    public Text(int id, float x, float y, String text, float scale, boolean centered) {
-        this(id, x, y, text, scale, null, centered);
-    }
-
-    public Text(int id, float x, float y, String text, float scale, Vector4f color, boolean centered) {
-        super(id, x, y, x, y);
-        this.text = text;
-        this.scale = Math.min(1.0f, scale);
-        this.color = MoreObjects.firstNonNull(color, Constants.COLOR_BLACK);
+    public Text(int id, float x, float y, boolean centered, String text, float scale) {
+        super(id, x, y, 0, 0);
         this.centered = centered;
+        this.text = text;
+        this.scale = scale;
     }
 
     public String getText() {
         return text;
     }
 
-    public void setText(String text) {
-        this.text = text;
-    }
-
     public float getScale() {
         return scale;
     }
 
-    public void setScale(float scale) {
-        this.scale = scale;
-    }
-
     public Vector4f getColor() {
-        return color;
-    }
-
-    public void setColor(Vector4f color) {
-        this.color = color;
+        return Constants.COLOR_BLACK;
     }
 
     public boolean isCentered() {
         return centered;
-    }
-
-    public void setCentered(boolean centered) {
-        this.centered = centered;
     }
 
     @Override
@@ -71,6 +44,11 @@ public class Text extends GuiElement {
 
     @Override
     public void onClick(MouseEvent.Click event) {
+
+    }
+
+    @Override
+    public void onDrag(MouseEvent.Click clickEvent, MouseEvent.Move moveEvent) {
 
     }
 
