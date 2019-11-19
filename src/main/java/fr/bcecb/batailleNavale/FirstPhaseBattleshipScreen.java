@@ -50,11 +50,11 @@ public class FirstPhaseBattleshipScreen extends ScreenState {
     @Override
     public void initGui() {
         battleship.initGrid();
-        setBackgroundTexture(new ResourceHandle<>("textures/BatailleNavale/background_battleship.jpg") {
+        setBackgroundTexture(new ResourceHandle<>("textures/BatailleNavale/battleshipScreen.png") {
         });
         Button caseButton;
         int id = 1;
-        float btnSize = 24.9f;
+        float btnSize = 14.99f;
         float x = (width / 2f) - (9 * btnSize / 2) - 4;
         for (int i = 0; i < 10; ++i, x += btnSize) {
             float y = (height / 2f) - (9 * btnSize / 2) - 4;
@@ -110,6 +110,7 @@ public class FirstPhaseBattleshipScreen extends ScreenState {
         final GuiElement backButton = new Button(999, 0, 0, 50 / ((float) 1920 / width), 50 / ((float) 1920 / width), false, new ResourceHandle<>("textures/back_button.png") {
         }) {
             @Override
+            //TODO I'm not sure too
             public void onClick(MouseEvent.Click event) {
                 Game.instance().getStateManager().popState();
             }
@@ -133,100 +134,101 @@ public class FirstPhaseBattleshipScreen extends ScreenState {
         };
         addGuiElement(putFinish);
 
-        Button a = new Button(102, (width / 20f), 50, (height / 10f), (height / 10f), false, "A",
-                new ResourceHandle<Texture>("textures/BatailleNavale/A.png") {
+//TODO Pixel Bauduin strat
+        Button a = new Button(102, (width / 20f), 50, btnSize*Boat.Type.AIRCRAFT_CARRIER.getSize(), btnSize, false, "",
+                new ResourceHandle<Texture>("textures/BatailleNavale/Aircraft_Carrier.png") {
                 }) {
             @Override
             public void onClick(MouseEvent.Click event) {
                 super.onClick(event);
-                selectedBoat = getTitle();
+                selectedBoat = "A";
                 boat = new Boat(Boat.Type.AIRCRAFT_CARRIER);
             }
 
             @Override
             public boolean isVisible() {
                 for (String val : boatPut){
-                    if(val==getTitle()) return false;
+                    if(val=="A") return false;
                 }
                 return true;
             }
         };
         addGuiElement(a);
 
-        Button c = new Button(103, (width / 20f), 100, (height / 10f), (height / 10f), false, "C",
-                new ResourceHandle<Texture>("textures/BatailleNavale/C.png") {
+        Button c = new Button(103, (width / 20f), 80, btnSize*Boat.Type.CRUISER.getSize(), btnSize, false, "",
+                new ResourceHandle<Texture>("textures/BatailleNavale/Cruiser.png") {
                 }) {
             @Override
             public void onClick(MouseEvent.Click event) {
                 super.onClick(event);
-                selectedBoat = getTitle();
+                selectedBoat = "C";
                 boat = new Boat(Boat.Type.CRUISER);
             }
 
             @Override
             public boolean isVisible() {
                 for (String val : boatPut){
-                    if(val==getTitle()) return false;
+                    if(val=="C") return false;
                 }
                 return true;
             }
         };
         addGuiElement(c);
 
-        Button f = new Button(104, (width / 20f), 150, (height / 10f), (height / 10f), false, "F",
-                new ResourceHandle<Texture>("textures/BatailleNavale/F.png") {
+        Button f = new Button(104, (width / 20f), 110, btnSize*Boat.Type.FRIGATE.getSize(), btnSize, false, "",
+                new ResourceHandle<Texture>("textures/BatailleNavale/Frigate.png") {
                 }) {
             @Override
             public void onClick(MouseEvent.Click event) {
                 super.onClick(event);
-                selectedBoat = getTitle();
+                selectedBoat = "F";
                 boat = new Boat(Boat.Type.FRIGATE);
             }
 
             @Override
             public boolean isVisible() {
                 for (String val : boatPut){
-                    if(val==getTitle()) return false;
+                    if(val=="F") return false;
                 }
                 return true;
             }
         };
         addGuiElement(f);
 
-        Button s = new Button(105, (width / 20f), 200, (height / 10f), (height / 10f), false, "S",
-                new ResourceHandle<Texture>("textures/BatailleNavale/S.png") {
+        Button s = new Button(105, (width / 20f), 140, btnSize*Boat.Type.SUBMARINE.getSize(), btnSize, false, "",
+                new ResourceHandle<Texture>("textures/BatailleNavale/Submarine.png") {
                 }) {
             @Override
             public void onClick(MouseEvent.Click event) {
                 super.onClick(event);
-                selectedBoat = getTitle();
+                selectedBoat = "S";
                 boat = new Boat(Boat.Type.SUBMARINE);
             }
 
             @Override
             public boolean isVisible() {
                 for (String val : boatPut){
-                    if(val==getTitle()) return false;
+                    if(val=="S") return false;
                 }
                 return true;
             }
         };
         addGuiElement(s);
 
-        Button t = new Button(106, (width / 20f), 250, (height / 10f), (height / 10f), false, "T",
-                new ResourceHandle<Texture>("textures/BatailleNavale/T.png") {
+        Button t = new Button(106, (width / 20f), 170, btnSize*Boat.Type.TORPEDO.getSize(), btnSize, false, "",
+                new ResourceHandle<Texture>("textures/BatailleNavale/Torpedo.png") {
                 }) {
             @Override
             public void onClick(MouseEvent.Click event) {
                 super.onClick(event);
-                selectedBoat = getTitle();
+                selectedBoat = "T";
                 boat = new Boat(Boat.Type.TORPEDO);
             }
 
             @Override
             public boolean isVisible() {
                 for (String val : boatPut){
-                    if(val==getTitle()) return false;
+                    if(val=="T") return false;
                 }
                 return true;
             }

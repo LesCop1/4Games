@@ -34,6 +34,7 @@ public class Boat {
         hits+=1;
     }
 
+    //TODO I will use this shit to display some shit information on the screen
     public boolean isAlive() {
         if(hits==type.getSize()) return false;
         else return true;

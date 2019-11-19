@@ -12,10 +12,10 @@ public class Battleship { //Gère tous les aspects d'une partie, création de la
         return boards[getNextPlayer()];
     }
 
-    public void initGrid(){
+    public void initGrid() {
         for (int i = 0; i < 10; i++) {
             for (int j = 0; j < 10; j++) {
-                getCurrentPlayerBoard()[i][j]=0;
+                getCurrentPlayerBoard()[i][j] = 0;
             }
         }
     }
@@ -63,10 +63,19 @@ public class Battleship { //Gère tous les aspects d'une partie, création de la
 
     public boolean shoot(Boat boat, int[][] board, int x, int y) {
         if (boat == null) return false;
-        else if (board[x][y] > 0 || board[x][y] < 6){
+        else if (board[x][y] > 0 && board[x][y] < 6) {
             boat.hits();
             return true;
         }
         return false;
+    }
+
+    public boolean checkWinCondition(int[][] board) {
+        for (int i = 0; i < 10; i++) {
+            for (int j = 0; j < 10; j++) {
+                if (board[i][j] > 0 && board[i][j] < 6) return false;
+            }
+        }
+        return true;
     }
 }

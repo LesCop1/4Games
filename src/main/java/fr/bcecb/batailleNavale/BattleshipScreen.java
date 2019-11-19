@@ -64,7 +64,7 @@ public class BattleshipScreen extends ScreenState {
         });
         Button caseButton;
         int id = 1;
-        float btnSize = 25f;
+        float btnSize = 14.99f;
         float x = (width / 2f) - (9 * btnSize / 2) - 4;
         for (int i = 0; i < 10; ++i, x += btnSize) {
             float y = (height / 2f) - (9 * btnSize / 2) - 4;
@@ -77,11 +77,12 @@ public class BattleshipScreen extends ScreenState {
                     public void onClick(MouseEvent.Click event) {
                         super.onClick(event);
 
-                        if (!shoot && event.getButton() == GLFW.GLFW_MOUSE_BUTTON_RIGHT) {
+                        if (!shoot && event.getButton() == GLFW.GLFW_MOUSE_BUTTON_LEFT) {
                             boat = hm.get(gridTemp[caseX][caseY]);
                             if (battleship.shoot(boat, gridTemp, caseX, caseY))
                                 gridTemp[caseX][caseY] = 100; //Touché
                             else gridTemp[caseX][caseY] = 200; //Coulé
+                            if(battleship.checkWinCondition(gridTemp)) System.out.println("ggwp"); //TODO Jolie fenêtre pour dire kiki gagne et bloquer tout le reste
                             shoot = true;
                         }
                     }
@@ -135,6 +136,7 @@ public class BattleshipScreen extends ScreenState {
         }) {
             @Override
             public void onClick(MouseEvent.Click event) {
+                //TODO This shit doesn't work very well
                 Game.instance().getStateManager().popState();
             }
         };
