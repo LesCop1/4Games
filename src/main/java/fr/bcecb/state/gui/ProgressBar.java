@@ -9,7 +9,6 @@ import org.joml.Vector4f;
 public class ProgressBar extends GuiElement {
     private float value = 0.00f;
     private final float increment = 0.01f;
-    private final float offset = 2f;
     private final Vector4f outlineColor;
     private final Vector4f defaultColor;
     private final Vector4f completedColor;
@@ -57,7 +56,7 @@ public class ProgressBar extends GuiElement {
     }
 
     public void setValue(float value) {
-        this.value = value;
+        this.value = MathHelper.clamp(value, 0.0f, 1.0f);
     }
 
     public String printValue() {
@@ -78,7 +77,7 @@ public class ProgressBar extends GuiElement {
     }
 
     public float getOffset() {
-        return offset;
+        return 2.0f;
     }
 
     public Vector4f getOutlineColor() {

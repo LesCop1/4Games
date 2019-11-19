@@ -20,6 +20,8 @@ public class Resources {
     public static final ResourceHandle<Texture> DEFAULT_LOGO_TEXTURE = new ResourceHandle<>("textures/defaultLogo.png") {};
     public static final ResourceHandle<Texture> DEFAULT_BACKGROUND_TEXTURE = new ResourceHandle<>("textures/defaultBackground.png") {};
     public static final ResourceHandle<Texture> DEFAULT_BUTTON_TEXTURE = new ResourceHandle<>("textures/defaultButton.png") {};
+    public static final ResourceHandle<Texture> CURRENT_PROFILE_TEXTURE = new ResourceHandle<>("textures/defaultProfile.jpg") {};
+
     public static final ResourceHandle<Font> DEFAULT_FONT = new ResourceHandle<>("font.ttf") {};
     /* SHADERS */
     public static final ResourceHandle<Shader> DEFAULT_SHADER = new ResourceHandle<>("shaders/base.json") {};
