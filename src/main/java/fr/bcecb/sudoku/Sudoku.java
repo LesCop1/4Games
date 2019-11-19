@@ -328,7 +328,7 @@ public class Sudoku {
         return true;
     }
 
-    enum Difficulty {
+    public enum Difficulty {
         EASY(20),
         NORMAL(40),
         HARD(60);

@@ -1,10 +1,10 @@
 package fr.bcecb.state.gui;
 
 import fr.bcecb.Game;
-import fr.bcecb.event.MouseEvent;
 import fr.bcecb.resources.ResourceHandle;
 import fr.bcecb.resources.Texture;
 import fr.bcecb.state.State;
+import fr.bcecb.state.StateManager;
 import fr.bcecb.util.Resources;
 
 import java.util.Collection;
@@ -12,23 +12,19 @@ import java.util.Comparator;
 import java.util.Map;
 import java.util.TreeMap;
 
-import static fr.bcecb.event.MouseEvent.Click.Type.RELEASED;
-
 public abstract class ScreenState extends State {
+    protected static final int BACK_BUTTON_ID = -1;
+
     protected int width;
     protected int height;
 
+    private GuiElement selection;
+
     private final Map<Integer, GuiElement> guiElements = new TreeMap<>(Comparator.naturalOrder());
     private ResourceHandle<Texture> backgroundTexture = Resources.DEFAULT_BACKGROUND_TEXTURE;
-    private boolean hasBackground = true;
 
-    public ScreenState(String name) {
-        super(name);
-    }
-
-    public ScreenState(String name, boolean hasBackground) {
-        super(name);
-        this.hasBackground = hasBackground;
+    public ScreenState(StateManager stateManager, String name) {
+        super(stateManager, name);
     }
 
     public final void addGuiElement(GuiElement... elements) {
@@ -37,8 +33,8 @@ public abstract class ScreenState extends State {
         }
     }
 
-    public boolean hasBackground() {
-        return hasBackground;
+    public void disableBackground() {
+        this.backgroundTexture = null;
     }
 
     public final void clearGuiElements() {
@@ -71,12 +67,10 @@ public abstract class ScreenState extends State {
 
     @Override
     public void onEnter() {
-        Game.EVENT_BUS.register(this);
     }
 
     @Override
     public void onExit() {
-        Game.EVENT_BUS.unregister(this);
     }
 
     @Override
@@ -86,42 +80,44 @@ public abstract class ScreenState extends State {
         }
     }
 
-    public void onClick(MouseEvent.Click event) {
+    public final boolean mouseClicked(float x, float y) {
         for (GuiElement element : getGuiElements()) {
             if (!element.isVisible() || element.isDisabled()) continue;
 
-            if (!event.isCancelled() && event.getType() == RELEASED && element.checkBounds(event.getX(), event.getY())) {
-                element.onClick(event);
+            if (element.checkBounds(x, y))
+                if (element.getId() == BACK_BUTTON_ID) {
+                    Game.instance().getStateManager().popState();
+                    return true;
+                }
 
-                event.setCancelled(true);
+            if (mouseClicked(element.getId())) {
+                return true;
             }
         }
+
+        return false;
     }
 
-    public void onHover(MouseEvent.Move event) {
-        for (GuiElement element : getGuiElements()) {
-            if (!element.isVisible()) continue;
+    public boolean mouseReleased() {
+        return false;
+    }
 
-            element.setHovered(element.checkBounds(event.getX(), event.getY()));
-
-            if (element.isHovered()) {
-                element.onHover(event);
-
-                event.setCancelled(true);
-            }
+    public final boolean mouseMoved(float x, float y, boolean clicked) {
+        if (selection != null && clicked) {
+            mouseDragged(selection.getId());
         }
-    }
 
-    public void onScroll(MouseEvent.Scroll event) {
         for (GuiElement element : getGuiElements()) {
             if (!element.isVisible() || element.isDisabled()) continue;
 
-            if (element.isHovered()) {
-                element.onScroll(event);
-
-                event.setCancelled(true);
+            if (element.checkBounds(x, y)) {
+                element.setHovered(true);
+            } else {
+                element.setHovered(false);
             }
         }
+
+        return false;
     }
 
     public void initGui(int width, int height) {
@@ -132,4 +128,10 @@ public abstract class ScreenState extends State {
     }
 
     public abstract void initGui();
+
+    public abstract boolean mouseClicked(int id);
+
+    public void mouseDragged(int id) {
+
+    }
 }

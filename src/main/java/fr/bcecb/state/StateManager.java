@@ -1,9 +1,7 @@
 package fr.bcecb.state;
 
-import com.google.common.eventbus.Subscribe;
 import fr.bcecb.Game;
 import fr.bcecb.event.Event;
-import fr.bcecb.event.MouseEvent;
 import fr.bcecb.event.StateEvent;
 import fr.bcecb.render.Renderer;
 import fr.bcecb.render.RendererRegistry;
@@ -27,7 +25,7 @@ public class StateManager {
         this.width = width;
         this.height = height;
 
-        pushState(new MainMenuScreen());
+        pushState(new MainMenuScreen(this));
 
         Game.EVENT_BUS.register(this);
     }
@@ -45,6 +43,12 @@ public class StateManager {
 
             stateStack.push(state);
             state.onEnter();
+        }
+    }
+
+    public void popMultipleState(int num) {
+        for (int i = 0; i < num; i++) {
+            popState();
         }
     }
 
@@ -84,42 +88,27 @@ public class StateManager {
         }
     }
 
-    @Subscribe
-    private void handleClickEvent(MouseEvent.Click event) {
-        ScreenState screenState;
+    public void mouseClicked(float x, float y) {
         for (State state : stateStack) {
             if (state instanceof ScreenState) {
-                screenState = (ScreenState) state;
-                screenState.onClick(event);
+                ScreenState screenState = (ScreenState) state;
+
+                if (screenState.mouseClicked(x, y)) return;
             }
 
-            if (state.shouldPauseBelow() || event.isCancelled()) break;
+            if (state.shouldPauseBelow()) return;
         }
     }
 
-    @Subscribe
-    private void handleHoverEvent(MouseEvent.Move event) {
-        ScreenState screenState;
+    public void mouseMoved(float x, float y, boolean clicked) {
         for (State state : stateStack) {
             if (state instanceof ScreenState) {
-                screenState = (ScreenState) state;
-                screenState.onHover(event);
+                ScreenState screenState = (ScreenState) state;
 
-                if (state.shouldPauseBelow() || event.isCancelled()) break;
+                if (screenState.mouseMoved(x, y, clicked)) return;
             }
-        }
-    }
 
-    @Subscribe
-    private void handleScrollEvent(MouseEvent.Scroll event) {
-        ScreenState screenState;
-        for (State state : stateStack) {
-            if (state instanceof ScreenState) {
-                screenState = (ScreenState) state;
-                screenState.onScroll(event);
-
-                if (state.shouldPauseBelow() || event.isCancelled()) break;
-            }
+            if (state.shouldPauseBelow()) return;
         }
     }
 
