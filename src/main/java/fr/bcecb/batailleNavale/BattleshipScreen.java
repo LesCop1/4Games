@@ -9,7 +9,6 @@ import fr.bcecb.state.gui.Button;
 import fr.bcecb.state.gui.ScreenState;
 import fr.bcecb.util.Constants;
 import fr.bcecb.util.MathHelper;
-import fr.bcecb.util.Resources;
 
 import java.util.concurrent.TimeUnit;
 
@@ -63,19 +62,29 @@ public class BattleshipScreen extends ScreenState {
                         int value = battleship.getPlayerGrid(currentPlayer)[finalI][finalJ];
                         return value == Battleship.SUCCESS_HIT ? touch : value == Battleship.FAILED_HIT ? sink : defaultTexture;
                     }
+
+                    @Override
+                    public ResourceHandle<Texture> getHoverTexture() {
+                        return null;
+                    }
+
+                    @Override
+                    public ResourceHandle<Texture> getDisabledTexture() {
+                        return null;
+                    }
                 };
                 addGuiElement(caseButton);
             }
         }
 
-        this.changePlayerButton = new Button(100, (width / 20f), 50, (height / 10f), (height / 10f), false, "Joueur Suivant", Resources.DEFAULT_BUTTON_TEXTURE) {
+        this.changePlayerButton = new Button(100, (width / 20f), 50, (height / 10f), (height / 10f), false, "Joueur Suivant") {
             @Override
             public boolean isVisible() {
                 return shoot;
             }
         };
 
-        Button backButton = new Button(BACK_BUTTON_ID, 0, 0, 50 / ((float) 1920 / width), 50 / ((float) 1920 / width), false, new ResourceHandle<>("textures/back_button.png") {});
+        Button backButton = new Button(BACK_BUTTON_ID, 0, 0, 50 / ((float) 1920 / width), 50 / ((float) 1920 / width), false);
         addGuiElement(this.changePlayerButton, backButton);
     }
 

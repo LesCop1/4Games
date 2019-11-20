@@ -6,7 +6,6 @@ import fr.bcecb.state.StateManager;
 import fr.bcecb.state.gui.Button;
 import fr.bcecb.state.gui.ScreenState;
 import fr.bcecb.util.Constants;
-import fr.bcecb.util.Resources;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -52,6 +51,16 @@ public class FirstPhaseBattleshipScreen extends ScreenState {
                         return value != Battleship.DEFAULT_VALUE ? findTexture(value) : defaultTexture;
                     }
 
+                    @Override
+                    public ResourceHandle<Texture> getHoverTexture() {
+                        return null;
+                    }
+
+                    @Override
+                    public ResourceHandle<Texture> getDisabledTexture() {
+                        return null;
+                    }
+
                     private ResourceHandle<Texture> findTexture(int i) {
                         return switch (i) {
                             case 0 -> new ResourceHandle<>("textures/BatailleNavale/T.png") {};
@@ -69,16 +78,31 @@ public class FirstPhaseBattleshipScreen extends ScreenState {
         }
 
         for (Boat.Type type : Boat.Type.values()) {
-            Button boatButton = new Button(100 + type.ordinal(), (width / 20f), 50 + (type.ordinal() * 30), btnSize * type.getSize(), btnSize, false, type.getTextureHandle()) {
+            Button boatButton = new Button(100 + type.ordinal(), (width / 20f), 50 + (type.ordinal() * 30), btnSize * type.getSize(), btnSize, false) {
                 @Override
                 public boolean isVisible() {
                     return checkIfNotPlaced(type.getName());
+                }
+
+                @Override
+                public ResourceHandle<Texture> getTexture() {
+                    return type.getTextureHandle();
+                }
+
+                @Override
+                public ResourceHandle<Texture> getHoverTexture() {
+                    return null;
+                }
+
+                @Override
+                public ResourceHandle<Texture> getDisabledTexture() {
+                    return null;
                 }
             };
             addGuiElement(boatButton);
         }
 
-        this.nextButton = new Button(110, 4.5f * (width / 5f), 50, (height / 10f), (height / 10f), false, "", Resources.DEFAULT_BUTTON_TEXTURE) {
+        this.nextButton = new Button(110, 4.5f * (width / 5f), 50, (height / 10f), (height / 10f), false) {
             @Override
             public String getTitle() {
                 return currentPlayer == 0 ? "Joueur Suivant" : "Commencer la partie";
@@ -90,7 +114,7 @@ public class FirstPhaseBattleshipScreen extends ScreenState {
             }
         };
 
-        Button backButton = new Button(BACK_BUTTON_ID, 0, 0, 50 / ((float) 1920 / width), 50 / ((float) 1920 / width), false, new ResourceHandle<>("textures/back_button.png") {});
+        Button backButton = new Button(BACK_BUTTON_ID, 0, 0, 50 / ((float) 1920 / width), 50 / ((float) 1920 / width), false);
         addGuiElement(this.nextButton, backButton);
     }
 
