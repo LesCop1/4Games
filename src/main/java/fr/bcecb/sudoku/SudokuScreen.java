@@ -37,7 +37,7 @@ public class SudokuScreen extends ScreenState {
 
     @Override
     public void initGui() {
-        GuiElement backButton = new Button(BACK_BUTTON_ID, (width / 20f), (height - (height / 20f) - (height / 10f)), (height / 10f), (height / 10f), false, "Back", Resources.DEFAULT_BUTTON_TEXTURE);
+        Button backButton = new Button(BACK_BUTTON_ID, (width / 20f), (height - (height / 20f) - (height / 10f)), (height / 10f), (height / 10f), false, "Back", Resources.DEFAULT_BUTTON_TEXTURE);
 
         int id = 1;
 
@@ -139,7 +139,7 @@ public class SudokuScreen extends ScreenState {
 
         @Override
         public boolean isDisabled() {
-            return sudoku.winCondition() && sudoku.getGeneratedGrid()[caseX][caseY] != 0;
+            return sudoku.winCondition() || sudoku.getGeneratedGrid()[caseX][caseY] != 0;
         }
 
         @Override
