@@ -10,50 +10,54 @@ import fr.bcecb.state.gui.GuiElement;
 import fr.bcecb.state.gui.ScreenState;
 import fr.bcecb.state.gui.Text;
 import fr.bcecb.util.Constants;
+import fr.bcecb.util.MathHelper;
 
 import java.util.concurrent.TimeUnit;
 
 public class BingoScreen extends ScreenState {
     private final Stopwatch stopwatch;
 
-    private Bingo bingo;
-    private int ticks = 0;
-    private int tickMultiplier;
+    private final int gridCount;
+    private final Bingo bingo;
+    private final int tickMultiplier;
+
+    private int ticks;
     private int lastDrop;
 
-    private GuiElement ball;
-
-    public BingoScreen(StateManager stateManager, int nbGrids, int difficulty) {
+    public BingoScreen(StateManager stateManager, int gridCount, int difficulty) {
         super(stateManager, "game_bingo");
-        this.bingo = new Bingo(nbGrids);
-        this.bingo.init();
-        switch (difficulty) {
-            case 1 -> this.tickMultiplier = 8;
-            case 2 -> this.tickMultiplier = 6;
-            case 3 -> this.tickMultiplier = 4;
-        }
-        this.stopwatch = Stopwatch.createStarted();
+        setBackgroundTexture(Constants.BINGO_BACKGROUND);
+
+        this.bingo = new Bingo(gridCount);
+        this.gridCount = gridCount;
+        this.tickMultiplier = MathHelper.clamp(8 - ((difficulty - 1) * 2), 0, 10);
+        this.stopwatch = Stopwatch.createUnstarted();
+    }
+
+    @Override
+    public void onEnter() {
+        super.onEnter();
+
+        this.stopwatch.start();
     }
 
     @Override
     public void onUpdate() {
         super.onUpdate();
-        if (this.bingo.getPlayer().checkWin()) {
+        if (!this.bingo.hasRemaining() || this.bingo.getPlayer().checkWin()) {
             stopwatch.stop();
             long time = stopwatch.elapsed(TimeUnit.MILLISECONDS);
             stateManager.pushState(new EndGameState(stateManager, Constants.GameType.BINGO, time, 32));
         }
 
         if (++this.ticks > tickMultiplier * 60) {
-            this.lastDrop = this.bingo.dropball();
+            this.lastDrop = this.bingo.dropBall();
             this.ticks = 0;
         }
     }
 
     @Override
     public void initGui() {
-        setBackgroundTexture(Constants.BINGO_BACKGROUND);
-
         float startX = 2.5f * (width / 20f);
         float startY = (height / 5f);
 
@@ -62,72 +66,90 @@ public class BingoScreen extends ScreenState {
         float marginW = (width / 10f);
         float marginH = (height / 20f);
 
-        for (int i = 0; i < this.bingo.getNbGrids(); i++) {
+        for (int i = 0; i < this.gridCount; i++) {
             float offsetX = ((float) Math.floor(i / 3f)) * (gridW + marginW);
             float offsetY = (i % 3) * (gridH + marginH);
             float gridX = startX + offsetX;
             float gridY = startY + offsetY;
 
-            drawGrid(gridX, gridY, gridW, gridH, i);
+            generateGridButtons(gridX, gridY, i);
         }
 
-        this.ball = new Text(2000, startX + gridW, height / 10f, false, "", 5f) {
+        GuiElement ball = new Text(2000, width / 2f, height / 10f, true, null, 3f) {
             @Override
             public String getText() {
-                return lastDrop != 0 ? Integer.toString(lastDrop) : "";
+                return MathHelper.stringifyInteger(lastDrop);
             }
         };
 
-        final Button backButton = new Button(BACK_BUTTON_ID, (width / 20f), (height - (height / 20f) - (height / 10f)), (height / 10f), (height / 10f), false, "Back") {
-        };
+        Button backButton = new Button(BACK_BUTTON_ID, (width / 20f), (height - (height / 20f) - (height / 10f)), (height / 10f), (height / 10f), false, "Back");
 
         addGuiElement(backButton, ball);
     }
 
     @Override
     public boolean mouseClicked(int id) {
+        BingoButton bingoButton = (BingoButton) this.getGuiElementById(id);
+
+        if (bingoButton.getValue() == this.lastDrop) {
+            this.bingo.getPlayer().setValue(bingoButton.grid, bingoButton.caseX, bingoButton.caseY, 0);
+        }
+
         return false;
     }
 
-    private void drawGrid(float gridX, float gridY, float gridW, float gridH, int numGrid) {
+    private void generateGridButtons(float gridX, float gridY, int numGrid) {
         int id = (100 * numGrid);
 
         for (int i = 0; i < 3; i++) {
             for (int j = 0; j < 9; j++, id++) {
-                int caseX = i;
-                int caseY = j;
-                int caseId = id;
-                final Button caseButton = new Button(caseId, (gridX + j * (gridW / 9)), (gridY + i * (gridH / 3)), (gridW / 10), (gridH / 3), false) {
-                    @Override
-                    public ResourceHandle<Texture> getTexture() {
-                        int value = getValue();
-                        return value != 0 ? Constants.BINGO_CASE : Constants.BINGO_CASE_CHECKED;
-                    }
-
-                    @Override
-                    public ResourceHandle<Texture> getHoverTexture() {
-                        int value = getValue();
-                        return value == 0 ? Constants.BINGO_CASE_CHECKED : value > 0 ? Constants.BINGO_CASE_HOVERED : Constants.BINGO_CASE;
-                    }
-
-                    @Override
-                    public String getTitle() {
-                        int value = getValue();
-                        return value > 0 ? String.valueOf(value) : "";
-                    }
-
-                    @Override
-                    public boolean isDisabled() {
-                        return getValue() <= 0;
-                    }
-
-                    private int getValue() {
-                        return bingo.getPlayer().getGrid(numGrid).getValue(caseX, caseY);
-                    }
-                };
+                final Button caseButton = new BingoButton(id, gridX, gridY, numGrid, i, j);
 
                 addGuiElement(caseButton);
             }
+        }
+    }
+
+    private final class BingoButton extends Button {
+        private final int grid;
+        private final int caseX;
+        private final int caseY;
+
+        public BingoButton(int id, float x, float y, int numGrid, int caseX, int caseY) {
+            super(id, (x + caseY * 15.75f), (y + caseX * 15.75f), 15, 15, false);
+            this.grid = numGrid;
+            this.caseX = caseX;
+            this.caseY = caseY;
+        }
+
+        @Override
+        public ResourceHandle<Texture> getTexture() {
+            return getValue() != 0 ? Constants.BINGO_CASE : Constants.BINGO_CASE_CHECKED;
+        }
+
+        @Override
+        public ResourceHandle<Texture> getHoverTexture() {
+            int value = getValue();
+            return value == 0 ? Constants.BINGO_CASE_CHECKED : value > 0 ? Constants.BINGO_CASE_HOVERED : Constants.BINGO_CASE;
+        }
+
+        @Override
+        public ResourceHandle<Texture> getDisabledTexture() {
+            return null;
+        }
+
+        @Override
+        public String getTitle() {
+            return MathHelper.stringifyInteger(getValue(), MathHelper::isPositive);
+        }
+
+        @Override
+        public boolean isDisabled() {
+            return getValue() <= 0;
+        }
+
+        private int getValue() {
+            return bingo.getPlayer().getValue(grid, caseX, caseY);
         }
     }
 }

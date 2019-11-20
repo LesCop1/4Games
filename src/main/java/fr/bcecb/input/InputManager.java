@@ -34,7 +34,7 @@ public class InputManager implements AutoCloseable {
         }
 
         if (action == GLFW.GLFW_RELEASE) {
-            this.game.getStateManager().mouseClicked(this.mouseX, this.mouseY);
+            this.game.getStateManager().mouseClicked(button, this.mouseX, this.mouseY);
         }
     }
 
@@ -60,6 +60,10 @@ public class InputManager implements AutoCloseable {
 
         if (key != Key.UNKNOWN) {
             keyStates.put(key, action == GLFW.GLFW_PRESS);
+        }
+
+        if (action == GLFW.GLFW_RELEASE) {
+            this.game.getStateManager().keyPressed(key);
         }
     }
 

@@ -3,22 +3,44 @@ package fr.bcecb.bingo;
 import java.util.Random;
 
 public class Grid {
+    private static final Random RANDOM = new Random();
 
-    private final static int NB_ROWS = 3;
-    private final static int NB_COLS = 9;
+    private static final int NB_ROWS = 3;
+    private static final int NB_COLS = 9;
     private int[][] grid;
 
     public Grid() {
         this.grid = new int[NB_ROWS][NB_COLS];
-        fillGrid();
+
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 9; j++) {
+                int value;
+
+                do {
+                    value = randGen(j);
+                } while (isInGrid(value));
+
+                grid[i][j] = value;
+            }
+        }
+
         holeInGrid();
     }
 
+    public boolean isComplete() {
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 9; j++) {
+                if (grid[i][j] != 0) return false;
+            }
+        }
+
+        return true;
+    }
+
     private int randGen(int x) {
-        Random rand = new Random();
-        int randInt = rand.nextInt(10);
+        int randInt = RANDOM.nextInt(10);
         if (x == 0) {
-            randInt = rand.nextInt(8) + 1;
+            randInt = RANDOM.nextInt(8) + 1;
             return randInt;
         }
         if (x == 8) {
@@ -30,24 +52,11 @@ public class Grid {
         }
     }
 
-    private void fillGrid() {
-        int value = 0;
-        for (int i = 0; i < 3; i++) {
-            for (int j = 0; j < 9; j++) {
-                while (isInGrid(value)) {
-                    value = randGen(j);
-                }
-                this.grid[i][j] = value;
-            }
-        }
-    }
-
     private void holeInGrid() {
-        Random rand = new Random();
         int compteur = 0;
         for (int i = 0; i < 3; i++) {
             while (compteur < 4) {
-                int randCol = rand.nextInt(8);
+                int randCol = RANDOM.nextInt(8);
                 if (i == 0) {
                     if (this.grid[i][randCol] != -1 && (this.grid[1][randCol] != -1 || this.grid[2][randCol] != -1)) {
                         this.grid[i][randCol] = -1;
@@ -76,6 +85,7 @@ public class Grid {
         if (n == 0) {
             return true;
         }
+
         for (int i = 0; i < 3; i++) {
             for (int j = 0; j < 9; j++) {
                 if (this.grid[i][j] == n) {
@@ -100,6 +110,10 @@ public class Grid {
 
     public int[][] getGrid() {
         return grid;
+    }
+
+    public void setValue(int x, int y, int value) {
+        this.grid[x][y] = value;
     }
 
     public int getValue(int x, int y) {

@@ -4,8 +4,9 @@ import fr.bcecb.resources.ResourceHandle;
 import fr.bcecb.resources.Texture;
 import org.joml.Vector4f;
 
-import java.util.EnumMap;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 public class Constants {
     /* COLORS */
@@ -37,6 +38,7 @@ public class Constants {
     /* GAME BASED VARS */
     public static final String MONEY_NAME = "FourCoins";
     public static final String MONEY_NAME_SHORT = "FC";
+    public static final Collector<?, ?, ?> SHUFFLER = Collectors.collectingAndThen(Collectors.toCollection(ArrayList::new), list -> { Collections.shuffle(list); return list; });
     public static int BANKROLL = 0;
 
     public static Map<GameType, Long> BEST_TIMES = new EnumMap<>(GameType.class) {{
@@ -47,6 +49,10 @@ public class Constants {
     }};
 
     private Constants() {
+    }
+
+    public static <T> Collector<T, ?, List<T>> toShuffledList() {
+        return (Collector<T, ?, List<T>>) Constants.SHUFFLER;
     }
 
     public enum GameType {

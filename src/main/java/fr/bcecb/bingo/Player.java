@@ -1,31 +1,33 @@
 package fr.bcecb.bingo;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class Player {
-    private List<Grid> grids = new ArrayList<>();
+    private final Grid[] grids;
 
     public Player(int nbGrid) {
+        this.grids = new Grid[nbGrid];
+
         for (int i = 0; i < nbGrid; i++) {
-            addGrid();
+            this.grids[i] = new Grid();
         }
     }
 
     public boolean checkWin() {
-        for (Grid g :
-                grids) {
-            if (g.checkWin()) return true;
+        for (Grid grid : this.grids) {
+            if (grid.isComplete()) return true;
         }
+
         return false;
     }
 
-    private void addGrid() {
-        Grid g = new Grid();
-        this.grids.add(g);
+    public Grid getGrid(int i) {
+        return this.grids[i];
     }
 
-    public Grid getGrid(int numGrid) {
-        return this.grids.get(numGrid);
+    public int getValue(int i, int x, int y) {
+        return this.grids[i].getValue(x, y);
+    }
+
+    public void setValue(int i, int x, int y, int value) {
+        this.grids[i].setValue(x, y, value);
     }
 }
