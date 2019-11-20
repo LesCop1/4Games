@@ -130,7 +130,9 @@ public class FirstPhaseBattleshipScreen extends ScreenState {
             }
             return true;
         } else if (id < 100) {
-            // TODO : right click -> battleship.swapOrientation
+            if (button == MouseButton.RIGHT) {
+                this.battleship.swapOrientation(this.boat);
+            }
             int x = id / 10;
             int y = id % 10;
             if (this.boat != null && !this.battleship.cannotPlace(this.currentPlayer, this.boat, x, y) && !this.addedBoats.contains(this.boat)) {
