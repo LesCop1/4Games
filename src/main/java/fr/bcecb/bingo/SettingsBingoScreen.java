@@ -2,65 +2,107 @@ package fr.bcecb.bingo;
 
 import fr.bcecb.state.StateManager;
 import fr.bcecb.state.gui.Button;
+import fr.bcecb.state.gui.GuiElement;
 import fr.bcecb.state.gui.ScreenState;
+import fr.bcecb.state.gui.Text;
 import fr.bcecb.util.Constants;
-import fr.bcecb.util.Resources;
 
 public class SettingsBingoScreen extends ScreenState {
-    private int nbGrids;
+    private int gridCount;
     private int difficulty;
 
     private Button startButton;
 
     public SettingsBingoScreen(StateManager stateManager) {
         super(stateManager, "settings_bingo");
-    }
+        this.setBackgroundTexture(Constants.BINGO_BACKGROUND);
 
-    @Override
-    public void onEnter() {
-        super.onEnter();
-        this.nbGrids = 0;
+        this.gridCount = 0;
         this.difficulty = 0;
     }
 
     @Override
     public void initGui() {
-        setBackgroundTexture(Constants.BINGO_BACKGROUND);
+        int id = 0;
 
+        GuiElement gridCountText = new Text(id++, (width / 10f), (height / 6f) + 10, false, "Grid count :");
         for (int i = 0; i < 6; i++) {
-            Button nbXGridsButton = new Button(i, (width / 10f) + i * (width / 10f), (height / 6f) + 10, (width / 20f), (height / 10f), true, Integer.toString(i), Resources.DEFAULT_BUTTON_TEXTURE);
-            addGuiElement(nbXGridsButton);
+            Button gridCountButton = new GridCountSettingButton(id++, (width / 10f) + i * (width / 10f), (height / 6f) + 35, i + 1);
+            addGuiElement(gridCountButton);
         }
 
-        for (int i = 6; i < 9; i++) {
-            Button difficultyButton = new Button(i, (width / 10f) + i * (width / 10f), 2 * (height / 6f) + 10, (width / 20f), (height / 10f), true, Integer.toString(i - 6), Resources.DEFAULT_BUTTON_TEXTURE);
+        GuiElement difficultyText = new Text(id++, (width / 10f), (height / 3f) + 40, false, "Difficulty :");
+        for (int i = 0; i < 3; i++) {
+            Button difficultyButton = new DifficultySettingButton(id++, (width / 10f) + i * (width / 10f), 2 * (height / 6f) + 65, i + 1);
             addGuiElement(difficultyButton);
         }
 
-        this.startButton = new Button(12, (width / 2f), (height / 4f) + 2 * (height / 4f), (width / 5f), (height / 10f), true, "Start", Resources.DEFAULT_BUTTON_TEXTURE);
+        this.startButton = new Button(++id, (width / 2f), (height / 4f) + 2 * (height / 4f), (width / 5f), (height / 10f), true, "Start") {
+            @Override
+            public boolean isDisabled() {
+                return gridCount == 0 || difficulty == 0;
+            }
+        };
 
-        Button backButton = new Button(BACK_BUTTON_ID, (width / 20f), (height - (height / 20f) - (height / 10f)), (height / 10f), (height / 10f), false, "Back", Resources.DEFAULT_BUTTON_TEXTURE);
+        Button backButton = new Button(BACK_BUTTON_ID, (width / 20f), (height - (height / 20f) - (height / 10f)), (height / 10f), (height / 10f), false, "Back");
 
-        addGuiElement(startButton, backButton);
+        addGuiElement(gridCountText, difficultyText, startButton, backButton);
     }
 
     @Override
     public boolean mouseClicked(int id) {
-        if (id == BACK_BUTTON_ID) {
-            stateManager.popState();
+        if (id == this.startButton.getId()) {
+            stateManager.pushState(new BingoScreen(stateManager, this.gridCount, this.difficulty));
             return true;
-        } else if (id == this.startButton.getId()) {
-            if (this.nbGrids != 0 && this.difficulty != 0) {
-                stateManager.pushState(new BingoScreen(stateManager, this.nbGrids, this.difficulty));
+        } else {
+            SettingButton settingButton = (SettingButton) this.getGuiElementById(id);
+
+            if (settingButton instanceof DifficultySettingButton) {
+                this.difficulty = settingButton.value;
+            } else if (settingButton instanceof GridCountSettingButton) {
+                this.gridCount = settingButton.value;
             }
-            return true;
-        } else if (id < 6) {
-            this.nbGrids = id;
-            return true;
-        } else if (id < 9) {
-            this.difficulty = id - 6;
-            return true;
         }
+
         return false;
+    }
+
+    private static class SettingButton extends Button {
+        protected final int value;
+
+        public SettingButton(int id, float x, float y, int value) {
+            super(id, x, y, 30, 30, true);
+            this.value = value;
+        }
+
+        @Override
+        public String getTitle() {
+            return String.valueOf(value);
+        }
+    }
+
+    private final class DifficultySettingButton extends SettingButton {
+        public DifficultySettingButton(int id, float x, float y, int value) {
+            super(id, x, y, value);
+        }
+
+        @Override
+        public boolean isDisabled() {
+            return SettingsBingoScreen.this.difficulty == value;
+        }
+    }
+
+    private final class GridCountSettingButton extends SettingButton {
+        private final int value;
+
+        public GridCountSettingButton(int id, float x, float y, int value) {
+            super(id, x, y, value);
+            this.value = value;
+        }
+
+        @Override
+        public boolean isDisabled() {
+            return SettingsBingoScreen.this.gridCount == value;
+        }
     }
 }

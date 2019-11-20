@@ -1,18 +1,10 @@
 package fr.bcecb.state.gui;
 
-import fr.bcecb.resources.ResourceHandle;
-import fr.bcecb.resources.Texture;
-
 public class CircleButton extends Button {
     private final float radius;
 
     public CircleButton(int id, float x, float y, float radius, boolean centered) {
-        super(id, x, y, radius * 2, radius * 2, centered, (String) null);
-        this.radius = radius;
-    }
-
-    public CircleButton(int id, float x, float y, float radius, boolean centered, ResourceHandle<Texture> texture) {
-        super(id, x, y, radius * 2, radius * 2, centered, texture);
+        super(id, x, y, radius * 2, radius * 2, centered);
         this.radius = radius;
     }
 

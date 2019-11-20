@@ -1,37 +1,25 @@
 package fr.bcecb.bingo;
 
-import java.util.ArrayList;
-import java.util.Random;
+import fr.bcecb.util.Constants;
+
+import java.util.List;
+import java.util.stream.IntStream;
 
 public class Bingo {
-    private Random random = new Random();
-
-    private int nbGrids;
-
     private Player player;
-    private ArrayList<Integer> numberList = new ArrayList();
+    private List<Integer> numbers;
 
-    public Bingo(int nbGrids) {
-        this.nbGrids = nbGrids;
+    public Bingo(int gridCount) {
+        this.player = new Player(gridCount);
+        this.numbers = IntStream.rangeClosed(1, 90).boxed().collect(Constants.toShuffledList());
     }
 
-    public void init() {
-        this.player = new Player(this.nbGrids);
-        for (int i = 1; i < 91; i++) {
-            this.numberList.add(i);
-        }
+    public boolean hasRemaining() {
+        return !this.numbers.isEmpty();
     }
 
-    public int dropball() {
-        int randInt = this.random.nextInt(numberList.size() - 1);
-
-        int droppedBall = this.numberList.get(randInt);
-        this.numberList.remove(randInt);
-        return droppedBall;
-    }
-
-    public int getNbGrids() {
-        return nbGrids;
+    public int dropBall() {
+        return this.numbers.remove(0);
     }
 
     public Player getPlayer() {

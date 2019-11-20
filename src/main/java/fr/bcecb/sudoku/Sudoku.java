@@ -1,23 +1,17 @@
 package fr.bcecb.sudoku;
 
+import fr.bcecb.util.Constants;
 import fr.bcecb.util.MathHelper;
 
-import java.util.*;
-import java.util.stream.Collector;
-import java.util.stream.Collectors;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Random;
 import java.util.stream.IntStream;
 
 public class Sudoku {
     public static final int SIZE = 9;
     private static final int SIZE_BOX = (int) Math.floor(Math.sqrt(SIZE));
     private static final Random RANDOM = new Random();
-    private static final Collector<?, ?, ?> SHUFFLER = Collectors.collectingAndThen(
-            Collectors.toCollection(ArrayList::new),
-            list -> {
-                Collections.shuffle(list);
-                return list;
-            }
-    );
 
     /**
      * The sudoku grid
@@ -34,7 +28,7 @@ public class Sudoku {
 
         this.fillRemaining(0, Sudoku.SIZE_BOX);
 
-        List<Integer> toRemove = IntStream.range(0, Sudoku.SIZE * Sudoku.SIZE).boxed().collect(Sudoku.toShuffledList()).subList(0, difficulty);
+        List<Integer> toRemove = IntStream.range(0, Sudoku.SIZE * Sudoku.SIZE).boxed().collect(Constants.toShuffledList()).subList(0, difficulty);
 
         int x, y;
         for (int i : toRemove) {
@@ -62,15 +56,6 @@ public class Sudoku {
      */
     static int randomInt() {
         return RANDOM.nextInt(9) + 1;
-    }
-
-    /**
-     * Pretty-prints the sudoku grid to the console
-     */
-
-
-    static <T> Collector<T, ?, List<T>> toShuffledList() {
-        return (Collector<T, ?, List<T>>) SHUFFLER;
     }
 
     /**
