@@ -1,7 +1,6 @@
 package fr.bcecb.bingo;
 
 import com.google.common.base.Stopwatch;
-import fr.bcecb.event.MouseEvent;
 import fr.bcecb.resources.ResourceHandle;
 import fr.bcecb.resources.Texture;
 import fr.bcecb.state.EndGameState;
@@ -115,14 +114,6 @@ public class BingoScreen extends ScreenState {
                     public String getTitle() {
                         int value = getValue();
                         return value > 0 ? String.valueOf(value) : "";
-                    }
-
-                    @Override
-                    public void onClick(MouseEvent.Click event) {
-                        super.onClick(event);
-                        if (bingo.getPlayer().getGrid(numGrid).getGrid()[caseX][caseY] == lastDrop) {
-                            bingo.getPlayer().getGrid(numGrid).getGrid()[caseX][caseY] = 0;
-                        }
                     }
 
                     @Override

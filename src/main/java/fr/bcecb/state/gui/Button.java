@@ -1,6 +1,5 @@
 package fr.bcecb.state.gui;
 
-import fr.bcecb.event.MouseEvent;
 import fr.bcecb.render.animation.Animation;
 import fr.bcecb.render.animation.BounceAnimation;
 import fr.bcecb.resources.ResourceHandle;
@@ -41,25 +40,6 @@ public class Button extends GuiElement {
         if (isVisible() && !isDisabled() && isHovered()) {
             hoverAnimation.update();
         } else hoverAnimation.reset();
-    }
-
-    @Override
-    public void onClick(MouseEvent.Click event) {
-    }
-
-    @Override
-    public void onDrag(MouseEvent.Click clickEvent, MouseEvent.Move moveEvent) {
-
-    }
-
-    @Override
-    public void onHover(MouseEvent.Move event) {
-
-    }
-
-    @Override
-    public void onScroll(MouseEvent.Scroll event) {
-
     }
 
     public String getTitle() {
