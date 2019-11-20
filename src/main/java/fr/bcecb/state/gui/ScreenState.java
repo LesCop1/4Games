@@ -84,14 +84,15 @@ public abstract class ScreenState extends State {
         for (GuiElement element : getGuiElements()) {
             if (!element.isVisible() || element.isDisabled()) continue;
 
-            if (element.checkBounds(x, y))
+            if (element.checkBounds(x, y)) {
                 if (element.getId() == BACK_BUTTON_ID) {
-                    Game.instance().getStateManager().popState();
+                    stateManager.popState();
                     return true;
                 }
 
-            if (mouseClicked(element.getId())) {
-                return true;
+                if (mouseClicked(element.getId())) {
+                    return true;
+                }
             }
         }
 

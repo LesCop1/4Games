@@ -41,8 +41,7 @@ public class GameSelectScreen extends ScreenState {
         this.pokerGameButton = new Button(13, (width / 4f) * 3, (height / 2f) + (height / 10f), (width / 8f), (height / 10f), true, "Poker", Resources.DEFAULT_BUTTON_TEXTURE) {
             @Override
             public void onClick(MouseEvent.Click event) {
-                Game.instance().getStateManager().pushState(new PokerScreenState());
-                ;
+                super.onClick(event);
             }
         };
 
@@ -59,6 +58,7 @@ public class GameSelectScreen extends ScreenState {
     @Override
     public boolean mouseClicked(int id) {
         if (id == this.sudokuGameButton.getId()) {
+            System.out.println("id = " + id);
             stateManager.pushState(new SudokuDifficultyScreen(stateManager));
             return true;
         } else if (id == this.bingoGameButton.getId()) {
@@ -68,7 +68,7 @@ public class GameSelectScreen extends ScreenState {
             stateManager.pushState(new BattleshipScreen(stateManager));
             return true;
         } else if (id == this.pokerGameButton.getId()) {
-            //TODO
+            stateManager.pushState(new PokerScreenState(stateManager));
             return true;
         } else if (id == this.profileButton.getId()) {
             stateManager.pushState(new ProfileScreen(stateManager));

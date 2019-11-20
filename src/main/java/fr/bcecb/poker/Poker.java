@@ -521,7 +521,7 @@ public class Poker {
             this.bankroll -= money;
         }
 
-        private int getBankroll() {
+        public int getBankroll() {
             return bankroll;
         }
 

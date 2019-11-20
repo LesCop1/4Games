@@ -50,7 +50,7 @@ public final class Game implements AutoCloseable {
         Log.SYSTEM.info("Starting the game");
         this.running = true;
 
-        float ticks = 1.0f / ticksPerSecond;
+        final float ticks = 1.0f / ticksPerSecond;
         float currentTime;
         float lastTime = 0.0f;
         float delta = 0.0f;
