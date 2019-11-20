@@ -3,13 +3,10 @@ package fr.bcecb.render;
 import fr.bcecb.resources.Font;
 import fr.bcecb.resources.ResourceHandle;
 import fr.bcecb.resources.ResourceManager;
-import fr.bcecb.util.Render;
+import fr.bcecb.util.RenderHelper;
 import fr.bcecb.util.Resources;
 import fr.bcecb.util.Transform;
-import org.lwjgl.BufferUtils;
 import org.lwjgl.stb.STBTTAlignedQuad;
-
-import java.nio.IntBuffer;
 
 import static org.lwjgl.opengl.GL11.GL_TRIANGLE_FAN;
 import static org.lwjgl.stb.STBTruetype.*;
@@ -30,7 +27,7 @@ public class FontRenderer implements AutoCloseable {
         this.font = resourceManager.loadResource(Resources.DEFAULT_FONT);
     }
 
-    public void drawStringBoxed(String string, float x, float y, float width, float height) {
+    public void test(String string, float x, float y, float width, float height) {
         float scale = 1.0f;
         while (this.getStringWidth(string) * this.getFontScale(scale) > width) {
             scale = scale - 0.001f;
@@ -42,7 +39,7 @@ public class FontRenderer implements AutoCloseable {
         this.drawString(string, x, y, 1.0f, centered);
     }
 
-    public void test(String string, float x, float y, float width, float height) {
+    public void drawStringBoxed(String string, float x, float y, float width, float height) {
         float scale = 100.0f;
 
         while (((this.getStringWidth(string) * this.getFontScale(scale) / 10f) > width - 5f) ||
@@ -53,7 +50,7 @@ public class FontRenderer implements AutoCloseable {
     }
 
     public void drawString(String string, float x, float y, float scale, boolean centered) {
-        Transform transform = Render.pushTransform();
+        Transform transform = RenderHelper.pushTransform();
         {
             if (font != null) {
                 float fontScale = this.getFontScale(scale);
@@ -100,7 +97,7 @@ public class FontRenderer implements AutoCloseable {
                 font.unbind();
             }
         }
-        Render.popTransform();
+        RenderHelper.popTransform();
     }
 
     public int getStringWidth(String string) {

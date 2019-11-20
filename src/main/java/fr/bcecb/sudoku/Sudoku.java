@@ -1,12 +1,14 @@
 package fr.bcecb.sudoku;
 
+import fr.bcecb.util.MathHelper;
+
 import java.util.*;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public class Sudoku {
-    private static final int SIZE = 9;
+    public static final int SIZE = 9;
     private static final int SIZE_BOX = (int) Math.floor(Math.sqrt(SIZE));
     private static final Random RANDOM = new Random();
     private static final Collector<?, ?, ?> SHUFFLER = Collectors.collectingAndThen(
@@ -23,14 +25,16 @@ public class Sudoku {
     private final int[][] grid = new int[SIZE][SIZE];
     private final int[][] generatedGrid = new int[SIZE][SIZE];
 
-    public Sudoku(Difficulty difficulty) {
+    public Sudoku(int difficulty) {
+        difficulty = MathHelper.clamp(difficulty, 20, 60);
+
         for (int i = 0; i < Sudoku.SIZE; i += Sudoku.SIZE_BOX) {
             this.fillBox(i, i);
         }
 
         this.fillRemaining(0, Sudoku.SIZE_BOX);
 
-        List<Integer> toRemove = IntStream.range(0, Sudoku.SIZE * Sudoku.SIZE).boxed().collect(Sudoku.toShuffledList()).subList(0, difficulty.getMissingValueCount());
+        List<Integer> toRemove = IntStream.range(0, Sudoku.SIZE * Sudoku.SIZE).boxed().collect(Sudoku.toShuffledList()).subList(0, difficulty);
 
         int x, y;
         for (int i : toRemove) {
@@ -326,24 +330,5 @@ public class Sudoku {
             }
         }
         return true;
-    }
-
-    enum Difficulty {
-        EASY(20),
-        NORMAL(40),
-        HARD(60);
-
-        private final int missingValueCount;
-
-        Difficulty(int missingValueCount) {
-            this.missingValueCount = missingValueCount;
-        }
-
-        /**
-         * @return the amount of values to remove from a Sudoku grid
-         */
-        public int getMissingValueCount() {
-            return missingValueCount;
-        }
     }
 }

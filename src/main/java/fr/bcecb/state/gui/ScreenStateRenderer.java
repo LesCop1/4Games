@@ -19,7 +19,7 @@ public class ScreenStateRenderer extends Renderer<ScreenState> {
     @Override
     public void render(ScreenState state, float partialTick) {
 
-        if (state.hasBackground()) {
+        if (state.getBackgroundTexture() != null) {
             ResourceHandle<Texture> backgroundTexture = getTexture(state);
             renderManager.drawBackground(backgroundTexture, state.width, state.height);
         }

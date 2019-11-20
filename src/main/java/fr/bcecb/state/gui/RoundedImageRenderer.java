@@ -8,30 +8,28 @@ import fr.bcecb.util.RenderHelper;
 import fr.bcecb.util.Resources;
 import fr.bcecb.util.Transform;
 
-public class ImageRenderer extends Renderer<Image> {
-
-    public ImageRenderer(RenderManager renderManager) {
+public class RoundedImageRenderer extends Renderer<RoundedImage> {
+    public RoundedImageRenderer(RenderManager renderManager) {
         super(renderManager);
     }
 
     @Override
-    public ResourceHandle<Texture> getTexture(Image image) {
-        return image.getImage();
+    public ResourceHandle<Texture> getTexture(RoundedImage roundedImage) {
+        return roundedImage.getImage();
     }
 
     @Override
-    public void render(Image image, float partialTick) {
+    public void render(RoundedImage roundedImage, float partialTick) {
         Transform transform = RenderHelper.pushTransform();
         {
-            transform.translate(image.getX(), image.getY());
-            transform.rotateZ((float) Math.toRadians(image.getRotation()));
+            transform.translate(roundedImage.getX(), roundedImage.getY());
 
-            if (image.keepRatio()) {
-                Texture texture = renderManager.getResourceManager().getResourceOrDefault(getTexture(image), Resources.DEFAULT_TEXTURE);
+            if (roundedImage.keepRatio()) {
+                Texture texture = renderManager.getResourceManager().getResourceOrDefault(getTexture(roundedImage), Resources.DEFAULT_TEXTURE);
                 float originalWidth = texture.getWidth();
                 float originalHeight = texture.getHeight();
-                float boundWidth = image.getWidth();
-                float boundHeight = image.getHeight();
+                float boundWidth = roundedImage.getWidth();
+                float boundHeight = roundedImage.getHeight();
                 float newWidth = originalWidth;
                 float newHeight = originalHeight;
 
@@ -46,9 +44,9 @@ public class ImageRenderer extends Renderer<Image> {
                 }
 
                 transform.translate((boundWidth - newWidth) / 2f, (boundHeight - newHeight) / 2f);
-                renderManager.drawRect(getTexture(image), 0, 0, newWidth, newHeight);
+                renderManager.drawRoundedRect(getTexture(roundedImage), 0, 0, newWidth, newHeight, roundedImage.getRadius());
             } else {
-                renderManager.drawRect(getTexture(image), 0, 0, image.getWidth(), image.getHeight());
+                renderManager.drawRoundedRect(getTexture(roundedImage), 0, 0, roundedImage.getWidth(), roundedImage.getHeight(), roundedImage.getRadius());
             }
         }
         RenderHelper.popTransform();
