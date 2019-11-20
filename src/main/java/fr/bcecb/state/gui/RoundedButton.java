@@ -6,17 +6,21 @@ import fr.bcecb.resources.ResourceHandle;
 import fr.bcecb.resources.Texture;
 import fr.bcecb.util.Resources;
 
-public class RoundedButton extends GuiElement {
+public class RoundedButton extends Button {
     private float radius;
     private ResourceHandle<Texture> texture;
     private ResourceHandle<Texture> onHoverTexture;
 
     public RoundedButton(int id, float x, float y, float width, float height, float radius, ResourceHandle<Texture> texture) {
-        this(id, x, y, width, height, radius, texture, null);
+        this(id, x, y, width, height, radius, false, null, texture, null);
     }
 
-    public RoundedButton(int id, float x, float y, float width, float height, float radius, ResourceHandle<Texture> texture, ResourceHandle<Texture> onHoverTexture) {
-        super(id, x, y, width, height);
+    public RoundedButton(int id, float x, float y, float width, float height, float radius, boolean centered, String title, ResourceHandle<Texture> texture) {
+        this(id, x, y, width, height, radius, centered, title, texture, null);
+    }
+
+    public RoundedButton(int id, float x, float y, float width, float height, float radius, boolean centered, String title, ResourceHandle<Texture> texture, ResourceHandle<Texture> onHoverTexture) {
+        super(id, x, y, width, height, centered, title);
         this.radius = radius;
         this.texture =  MoreObjects.firstNonNull(texture, Resources.DEFAULT_BUTTON_TEXTURE);
         this.onHoverTexture = MoreObjects.firstNonNull(onHoverTexture, this.texture);
