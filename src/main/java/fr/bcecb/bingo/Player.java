@@ -25,10 +25,6 @@ public class Player {
         this.grids.add(g);
     }
 
-    public List<Grid> getGrids() {
-        return grids;
-    }
-
     public Grid getGrid(int numGrid) {
         return this.grids.get(numGrid);
     }
