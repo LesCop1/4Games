@@ -1,5 +1,6 @@
 package fr.bcecb.batailleNavale;
 
+import fr.bcecb.input.MouseButton;
 import fr.bcecb.resources.ResourceHandle;
 import fr.bcecb.resources.Texture;
 import fr.bcecb.state.StateManager;
@@ -119,7 +120,7 @@ public class FirstPhaseBattleshipScreen extends ScreenState {
     }
 
     @Override
-    public boolean mouseClicked(int id) {
+    public boolean mouseClicked(int id, MouseButton button) {
         if (id == this.nextButton.getId()) {
             if (this.currentPlayer == 0) {
                 this.currentPlayer = 1;

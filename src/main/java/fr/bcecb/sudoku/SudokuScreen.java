@@ -1,6 +1,7 @@
 package fr.bcecb.sudoku;
 
 import com.google.common.base.Stopwatch;
+import fr.bcecb.input.MouseButton;
 import fr.bcecb.resources.ResourceHandle;
 import fr.bcecb.resources.Texture;
 import fr.bcecb.state.EndGameState;
@@ -73,7 +74,7 @@ public class SudokuScreen extends ScreenState {
     }
 
     @Override
-    public boolean mouseClicked(int id) {
+    public boolean mouseClicked(int id, MouseButton button) {
         GuiElement guiElement = getGuiElementById(id);
 
         if (guiElement instanceof SudokuButton) {

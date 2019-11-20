@@ -2,6 +2,7 @@ package fr.bcecb.state;
 
 import fr.bcecb.batailleNavale.BattleshipScreen;
 import fr.bcecb.bingo.SettingsBingoScreen;
+import fr.bcecb.input.MouseButton;
 import fr.bcecb.resources.ResourceHandle;
 import fr.bcecb.resources.Texture;
 import fr.bcecb.state.gui.Button;
@@ -50,7 +51,7 @@ public class GameSelectScreen extends ScreenState {
     }
 
     @Override
-    public boolean mouseClicked(int id) {
+    public boolean mouseClicked(int id, MouseButton button) {
         if (id == this.sudokuGameButton.getId()) {
             stateManager.pushState(new SettingsSudokuScreen(stateManager));
             return true;

@@ -1,5 +1,6 @@
 package fr.bcecb.state;
 
+import fr.bcecb.input.MouseButton;
 import fr.bcecb.state.gui.*;
 import fr.bcecb.util.Constants;
 
@@ -87,7 +88,7 @@ public class EndGameState extends ScreenState {
     }
 
     @Override
-    public boolean mouseClicked(int id) {
+    public boolean mouseClicked(int id, MouseButton button) {
         if (id == replayButton.getId()) {
             stateManager.popMultipleState(gameType.getNbState());
             return true;

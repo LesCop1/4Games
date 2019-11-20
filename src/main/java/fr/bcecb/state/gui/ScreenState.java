@@ -90,7 +90,7 @@ public abstract class ScreenState extends State {
                     return true;
                 }
 
-                if (mouseClicked(element.getId())) {
+                if (mouseClicked(element.getId(), mouseButton)) {
                     return true;
                 }
             }
@@ -130,7 +130,7 @@ public abstract class ScreenState extends State {
 
     public abstract void initGui();
 
-    public abstract boolean mouseClicked(int id);
+    public abstract boolean mouseClicked(int id, MouseButton button);
 
     public void mouseDragged(int id) {
 

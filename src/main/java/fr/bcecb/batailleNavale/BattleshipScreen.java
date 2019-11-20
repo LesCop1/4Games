@@ -1,6 +1,7 @@
 package fr.bcecb.batailleNavale;
 
 import com.google.common.base.Stopwatch;
+import fr.bcecb.input.MouseButton;
 import fr.bcecb.resources.ResourceHandle;
 import fr.bcecb.resources.Texture;
 import fr.bcecb.state.EndGameState;
@@ -89,7 +90,7 @@ public class BattleshipScreen extends ScreenState {
     }
 
     @Override
-    public boolean mouseClicked(int id) {
+    public boolean mouseClicked(int id, MouseButton button) {
         if (id == this.changePlayerButton.getId()) {
             this.currentPlayer = this.currentPlayer == 1 ? 0 : 1;
             this.shoot = false;

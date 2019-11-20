@@ -1,5 +1,6 @@
 package fr.bcecb.state;
 
+import fr.bcecb.input.MouseButton;
 import fr.bcecb.resources.ResourceHandle;
 import fr.bcecb.resources.Texture;
 import fr.bcecb.state.gui.*;
@@ -39,7 +40,7 @@ public class ProfileScreen extends ScreenState {
     }
 
     @Override
-    public boolean mouseClicked(int id) {
+    public boolean mouseClicked(int id, MouseButton button) {
         if (id == BACK_BUTTON_ID) {
             stateManager.popState();
             return true;

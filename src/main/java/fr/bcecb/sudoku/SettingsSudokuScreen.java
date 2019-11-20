@@ -1,5 +1,6 @@
 package fr.bcecb.sudoku;
 
+import fr.bcecb.input.MouseButton;
 import fr.bcecb.state.StateManager;
 import fr.bcecb.state.gui.Button;
 import fr.bcecb.state.gui.GuiElement;
@@ -27,7 +28,7 @@ public class SettingsSudokuScreen extends ScreenState {
     }
 
     @Override
-    public boolean mouseClicked(int id) {
+    public boolean mouseClicked(int id, MouseButton button) {
         if (id == this.sudokuEasyButton.getId()) {
             selectMode(20);
             return true;

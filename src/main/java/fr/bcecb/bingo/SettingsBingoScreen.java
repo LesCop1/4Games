@@ -1,5 +1,6 @@
 package fr.bcecb.bingo;
 
+import fr.bcecb.input.MouseButton;
 import fr.bcecb.state.StateManager;
 import fr.bcecb.state.gui.Button;
 import fr.bcecb.state.gui.GuiElement;
@@ -50,7 +51,7 @@ public class SettingsBingoScreen extends ScreenState {
     }
 
     @Override
-    public boolean mouseClicked(int id) {
+    public boolean mouseClicked(int id, MouseButton button) {
         if (id == this.startButton.getId()) {
             stateManager.pushState(new BingoScreen(stateManager, this.gridCount, this.difficulty));
             return true;

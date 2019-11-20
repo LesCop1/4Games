@@ -1,6 +1,7 @@
 package fr.bcecb.bingo;
 
 import com.google.common.base.Stopwatch;
+import fr.bcecb.input.MouseButton;
 import fr.bcecb.resources.ResourceHandle;
 import fr.bcecb.resources.Texture;
 import fr.bcecb.state.EndGameState;
@@ -88,7 +89,7 @@ public class BingoScreen extends ScreenState {
     }
 
     @Override
-    public boolean mouseClicked(int id) {
+    public boolean mouseClicked(int id, MouseButton button) {
         BingoButton bingoButton = (BingoButton) this.getGuiElementById(id);
 
         if (bingoButton.getValue() == this.lastDrop) {
