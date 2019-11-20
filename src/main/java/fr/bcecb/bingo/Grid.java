@@ -98,27 +98,8 @@ public class Grid {
         return compteur == 24;
     }
 
-    public void dispGrid() {
-        for (int i = 0; i < 3; i++) {
-            for (int j = 0; j < 9; j++) {
-                if (this.grid[i][j] == 0) {
-                    System.out.print("X | ");
-                } else {
-                    System.out.print(this.grid[i][j] + " | ");
-                }
-                if (j == 8) {
-                    System.out.println();
-                }
-            }
-        }
-    }
-
     public int[][] getGrid() {
         return grid;
-    }
-
-    public void setGrid(int[][] grid) {
-        this.grid = grid;
     }
 
     public int getValue(int x, int y) {
