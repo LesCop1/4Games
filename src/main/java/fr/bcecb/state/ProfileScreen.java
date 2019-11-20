@@ -8,7 +8,8 @@ import fr.bcecb.state.gui.*;
 import fr.bcecb.util.Resources;
 
 public class ProfileScreen extends ScreenState {
-    private static final ResourceHandle<Texture> CIRCLE_TEXTURE = new ResourceHandle<>("textures/defaultBackground.png") {};
+    private static final ResourceHandle<Texture> CIRCLE_TEXTURE = new ResourceHandle<>("textures/default/defaultBackground.png") {
+    };
 
 
     public ProfileScreen(StateManager stateManager) {
@@ -27,12 +28,12 @@ public class ProfileScreen extends ScreenState {
         };
 
         for (int i = 0; i < 4; i++) {
-            float centerX,centerY,radius;
+            float centerX, centerY, radius;
             radius = 40;
-            centerX = i%4 * (width/4f) ;
-            centerY = (height/2f) ;
+            centerX = i % 4 * (width / 4f);
+            centerY = (height / 2f);
 
-            drawCircle(centerX,centerY,radius);
+            drawCircle(centerX, centerY, radius);
 
         }
 
@@ -44,9 +45,9 @@ public class ProfileScreen extends ScreenState {
         return false;
     }
 
-    public void drawCircle(float centerX, float centerY,float radius ){
+    public void drawCircle(float centerX, float centerY, float radius) {
 
-        GuiElement score = new CircleImage(300,CIRCLE_TEXTURE,centerX-radius,centerY-radius,radius);
+        GuiElement score = new CircleImage(300, CIRCLE_TEXTURE, centerX - radius, centerY - radius, radius);
         addGuiElement(score);
 
     }

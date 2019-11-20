@@ -6,14 +6,14 @@ import fr.bcecb.state.gui.GuiElement;
 import fr.bcecb.state.gui.ScreenState;
 import fr.bcecb.util.Resources;
 
-public class SudokuDifficultyScreen extends ScreenState {
+public class SettingsSudokuScreen extends ScreenState {
 
     private GuiElement sudokuEasyButton;
     private GuiElement sudokuNormalButton;
     private GuiElement sudokuHardButton;
 
-    public SudokuDifficultyScreen(StateManager stateManager) {
-        super(stateManager, "game_select_menu");
+    public SettingsSudokuScreen(StateManager stateManager) {
+        super(stateManager, "settings_sudoku");
     }
 
     @Override
@@ -22,7 +22,7 @@ public class SudokuDifficultyScreen extends ScreenState {
         this.sudokuNormalButton = new Button(11, (width / 4f) * 2, (height / 2f) - (height / 10f), (width / 8f), (height / 10f), true, "Normal", Resources.DEFAULT_BUTTON_TEXTURE);
         this.sudokuHardButton = new Button(12, (width / 4f) * 3, (height / 2f) - (height / 10f), (width / 8f), (height / 10f), true, "Hard", Resources.DEFAULT_BUTTON_TEXTURE);
 
-        GuiElement backButton = new Button(BACK_BUTTON_ID, (width / 20f), (height - (height / 20f) - (height / 10f)), (height / 10f), (height / 10f), false, "Back", Resources.DEFAULT_BUTTON_TEXTURE);
+        Button backButton = new Button(BACK_BUTTON_ID, (width / 20f), (height - (height / 20f) - (height / 10f)), (height / 10f), (height / 10f), false, "Back", Resources.DEFAULT_BUTTON_TEXTURE);
 
         addGuiElement(sudokuEasyButton, sudokuNormalButton, sudokuHardButton, backButton);
     }
@@ -44,6 +44,6 @@ public class SudokuDifficultyScreen extends ScreenState {
     }
 
     private void selectMode(int difficulty) {
-        stateManager.pushState(new SudokuState(stateManager, difficulty));
+        stateManager.pushState(new SudokuScreen(stateManager, difficulty));
     }
 }

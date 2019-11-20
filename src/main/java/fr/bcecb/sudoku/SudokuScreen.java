@@ -14,8 +14,7 @@ import org.joml.Vector4f;
 
 import java.util.concurrent.TimeUnit;
 
-public class SudokuState extends ScreenState {
-    private static final ResourceHandle<Texture> BACKGROUND = new ResourceHandle<>("textures/sudokuBackground.png") {};
+public class SudokuScreen extends ScreenState {
 
     private final Sudoku sudoku;
     private final int difficulty;
@@ -24,8 +23,8 @@ public class SudokuState extends ScreenState {
     private int selectedX = -1;
     private int selectedY = -1;
 
-    public SudokuState(StateManager stateManager, int difficulty) {
-        super(stateManager, "sudoku_game");
+    public SudokuScreen(StateManager stateManager, int difficulty) {
+        super(stateManager, "game_sudoku");
         this.sudoku = new Sudoku(difficulty);
         this.difficulty = difficulty;
         stopwatch = Stopwatch.createStarted();
@@ -33,7 +32,7 @@ public class SudokuState extends ScreenState {
 
     @Override
     public ResourceHandle<Texture> getBackgroundTexture() {
-        return BACKGROUND;
+        return Constants.SUDOKU_BACKGROUND;
     }
 
     @Override
@@ -155,7 +154,7 @@ public class SudokuState extends ScreenState {
 
         @Override
         public ResourceHandle<Texture> getTexture() {
-            return sudoku.getGeneratedGrid()[caseX][caseY] == 0 ? new ResourceHandle<>("textures/caseSudoku.png") {} : new ResourceHandle<>("textures/caseSudokuBase.png") {};
+            return sudoku.getGeneratedGrid()[caseX][caseY] == 0 ? Constants.SUDOKU_FREE_CASE : Constants.SUDOKU_FIXED_CASE;
         }
     }
 
@@ -163,7 +162,7 @@ public class SudokuState extends ScreenState {
         private final int value;
 
         public SudokuCandidateButton(int id, float x, float y, int value) {
-            super(id, x, y, 20.0f, 20.0f, true, String.valueOf(value), new ResourceHandle<>("textures/candidateValuesTextures.png") {});
+            super(id, x, y, 20.0f, 20.0f, true, String.valueOf(value), Constants.SUDOKU_CANDIDATES_VALUE_CASE);
             this.value = value;
         }
 
