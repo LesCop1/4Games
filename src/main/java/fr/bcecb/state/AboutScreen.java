@@ -12,13 +12,17 @@ public class AboutScreen extends ScreenState {
 
     @Override
     public void initGui() {
-        GuiElement backButton = new Button(-1, (width / 20f), (height - (height / 20f) - (height / 10f)), (height / 10f), (height / 10f), false, "Back", Resources.DEFAULT_BUTTON_TEXTURE);
+        GuiElement backButton = new Button(BACK_BUTTON_ID, (width / 20f), (height - (height / 20f) - (height / 10f)), (height / 10f), (height / 10f), false, "Back", Resources.DEFAULT_BUTTON_TEXTURE);
 
         addGuiElement(backButton);
     }
 
     @Override
     public boolean mouseClicked(int id) {
+        if (id == BACK_BUTTON_ID) {
+            stateManager.popState();
+            return true;
+        }
         return false;
     }
 }

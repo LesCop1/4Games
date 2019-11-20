@@ -55,7 +55,6 @@ public class GameSelectScreen extends ScreenState {
             stateManager.pushState(new ProfileScreen(stateManager));
             return true;
         }
-
         return false;
     }
 }

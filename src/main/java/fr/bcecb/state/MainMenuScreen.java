@@ -49,7 +49,6 @@ public class MainMenuScreen extends ScreenState {
             stateManager.pushState(new AboutScreen(stateManager));
             return true;
         }
-
         return false;
     }
 }

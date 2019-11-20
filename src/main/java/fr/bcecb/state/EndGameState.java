@@ -96,7 +96,6 @@ public class EndGameState extends ScreenState {
             stateManager.popMultipleState(gameType.getNbState() + 2);
             return true;
         }
-
         return false;
     }
 }
