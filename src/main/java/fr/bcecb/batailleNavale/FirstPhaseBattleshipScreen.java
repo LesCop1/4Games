@@ -1,248 +1,132 @@
 package fr.bcecb.batailleNavale;
 
-import fr.bcecb.Game;
-import fr.bcecb.event.KeyboardEvent;
-import fr.bcecb.event.MouseEvent;
-import fr.bcecb.input.Key;
-import fr.bcecb.render.Window;
 import fr.bcecb.resources.ResourceHandle;
-import fr.bcecb.state.gui.Button;
-import fr.bcecb.state.gui.GuiElement;
-import fr.bcecb.state.gui.ScreenState;
-import fr.bcecb.state.gui.Text;
-import org.lwjgl.glfw.GLFW;
 import fr.bcecb.resources.Texture;
+import fr.bcecb.state.StateManager;
+import fr.bcecb.state.gui.Button;
+import fr.bcecb.state.gui.ScreenState;
+import fr.bcecb.util.Constants;
+import fr.bcecb.util.Resources;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class FirstPhaseBattleshipScreen extends ScreenState {
-    private static final ResourceHandle<Texture> defaultTexture = new ResourceHandle<>("textures/BatailleNavale/caseBattleship.png") {
-    };
+    private static final ResourceHandle<Texture> defaultTexture = new ResourceHandle<>("textures/BatailleNavale/caseBattleship.png") {};
 
     private Battleship battleship;
+    private List<Boat> addedBoats = new ArrayList<>();
     private Boat boat;
+    private int currentPlayer;
 
-    private List<String> boatPut = new ArrayList<>();
+    private Button nextButton;
 
-    private int whichPlayer;
-    private int[][] saveGridPlayer1;
-    private int[][] saveGridPlayer2;
-
-
-    private int selectedX = -1;
-    private int selectedY = -1;
-
-    private String selectedBoat = "";
-
-    private String changeOrientation = "Horizontale";
-
-    public FirstPhaseBattleshipScreen(Battleship battleship, int whichPlayer, int[][] gridPlayer1, int[][] gridPlayer2) {
-        super("game-battleship.firstphase");
+    public FirstPhaseBattleshipScreen(StateManager stateManager, Battleship battleship) {
+        super(stateManager, "game_battleship.firstphase");
         this.battleship = battleship;
-        this.whichPlayer = whichPlayer;
-        saveGridPlayer1 = gridPlayer1;
-        saveGridPlayer2 = gridPlayer2;
-        setBackgroundTexture(new ResourceHandle<>("textures/battleshipScreen.png") {
-        });
+        this.currentPlayer = 0;
     }
 
     @Override
     public void initGui() {
-        battleship.initGrid();
-        setBackgroundTexture(new ResourceHandle<>("textures/BatailleNavale/battleshipScreen.png") {
-        });
-        Button caseButton;
-        int id = 1;
+        setBackgroundTexture(Constants.BS_BACKGROUND);
+
         float btnSize = 14.99f;
+
         float x = (width / 2f) - (9 * btnSize / 2) - 4;
-        for (int i = 0; i < 10; ++i, x += btnSize) {
+        for (int i = 0; i < Battleship.GRID_SIZE; i++, x += btnSize) {
+
             float y = (height / 2f) - (9 * btnSize / 2) - 4;
-            for (int j = 0; j < 10; ++j, ++id, y += btnSize) {
-                int caseX = i;
-                int caseY = j;
-                caseButton = new Button(id, x, y, btnSize, btnSize, false) {
-                    @Override
-                    public void onClick(MouseEvent.Click event) {
-                        super.onClick(event);
-
-                        if (event.getButton() == GLFW.GLFW_MOUSE_BUTTON_RIGHT) {
-                            battleship.swapOrientation(boat);
-                        }
-
-                        if (selectedBoat != "" && !battleship.cannotPlace(boat, caseX, caseY)
-                                && !boatPut.contains(selectedBoat)) {
-                            boatPut.add(selectedBoat);
-                            battleship.putBoat(boat, caseX, caseY);
-                            selectedBoat = "";
-                        }
-                    }
-
+            for (int j = 0; j < Battleship.GRID_SIZE; j++, y += btnSize) {
+                int finalI = i;
+                int finalJ = j;
+                Button caseButton = new Button(((10 * finalI) + finalJ), x, y, btnSize, btnSize, false) {
                     @Override
                     public boolean isDisabled() {
-                        if (boatPut.size() == 5) return true;
-                        return battleship.getCurrentPlayerBoard()[caseX][caseY] != 0;
+                        return ((battleship.getPlayerGrid(currentPlayer)[finalI][finalJ] != Battleship.DEFAULT_VALUE) || (addedBoats.size() == 5));
                     }
 
                     @Override
                     public ResourceHandle<Texture> getTexture() {
-                        return battleship.getCurrentPlayerBoard()[caseX][caseY] != 0 ? whichTexture(battleship.getCurrentPlayerBoard()[caseX][caseY]) : defaultTexture;
+                        int value = battleship.getPlayerGrid(currentPlayer)[finalI][finalJ];
+                        return value != Battleship.DEFAULT_VALUE ? findTexture(value) : defaultTexture;
                     }
 
-                    public ResourceHandle<Texture> whichTexture(int num) {
-                        if (num == 5) return new ResourceHandle<>("textures/BatailleNavale/A.png") {
+                    private ResourceHandle<Texture> findTexture(int i) {
+                        return switch (i) {
+                            case 0 -> new ResourceHandle<>("textures/BatailleNavale/T.png") {};
+                            case 1 -> new ResourceHandle<>("textures/BatailleNavale/S.png") {};
+                            case 2 -> new ResourceHandle<>("textures/BatailleNavale/F.png") {};
+                            case 3 -> new ResourceHandle<>("textures/BatailleNavale/C.png") {};
+                            case 4 -> new ResourceHandle<>("textures/BatailleNavale/A.png") {};
+                            default -> null;
                         };
-                        if (num == 4) return new ResourceHandle<>("textures/BatailleNavale/C.png") {
-                        };
-                        if (num == 3) return new ResourceHandle<>("textures/BatailleNavale/F.png") {
-                        };
-                        if (num == 2) return new ResourceHandle<>("textures/BatailleNavale/S.png") {
-                        };
-                        if (num == 1) return new ResourceHandle<>("textures/BatailleNavale/T.png") {
-                        };
-                        return defaultTexture;
                     }
                 };
+
                 addGuiElement(caseButton);
             }
         }
 
-        final GuiElement backButton = new Button(999, 0, 0, 50 / ((float) 1920 / width), 50 / ((float) 1920 / width), false, new ResourceHandle<>("textures/back_button.png") {
-        }) {
-            @Override
-            //TODO I'm not sure too
-            public void onClick(MouseEvent.Click event) {
-                Game.instance().getStateManager().popState();
-            }
-        };
-        addGuiElement(backButton);
-
-        Button putFinish = new Button(107, 4.5f * (width / 5f), 50, (height / 10f), (height / 10f), false, "Joueur Suivant",
-                new ResourceHandle<Texture>("textures/defaultButton.png") {
-                }) {
-            @Override
-            public void onClick(MouseEvent.Click event) {
-                super.onClick(event);
-                onExit();
-            }
-
-            @Override
-            public boolean isVisible() {
-                if (boatPut.size() == 5) return true;
-                else return false;
-            }
-        };
-        addGuiElement(putFinish);
-
-//TODO Pixel Bauduin strat
-        Button a = new Button(102, (width / 20f), 50, btnSize*Boat.Type.AIRCRAFT_CARRIER.getSize(), btnSize, false, "",
-                new ResourceHandle<Texture>("textures/BatailleNavale/Aircraft_Carrier.png") {
-                }) {
-            @Override
-            public void onClick(MouseEvent.Click event) {
-                super.onClick(event);
-                selectedBoat = "A";
-                boat = new Boat(Boat.Type.AIRCRAFT_CARRIER);
-            }
-
-            @Override
-            public boolean isVisible() {
-                for (String val : boatPut){
-                    if(val=="A") return false;
+        for (Boat.Type type : Boat.Type.values()) {
+            Button boatButton = new Button(100 + type.ordinal(), (width / 20f), 50 + (type.ordinal() * 30), btnSize * type.getSize(), btnSize, false, type.getTextureHandle()) {
+                @Override
+                public boolean isVisible() {
+                    return checkIfNotPlaced(type.getName());
                 }
-                return true;
-            }
-        };
-        addGuiElement(a);
+            };
+            addGuiElement(boatButton);
+        }
 
-        Button c = new Button(103, (width / 20f), 80, btnSize*Boat.Type.CRUISER.getSize(), btnSize, false, "",
-                new ResourceHandle<Texture>("textures/BatailleNavale/Cruiser.png") {
-                }) {
+        this.nextButton = new Button(110, 4.5f * (width / 5f), 50, (height / 10f), (height / 10f), false, "", Resources.DEFAULT_BUTTON_TEXTURE) {
             @Override
-            public void onClick(MouseEvent.Click event) {
-                super.onClick(event);
-                selectedBoat = "C";
-                boat = new Boat(Boat.Type.CRUISER);
+            public String getTitle() {
+                return currentPlayer == 0 ? "Joueur Suivant" : "Commencer la partie";
             }
 
             @Override
             public boolean isVisible() {
-                for (String val : boatPut){
-                    if(val=="C") return false;
-                }
-                return true;
+                return addedBoats.size() == 5;
             }
         };
-        addGuiElement(c);
 
-        Button f = new Button(104, (width / 20f), 110, btnSize*Boat.Type.FRIGATE.getSize(), btnSize, false, "",
-                new ResourceHandle<Texture>("textures/BatailleNavale/Frigate.png") {
-                }) {
-            @Override
-            public void onClick(MouseEvent.Click event) {
-                super.onClick(event);
-                selectedBoat = "F";
-                boat = new Boat(Boat.Type.FRIGATE);
-            }
-
-            @Override
-            public boolean isVisible() {
-                for (String val : boatPut){
-                    if(val=="F") return false;
-                }
-                return true;
-            }
-        };
-        addGuiElement(f);
-
-        Button s = new Button(105, (width / 20f), 140, btnSize*Boat.Type.SUBMARINE.getSize(), btnSize, false, "",
-                new ResourceHandle<Texture>("textures/BatailleNavale/Submarine.png") {
-                }) {
-            @Override
-            public void onClick(MouseEvent.Click event) {
-                super.onClick(event);
-                selectedBoat = "S";
-                boat = new Boat(Boat.Type.SUBMARINE);
-            }
-
-            @Override
-            public boolean isVisible() {
-                for (String val : boatPut){
-                    if(val=="S") return false;
-                }
-                return true;
-            }
-        };
-        addGuiElement(s);
-
-        Button t = new Button(106, (width / 20f), 170, btnSize*Boat.Type.TORPEDO.getSize(), btnSize, false, "",
-                new ResourceHandle<Texture>("textures/BatailleNavale/Torpedo.png") {
-                }) {
-            @Override
-            public void onClick(MouseEvent.Click event) {
-                super.onClick(event);
-                selectedBoat = "T";
-                boat = new Boat(Boat.Type.TORPEDO);
-            }
-
-            @Override
-            public boolean isVisible() {
-                for (String val : boatPut){
-                    if(val=="T") return false;
-                }
-                return true;
-            }
-        };
-        addGuiElement(t);
+        Button backButton = new Button(BACK_BUTTON_ID, 0, 0, 50 / ((float) 1920 / width), 50 / ((float) 1920 / width), false, new ResourceHandle<>("textures/back_button.png") {});
+        addGuiElement(this.nextButton, backButton);
     }
 
     @Override
-    public void onExit() {
-        super.onExit();
-        if (whichPlayer == 1) {
-            Game.instance().getStateManager().pushState(new BattleshipScreen(battleship.getCurrentPlayerBoard(), saveGridPlayer2, 2));
-        } else {
-            Game.instance().getStateManager().pushState(new BattleshipScreen(saveGridPlayer1, battleship.getCurrentPlayerBoard(), 3));
+    public boolean mouseClicked(int id) {
+        if (id == this.nextButton.getId()) {
+            if (this.currentPlayer == 0) {
+                this.currentPlayer = 1;
+                this.addedBoats.clear();
+            } else {
+                stateManager.popState();
+            }
+            return true;
+        } else if (id < 100) {
+            // TODO : right click -> battleship.swapOrientation
+            int x = id / 10;
+            int y = id % 10;
+            if (this.boat != null && !this.battleship.cannotPlace(this.currentPlayer, this.boat, x, y) && !this.addedBoats.contains(this.boat)) {
+                this.addedBoats.add(this.boat);
+                this.battleship.putBoat(this.currentPlayer, this.boat, x, y);
+                this.boat = null;
+            }
+            return true;
+        } else if (id < 105) {
+            this.boat = new Boat(Boat.Type.values()[id - 100]);
+            return true;
         }
+        return false;
+    }
+
+    private boolean checkIfNotPlaced(String s) {
+        for (Boat boat : this.addedBoats) {
+            if (boat.getType().getName().equals(s)) {
+                return false;
+            }
+        }
+        return true;
     }
 }

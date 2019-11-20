@@ -1,5 +1,8 @@
 package fr.bcecb.batailleNavale;
 
+import fr.bcecb.resources.ResourceHandle;
+import fr.bcecb.resources.Texture;
+
 public class Boat {
     private final Boat.Type type;
     private int hits;
@@ -36,8 +39,7 @@ public class Boat {
 
     //TODO I will use this shit to display some shit information on the screen
     public boolean isAlive() {
-        if(hits==type.getSize()) return false;
-        else return true;
+        return hits != type.getSize();
     }
 
     public boolean isHorizontal() {
@@ -56,25 +58,21 @@ public class Boat {
         return type;
     }
 
-    enum Type {
-        AIRCRAFT_CARRIER("A", 5, 5), //AircraftCarrier
-        CRUISER("C", 4, 4), //Cruiser
-        FRIGATE("F", 3, 3), //Frigate
-        SUBMARINE("S", 3, 2), //Submarine
-        TORPEDO("T", 2, 1); //Torpedo
+    public enum Type {
+        TORPEDO("T", 2, new ResourceHandle<>("textures/BatailleNavale/Torpedo.png") {}),
+        SUBMARINE("S", 3, new ResourceHandle<>("textures/BatailleNavale/Submarine.png") {}),
+        FRIGATE("F", 3, new ResourceHandle<>("textures/BatailleNavale/Frigate.png") {}),
+        CRUISER("C", 4, new ResourceHandle<>("textures/BatailleNavale/Cruiser.png") {}),
+        AIRCRAFT_CARRIER("A", 5, new ResourceHandle<>("textures/BatailleNavale/Aircraft_Carrier.png") {});
 
         private final String name;
         private final int sizeBoat;
-        private final int id;
+        private final ResourceHandle<Texture> textureHandle;
 
-        Type(String name, int sizeBoat, int id) {
+        Type(String name, int sizeBoat, ResourceHandle<Texture> textureHandle) {
             this.name = name;
             this.sizeBoat = sizeBoat;
-            this.id = id;
-        }
-
-        public int getId() {
-            return id;
+            this.textureHandle = textureHandle;
         }
 
         public String getName() {
@@ -83,6 +81,10 @@ public class Boat {
 
         public int getSize() {
             return sizeBoat;
+        }
+
+        public ResourceHandle<Texture> getTextureHandle() {
+            return textureHandle;
         }
     }
 }

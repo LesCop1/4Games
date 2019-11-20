@@ -1,145 +1,120 @@
 package fr.bcecb.batailleNavale;
 
-import fr.bcecb.Game;
-import fr.bcecb.event.MouseEvent;
+import com.google.common.base.Stopwatch;
 import fr.bcecb.resources.ResourceHandle;
 import fr.bcecb.resources.Texture;
+import fr.bcecb.state.EndGameState;
+import fr.bcecb.state.StateManager;
 import fr.bcecb.state.gui.Button;
-import fr.bcecb.state.gui.GuiElement;
 import fr.bcecb.state.gui.ScreenState;
-import org.lwjgl.glfw.GLFW;
+import fr.bcecb.util.Constants;
+import fr.bcecb.util.MathHelper;
+import fr.bcecb.util.Resources;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
+import java.util.concurrent.TimeUnit;
 
 public class BattleshipScreen extends ScreenState {
-    private static final ResourceHandle<Texture> defaultTexture = new ResourceHandle<>("textures/BatailleNavale/caseBattleship.png") {
-    };
-    private static final ResourceHandle<Texture> sink = new ResourceHandle<>("textures/BatailleNavale/sink.png") {
-    };
-    private static final ResourceHandle<Texture> touch = new ResourceHandle<>("textures/BatailleNavale/touch.png") {
-    };
-    private Battleship battleship = new Battleship();
-    private Boat boat;
-    private int[][] gridPlayer1;
-    private int[][] gridPlayer2;
-    private int[][] gridTemp;
-    private int whichPlayer = 1;
+    private static final ResourceHandle<Texture> defaultTexture = new ResourceHandle<>("textures/BatailleNavale/caseBattleship.png") {};
+    private static final ResourceHandle<Texture> sink = new ResourceHandle<>("textures/BatailleNavale/sink.png") {};
+    private static final ResourceHandle<Texture> touch = new ResourceHandle<>("textures/BatailleNavale/touch.png") {};
+
+    private Battleship battleship;
+    private int currentPlayer;
     private boolean shoot = false;
-    
-    private Map<Integer, Boat> hm = new HashMap<Integer, Boat>();
 
-    public BattleshipScreen() {
-        super("game-battleship");
-    }
+    private Button changePlayerButton;
+    private Stopwatch stopwatch;
 
-    public BattleshipScreen(int[][] grid1, int[][] grid2, int whichPlayer) {
-        super("game-battleship");
-        gridPlayer1 = grid1;
-        gridPlayer2 = grid2;
-        this.whichPlayer = whichPlayer;
+    public BattleshipScreen(StateManager stateManager) {
+        super(stateManager, "game_battleship");
+        this.battleship = new Battleship();
+        this.battleship.init();
+        this.stopwatch = Stopwatch.createStarted();
     }
 
     @Override
     public void onEnter() {
         super.onEnter();
-        if (whichPlayer < 3)
-            Game.instance().getStateManager().pushState(new FirstPhaseBattleshipScreen(battleship, whichPlayer, gridPlayer1, gridPlayer2));
-        else {
-            whichPlayer-=2; //On repasse au joueur 1 quand tous les bateaux sont placés
-            gridTemp=gridPlayer2;
-        }
+        stateManager.pushState(new FirstPhaseBattleshipScreen(stateManager, battleship));
     }
 
     @Override
     public void initGui() {
-        hm.put(5, new Boat(Boat.Type.AIRCRAFT_CARRIER));
-        hm.put(4, new Boat(Boat.Type.CRUISER));
-        hm.put(3, new Boat(Boat.Type.FRIGATE));
-        hm.put(2, new Boat(Boat.Type.SUBMARINE));
-        hm.put(1, new Boat(Boat.Type.TORPEDO));
-        setBackgroundTexture(new ResourceHandle<>("textures/BatailleNavale/background_battleship.jpg") {
-        });
-        Button caseButton;
-        int id = 1;
+        setBackgroundTexture(Constants.BS_BACKGROUND);
+
         float btnSize = 14.99f;
+
         float x = (width / 2f) - (9 * btnSize / 2) - 4;
-        for (int i = 0; i < 10; ++i, x += btnSize) {
+        for (int i = 0; i < Battleship.GRID_SIZE; i++, x += btnSize) {
+
             float y = (height / 2f) - (9 * btnSize / 2) - 4;
-            for (int j = 0; j < 10; ++j, ++id, y += btnSize) {
-                int caseX = i;
-                int caseY = j;
-                caseButton = new Button(id, x, y, btnSize, btnSize, false) {
-
-                    @Override
-                    public void onClick(MouseEvent.Click event) {
-                        super.onClick(event);
-
-                        if (!shoot && event.getButton() == GLFW.GLFW_MOUSE_BUTTON_LEFT) {
-                            boat = hm.get(gridTemp[caseX][caseY]);
-                            if (battleship.shoot(boat, gridTemp, caseX, caseY))
-                                gridTemp[caseX][caseY] = 100; //Touché
-                            else gridTemp[caseX][caseY] = 200; //Coulé
-                            if(battleship.checkWinCondition(gridTemp)) System.out.println("ggwp"); //TODO Jolie fenêtre pour dire kiki gagne et bloquer tout le reste
-                            shoot = true;
-                        }
-                    }
-
+            for (int j = 0; j < Battleship.GRID_SIZE; j++, y += btnSize) {
+                int finalI = i;
+                int finalJ = j;
+                Button caseButton = new Button(((10 * finalI) + finalJ), x, y, btnSize, btnSize, false) {
                     @Override
                     public boolean isDisabled() {
-                        if(shoot) return true;
-                        return gridTemp[caseX][caseY] > 5;
+                        int value = battleship.getPlayerGrid(currentPlayer)[finalI][finalJ];
+                        return shoot || value == Battleship.SUCCESS_HIT || value == Battleship.FAILED_HIT;
                     }
 
                     @Override
                     public ResourceHandle<Texture> getTexture() {
-                        return gridTemp[caseX][caseY] > 5 ? changeTexture() : defaultTexture;
-                    }
-
-                    public ResourceHandle<Texture> changeTexture() {
-                        return gridTemp[caseX][caseY] == 200 ? sink : touch;
+                        int value = battleship.getPlayerGrid(currentPlayer)[finalI][finalJ];
+                        return value == Battleship.SUCCESS_HIT ? touch : value == Battleship.FAILED_HIT ? sink : defaultTexture;
                     }
                 };
                 addGuiElement(caseButton);
             }
         }
 
-        Button changePlayer = new Button(102, (width / 20f), 50, (height / 10f), (height / 10f), false, "Joueur Suivant",
-                new ResourceHandle<Texture>("textures/defaultButton.png") {
-                }) {
-            @Override
-            public void onClick(MouseEvent.Click event) {
-                super.onClick(event);
-                if(whichPlayer==1){
-                    gridPlayer2=gridTemp;
-                    gridTemp=gridPlayer1;
-                    whichPlayer++;
-                }else{
-                    gridPlayer1=gridTemp;
-                    gridTemp=gridPlayer2;
-                    whichPlayer--;
-                }
-                shoot = false;
-            }
-
+        this.changePlayerButton = new Button(100, (width / 20f), 50, (height / 10f), (height / 10f), false, "Joueur Suivant", Resources.DEFAULT_BUTTON_TEXTURE) {
             @Override
             public boolean isVisible() {
-                if (shoot==true) return true;
-                else return false;
+                return shoot;
             }
         };
-        addGuiElement(changePlayer);
 
-        final GuiElement backButton = new Button(999, 0, 0, 50 / ((float) 1920 / width), 50 / ((float) 1920 / width), false, new ResourceHandle<>("textures/back_button.png") {
-        }) {
-            @Override
-            public void onClick(MouseEvent.Click event) {
-                //TODO This shit doesn't work very well
-                Game.instance().getStateManager().popState();
+        Button backButton = new Button(BACK_BUTTON_ID, 0, 0, 50 / ((float) 1920 / width), 50 / ((float) 1920 / width), false, new ResourceHandle<>("textures/back_button.png") {});
+        addGuiElement(this.changePlayerButton, backButton);
+    }
+
+    @Override
+    public boolean mouseClicked(int id) {
+        if (id == this.changePlayerButton.getId()) {
+            this.currentPlayer = this.currentPlayer == 1 ? 0 : 1;
+            this.shoot = false;
+            return true;
+        } else if (id < 100) {
+            if (!this.shoot) {
+                int x = id / 10;
+                int y = id % 10;
+                this.battleship.shoot(this.currentPlayer, x, y);
+                this.shoot = true;
+                if (this.battleship.checkWinCondition(this.currentPlayer)) {
+                    this.stopwatch.stop();
+                    long time = this.stopwatch.elapsed(TimeUnit.MILLISECONDS);
+                    stateManager.pushState(new EndGameState(stateManager, Constants.GameType.BATTLESHIP, time, calculatePoints()));
+                }
             }
-        };
-        addGuiElement(backButton);
+        }
+        return false;
+    }
+
+    private int calculatePoints() {
+        long time = this.stopwatch.elapsed(TimeUnit.SECONDS);
+
+        int failedCount = 0;
+        for (int i = 0; i < Battleship.GRID_SIZE; i++) {
+            for (int j = 0; j < Battleship.GRID_SIZE; j++) {
+                int value = this.battleship.getPlayerGrid(this.currentPlayer)[i][j];
+                if (value == Battleship.FAILED_HIT) {
+                    failedCount++;
+                }
+            }
+        }
+        time = time - 120;
+        int minusPoint = (int) (((time / 30) * 3) + (failedCount * 10));
+        return MathHelper.clamp(600 - minusPoint, 200, 600);
     }
 }

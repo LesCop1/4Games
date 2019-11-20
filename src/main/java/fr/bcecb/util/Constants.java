@@ -34,6 +34,10 @@ public class Constants {
     public static final ResourceHandle<Texture> BINGO_CASE_CHECKED = new ResourceHandle<>("textures/bingo/caseBGchecked.png") {
     };
 
+    /* BS */
+    public static final ResourceHandle<Texture> BS_BACKGROUND = new ResourceHandle<>("textures/BatailleNavale/background_battleship.jpg") {};
+
+
     /* GAME BASED VARS */
     public static final String MONEY_NAME = "FourCoins";
     public static final String MONEY_NAME_SHORT = "FC";
@@ -42,7 +46,7 @@ public class Constants {
     public static Map<GameType, Long> BEST_TIMES = new EnumMap<>(GameType.class) {{
         put(GameType.SUDOKU, 0L);
         put(GameType.BINGO, 0L);
-        put(GameType.BATTLESHIP, 52543L);
+        put(GameType.BATTLESHIP, 0L);
         put(GameType.POKER, 52543L);
     }};
 
@@ -52,7 +56,7 @@ public class Constants {
     public enum GameType {
         SUDOKU("Sudoku", 2),
         BINGO("Bingo", 2),
-        BATTLESHIP("Bataille Navale", 2),
+        BATTLESHIP("Bataille Navale", 1),
         POKER("Poker", 2);
 
         private final String name;

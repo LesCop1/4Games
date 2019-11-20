@@ -1,81 +1,76 @@
 package fr.bcecb.batailleNavale;
 
 public class Battleship { //Gère tous les aspects d'une partie, création de la grille, changer l'orientation d'un bateau, le placer, touché/coulé, win condition
-    private final int[][][] boards = new int[2][10][10];
-    private int currentPlayer = 0;
+    public static final int GRID_SIZE = 10;
+    public static final int DEFAULT_VALUE = -1;
+    public static final int SUCCESS_HIT = 100;
+    public static final int FAILED_HIT = 200;
 
-    public int[][] getCurrentPlayerBoard() {
-        return boards[currentPlayer];
-    }
+    private final int[][][] boards = new int[2][GRID_SIZE][GRID_SIZE];
 
-    public int[][] getNextPlayerBoard() {
-        return boards[getNextPlayer()];
-    }
-
-    public void initGrid() {
-        for (int i = 0; i < 10; i++) {
-            for (int j = 0; j < 10; j++) {
-                getCurrentPlayerBoard()[i][j] = 0;
+    public void init() {
+        for (int i = 0; i < boards.length; i++) {
+            for (int j = 0; j < GRID_SIZE; j++) {
+                for (int k = 0; k < GRID_SIZE; k++) {
+                    this.boards[i][j][k] = DEFAULT_VALUE;
+                }
             }
         }
     }
 
-    public int getCurrentPlayer() {
-        return currentPlayer;
-    }
-
-    public int getNextPlayer() {
-        return (this.currentPlayer + 1) % 2;
-    }
-
-    public void putBoat(Boat boat, int x, int y) { //Place les bateaux
-        if (cannotPlace(boat, x, y)) return;
+    public void putBoat(int currentPlayer, Boat boat, int x, int y) {
+        if (cannotPlace(currentPlayer, boat, x, y)) return;
         if (boat.isHorizontal()) {
             boat.setPosition(x, y);
             for (int i = 0; i < boat.getSize(); i++) {
-                getCurrentPlayerBoard()[x + i][y] = boat.getType().getId();
+                getPlayerGrid(currentPlayer)[x + i][y] = boat.getType().ordinal();
             }
         } else {
             boat.setPosition(x, y);
             for (int i = 0; i < boat.getSize(); i++) {
-                getCurrentPlayerBoard()[x][y + i] = boat.getType().getId();
+                getPlayerGrid(currentPlayer)[x][y + i] = boat.getType().ordinal();
             }
         }
     }
 
-    public boolean cannotPlace(Boat boat, int x, int y) {
+    public boolean cannotPlace(int currentPlayer, Boat boat, int x, int y) {
         if (boat.isHorizontal()) {
             for (int i = 0; i < boat.getSize(); i++) {
-                if (x + i >= 10 || getCurrentPlayerBoard()[x + i][y] != 0) return true;
+                if (x + i >= GRID_SIZE || getPlayerGrid(currentPlayer)[x + i][y] != DEFAULT_VALUE) return true;
             }
         } else {
             for (int i = 0; i < boat.getSize(); i++) {
-                if (y + i >= 10 || getCurrentPlayerBoard()[x][y + i] != 0) return true;
+                if (y + i >= GRID_SIZE || getPlayerGrid(currentPlayer)[x][y + i] != DEFAULT_VALUE) return true;
             }
         }
         return false;
     }
 
-    public void swapOrientation(Boat boat) { //Change l'orientation du bateau passé en paramètre
+    public void swapOrientation(Boat boat) {
         if (boat.isHorizontal()) boat.setHorizontal(false);
         else boat.setHorizontal(true);
     }
 
-    public boolean shoot(Boat boat, int[][] board, int x, int y) {
-        if (boat == null) return false;
-        else if (board[x][y] > 0 && board[x][y] < 6) {
-            boat.hits();
-            return true;
+    public void shoot(int currentPlayer, int x, int y) {
+        int[][] playerGrid = getPlayerGrid(currentPlayer);
+        if (0 <= playerGrid[x][y] && playerGrid[x][y] <= 4) {
+            playerGrid[x][y] = SUCCESS_HIT;
+        } else {
+            playerGrid[x][y] = FAILED_HIT;
         }
-        return false;
     }
 
-    public boolean checkWinCondition(int[][] board) {
-        for (int i = 0; i < 10; i++) {
-            for (int j = 0; j < 10; j++) {
-                if (board[i][j] > 0 && board[i][j] < 6) return false;
+    public boolean checkWinCondition(int currentPlayer) {
+        int[][] playerGrid = getPlayerGrid(currentPlayer);
+        for (int i = 0; i < GRID_SIZE; i++) {
+            for (int j = 0; j < GRID_SIZE; j++) {
+                if (0 <= playerGrid[i][j] && playerGrid[i][j] <= 4) return false;
             }
         }
         return true;
+    }
+
+    public int[][] getPlayerGrid(int player) {
+        return this.boards[player];
     }
 }
