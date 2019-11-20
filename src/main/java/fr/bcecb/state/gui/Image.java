@@ -1,6 +1,5 @@
 package fr.bcecb.state.gui;
 
-import fr.bcecb.event.MouseEvent;
 import fr.bcecb.resources.ResourceHandle;
 import fr.bcecb.resources.Texture;
 
@@ -48,23 +47,4 @@ public class Image extends GuiElement {
 
     }
 
-    @Override
-    public void onClick(MouseEvent.Click event) {
-
-    }
-
-    @Override
-    public void onDrag(MouseEvent.Click clickEvent, MouseEvent.Move moveEvent) {
-
-    }
-
-    @Override
-    public void onHover(MouseEvent.Move event) {
-
-    }
-
-    @Override
-    public void onScroll(MouseEvent.Scroll event) {
-
-    }
 }

@@ -4,7 +4,6 @@ import fr.bcecb.state.StateManager;
 import fr.bcecb.state.gui.Button;
 import fr.bcecb.state.gui.GuiElement;
 import fr.bcecb.state.gui.ScreenState;
-import fr.bcecb.util.Resources;
 
 public class SettingsSudokuScreen extends ScreenState {
 
@@ -18,11 +17,11 @@ public class SettingsSudokuScreen extends ScreenState {
 
     @Override
     public void initGui() {
-        this.sudokuEasyButton = new Button(10, (width / 4f), (height / 2f) - (height / 10f), (width / 8f), (height / 10f), true, "Easy", Resources.DEFAULT_BUTTON_TEXTURE);
-        this.sudokuNormalButton = new Button(11, (width / 4f) * 2, (height / 2f) - (height / 10f), (width / 8f), (height / 10f), true, "Normal", Resources.DEFAULT_BUTTON_TEXTURE);
-        this.sudokuHardButton = new Button(12, (width / 4f) * 3, (height / 2f) - (height / 10f), (width / 8f), (height / 10f), true, "Hard", Resources.DEFAULT_BUTTON_TEXTURE);
+        this.sudokuEasyButton = new Button(10, (width / 4f), (height / 2f) - (height / 10f), (width / 8f), (height / 10f), true, "Easy");
+        this.sudokuNormalButton = new Button(11, (width / 4f) * 2, (height / 2f) - (height / 10f), (width / 8f), (height / 10f), true, "Normal");
+        this.sudokuHardButton = new Button(12, (width / 4f) * 3, (height / 2f) - (height / 10f), (width / 8f), (height / 10f), true, "Hard");
 
-        Button backButton = new Button(BACK_BUTTON_ID, (width / 20f), (height - (height / 20f) - (height / 10f)), (height / 10f), (height / 10f), false, "Back", Resources.DEFAULT_BUTTON_TEXTURE);
+        Button backButton = new Button(BACK_BUTTON_ID, (width / 20f), (height - (height / 20f) - (height / 10f)), (height / 10f), (height / 10f), false, "Back");
 
         addGuiElement(sudokuEasyButton, sudokuNormalButton, sudokuHardButton, backButton);
     }

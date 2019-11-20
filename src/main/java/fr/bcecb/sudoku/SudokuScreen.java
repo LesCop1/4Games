@@ -9,7 +9,6 @@ import fr.bcecb.state.gui.Button;
 import fr.bcecb.state.gui.GuiElement;
 import fr.bcecb.state.gui.ScreenState;
 import fr.bcecb.util.Constants;
-import fr.bcecb.util.Resources;
 import org.joml.Vector4f;
 
 import java.util.concurrent.TimeUnit;
@@ -37,7 +36,7 @@ public class SudokuScreen extends ScreenState {
 
     @Override
     public void initGui() {
-        Button backButton = new Button(BACK_BUTTON_ID, (width / 20f), (height - (height / 20f) - (height / 10f)), (height / 10f), (height / 10f), false, "Back", Resources.DEFAULT_BUTTON_TEXTURE);
+        Button backButton = new Button(BACK_BUTTON_ID, (width / 20f), (height - (height / 20f) - (height / 10f)), (height / 10f), (height / 10f), false, "Back");
 
         int id = 1;
 
@@ -154,7 +153,17 @@ public class SudokuScreen extends ScreenState {
 
         @Override
         public ResourceHandle<Texture> getTexture() {
-            return sudoku.getGeneratedGrid()[caseX][caseY] == 0 ? Constants.SUDOKU_FREE_CASE : Constants.SUDOKU_FIXED_CASE;
+            return Constants.SUDOKU_FREE_CASE;
+        }
+
+        @Override
+        public ResourceHandle<Texture> getHoverTexture() {
+            return null;
+        }
+
+        @Override
+        public ResourceHandle<Texture> getDisabledTexture() {
+            return Constants.SUDOKU_FIXED_CASE;
         }
     }
 
@@ -162,8 +171,18 @@ public class SudokuScreen extends ScreenState {
         private final int value;
 
         public SudokuCandidateButton(int id, float x, float y, int value) {
-            super(id, x, y, 20.0f, 20.0f, true, String.valueOf(value), Constants.SUDOKU_CANDIDATES_VALUE_CASE);
+            super(id, x, y, 20.0f, 20.0f, true, String.valueOf(value));
             this.value = value;
+        }
+
+        @Override
+        public ResourceHandle<Texture> getTexture() {
+            return Constants.SUDOKU_CANDIDATES_VALUE_CASE;
+        }
+
+        @Override
+        public ResourceHandle<Texture> getHoverTexture() {
+            return null;
         }
 
         public int getValue() {

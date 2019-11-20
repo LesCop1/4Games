@@ -1,6 +1,7 @@
 package fr.bcecb.state.gui;
 
 import fr.bcecb.Game;
+import fr.bcecb.input.MouseButton;
 import fr.bcecb.resources.ResourceHandle;
 import fr.bcecb.resources.Texture;
 import fr.bcecb.state.State;
@@ -79,7 +80,7 @@ public abstract class ScreenState extends State {
         }
     }
 
-    public final boolean mouseClicked(float x, float y) {
+    public final boolean mouseClicked(MouseButton mouseButton, float x, float y) {
         for (GuiElement element : getGuiElements()) {
             if (!element.isVisible() || element.isDisabled()) continue;
 

@@ -1,6 +1,5 @@
 package fr.bcecb.state.gui;
 
-import fr.bcecb.event.MouseEvent;
 import org.joml.Vector4f;
 
 public class RoundedRectangle extends Rectangle {
@@ -17,26 +16,6 @@ public class RoundedRectangle extends Rectangle {
 
     @Override
     public void onUpdate() {
-
-    }
-
-    @Override
-    public void onClick(MouseEvent.Click event) {
-
-    }
-
-    @Override
-    public void onDrag(MouseEvent.Click clickEvent, MouseEvent.Move moveEvent) {
-
-    }
-
-    @Override
-    public void onHover(MouseEvent.Move event) {
-
-    }
-
-    @Override
-    public void onScroll(MouseEvent.Scroll event) {
 
     }
 

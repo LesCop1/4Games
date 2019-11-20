@@ -1,7 +1,6 @@
 package fr.bcecb.state.gui;
 
 import com.google.common.base.MoreObjects;
-import fr.bcecb.event.MouseEvent;
 import fr.bcecb.util.Constants;
 import fr.bcecb.util.MathHelper;
 import org.joml.Vector4f;
@@ -28,26 +27,6 @@ public class ProgressBar extends GuiElement {
 
     @Override
     public void onUpdate() {
-
-    }
-
-    @Override
-    public void onClick(MouseEvent.Click event) {
-
-    }
-
-    @Override
-    public void onDrag(MouseEvent.Click clickEvent, MouseEvent.Move moveEvent) {
-
-    }
-
-    @Override
-    public void onHover(MouseEvent.Move event) {
-
-    }
-
-    @Override
-    public void onScroll(MouseEvent.Scroll event) {
 
     }
 

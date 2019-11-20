@@ -2,7 +2,6 @@ package fr.bcecb.state;
 
 import fr.bcecb.state.gui.*;
 import fr.bcecb.util.Constants;
-import fr.bcecb.util.Resources;
 
 import java.util.concurrent.TimeUnit;
 
@@ -52,9 +51,9 @@ public class EndGameState extends ScreenState {
 
         RoundedRectangle lineSeparation2 = new RoundedRectangle(1010, (width / 2f), (height / 2f) + 20f, 180, 1, true, Constants.COLOR_GREY, Float.MAX_VALUE);
 
-        this.replayButton = new Button(1011, (width / 2f) - (backgroundWidth / 4f), (height / 2f) + 45f, 80, 35, true, "Rejouer", Resources.DEFAULT_BUTTON_TEXTURE);
+        this.replayButton = new Button(1011, (width / 2f) - (backgroundWidth / 4f), (height / 2f) + 45f, 80, 35, true, "Rejouer");
 
-        this.exitButton = new Button(1012, (width / 2f) + (backgroundWidth / 4f), (height / 2f) + 45f, 80, 35, true, "Quitter", Resources.DEFAULT_BUTTON_TEXTURE);
+        this.exitButton = new Button(1012, (width / 2f) + (backgroundWidth / 4f), (height / 2f) + 45f, 80, 35, true, "Quitter");
 
         addGuiElement(gameTypeTitle, timeTitle, time, moneyTitle, money, lineSeparation, bestTimeTitle, allMoneyTitle, bestTime, bankroll, lineSeparation2, replayButton, exitButton);
     }

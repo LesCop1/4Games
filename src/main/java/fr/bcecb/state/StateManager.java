@@ -3,6 +3,8 @@ package fr.bcecb.state;
 import fr.bcecb.Game;
 import fr.bcecb.event.Event;
 import fr.bcecb.event.StateEvent;
+import fr.bcecb.input.Key;
+import fr.bcecb.input.MouseButton;
 import fr.bcecb.render.Renderer;
 import fr.bcecb.render.RendererRegistry;
 import fr.bcecb.state.gui.ScreenState;
@@ -88,12 +90,12 @@ public class StateManager {
         }
     }
 
-    public void mouseClicked(float x, float y) {
+    public void mouseClicked(MouseButton button, float x, float y) {
         for (State state : stateStack) {
             if (state instanceof ScreenState) {
                 ScreenState screenState = (ScreenState) state;
 
-                if (screenState.mouseClicked(x, y)) return;
+                if (screenState.mouseClicked(button, x, y)) return;
             }
 
             if (state.shouldPauseBelow()) return;
@@ -109,6 +111,14 @@ public class StateManager {
             }
 
             if (state.shouldPauseBelow()) return;
+        }
+    }
+
+    public void keyPressed(Key key) {
+        if (key == Key.DEBUG_REBUILD_GUI) {
+            this.rebuildGui(this.width, this.height);
+        } else if (key == Key.BACK) {
+            this.popState();
         }
     }
 
