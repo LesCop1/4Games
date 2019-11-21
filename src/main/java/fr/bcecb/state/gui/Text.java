@@ -1,6 +1,5 @@
 package fr.bcecb.state.gui;
 
-import fr.bcecb.event.MouseEvent;
 import fr.bcecb.util.Constants;
 import org.joml.Vector4f;
 
@@ -42,23 +41,4 @@ public class Text extends GuiElement {
 
     }
 
-    @Override
-    public void onClick(MouseEvent.Click event) {
-
-    }
-
-    @Override
-    public void onDrag(MouseEvent.Click clickEvent, MouseEvent.Move moveEvent) {
-
-    }
-
-    @Override
-    public void onHover(MouseEvent.Move event) {
-
-    }
-
-    @Override
-    public void onScroll(MouseEvent.Scroll event) {
-
-    }
 }

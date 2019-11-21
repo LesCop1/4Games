@@ -1,15 +1,18 @@
 package fr.bcecb.batailleNavale;
 
+import fr.bcecb.resources.ResourceHandle;
+import fr.bcecb.resources.Texture;
+
 public class Boat {
     private final Boat.Type type;
-    private final boolean[] hits;
+    private int hits;
     private boolean horizontal;
 
     private int x, y;
 
     public Boat(Boat.Type type) {
         this.type = type;
-        this.hits = new boolean[type.getSize()];
+        this.hits = 0;
         this.horizontal = true;
     }
 
@@ -26,20 +29,17 @@ public class Boat {
         return y;
     }
 
-    public boolean[] getHits() {
+    public int getHits() {
         return hits;
     }
 
-    public void hit(int i) {
-        hits[i] = true;
+    public void hits() {
+        hits+=1;
     }
 
+    //TODO I will use this shit to display some shit information on the screen
     public boolean isAlive() {
-        for (boolean hit : hits) {
-            if (!hit) return true; //Le bateau n'a pas été touché à cet endroit, il est encore vivant
-        }
-
-        return false;
+        return hits != type.getSize();
     }
 
     public boolean isHorizontal() {
@@ -58,19 +58,21 @@ public class Boat {
         return type;
     }
 
-    enum Type { 
-        AIRCRAFT_CARRIER("A", 5), //AircraftCarrier
-        CRUISER("C", 4), //Cruiser
-        FRIGATE("F", 3), //Frigate
-        SUBMARINE("S", 3), //Submarine
-        TORPEDO("T", 2); //Torpedo
+    public enum Type {
+        TORPEDO("T", 2, new ResourceHandle<>("textures/BatailleNavale/Torpedo.png") {}),
+        SUBMARINE("S", 3, new ResourceHandle<>("textures/BatailleNavale/Submarine.png") {}),
+        FRIGATE("F", 3, new ResourceHandle<>("textures/BatailleNavale/Frigate.png") {}),
+        CRUISER("C", 4, new ResourceHandle<>("textures/BatailleNavale/Cruiser.png") {}),
+        AIRCRAFT_CARRIER("A", 5, new ResourceHandle<>("textures/BatailleNavale/Aircraft_Carrier.png") {});
 
         private final String name;
         private final int sizeBoat;
+        private final ResourceHandle<Texture> textureHandle;
 
-        Type(String name, int sizeBoat) {
+        Type(String name, int sizeBoat, ResourceHandle<Texture> textureHandle) {
             this.name = name;
             this.sizeBoat = sizeBoat;
+            this.textureHandle = textureHandle;
         }
 
         public String getName() {
@@ -79,6 +81,10 @@ public class Boat {
 
         public int getSize() {
             return sizeBoat;
+        }
+
+        public ResourceHandle<Texture> getTextureHandle() {
+            return textureHandle;
         }
     }
 }

@@ -1,5 +1,7 @@
 package fr.bcecb.sudoku;
 
+import com.google.common.base.Stopwatch;
+import fr.bcecb.input.MouseButton;
 import fr.bcecb.resources.ResourceHandle;
 import fr.bcecb.resources.Texture;
 import fr.bcecb.state.EndGameState;
@@ -8,30 +10,34 @@ import fr.bcecb.state.gui.Button;
 import fr.bcecb.state.gui.GuiElement;
 import fr.bcecb.state.gui.ScreenState;
 import fr.bcecb.util.Constants;
-import fr.bcecb.util.Resources;
 import org.joml.Vector4f;
 
-public class SudokuState extends ScreenState {
-    private static final ResourceHandle<Texture> BACKGROUND = new ResourceHandle<>("textures/sudokuBackground.png") {};
+import java.util.concurrent.TimeUnit;
+
+public class SudokuScreen extends ScreenState {
 
     private final Sudoku sudoku;
+    private final int difficulty;
+    private final Stopwatch stopwatch;
 
     private int selectedX = -1;
     private int selectedY = -1;
 
-    public SudokuState(StateManager stateManager, Sudoku.Difficulty difficulty) {
-        super(stateManager, "sudoku_game");
+    public SudokuScreen(StateManager stateManager, int difficulty) {
+        super(stateManager, "game_sudoku");
         this.sudoku = new Sudoku(difficulty);
+        this.difficulty = difficulty;
+        stopwatch = Stopwatch.createStarted();
     }
 
     @Override
     public ResourceHandle<Texture> getBackgroundTexture() {
-        return BACKGROUND;
+        return Constants.SUDOKU_BACKGROUND;
     }
 
     @Override
     public void initGui() {
-        GuiElement backButton = new Button(BACK_BUTTON_ID, (width / 20f), (height - (height / 20f) - (height / 10f)), (height / 10f), (height / 10f), false, "Back", Resources.DEFAULT_BUTTON_TEXTURE);
+        Button backButton = new Button(BACK_BUTTON_ID, (width / 20f), (height - (height / 20f) - (height / 10f)), (height / 10f), (height / 10f), false, "Back");
 
         int id = 1;
 
@@ -68,7 +74,7 @@ public class SudokuState extends ScreenState {
     }
 
     @Override
-    public boolean mouseClicked(int id) {
+    public boolean mouseClicked(int id, MouseButton button) {
         GuiElement guiElement = getGuiElementById(id);
 
         if (guiElement instanceof SudokuButton) {
@@ -97,8 +103,17 @@ public class SudokuState extends ScreenState {
     public void onUpdate() {
         super.onUpdate();
         if (sudoku.winCondition()) {
-            stateManager.pushState(new EndGameState(stateManager, Constants.GameType.SUDOKU, 4535L, 34));
+            stopwatch.stop();
+            long time = stopwatch.elapsed(TimeUnit.MILLISECONDS);
+            stateManager.pushState(new EndGameState(stateManager, Constants.GameType.SUDOKU, time, calculateMoneyEarned()));
         }
+    }
+
+    private int calculateMoneyEarned() {
+        long time = stopwatch.elapsed(TimeUnit.SECONDS);
+        int minusToken = (int) Math.max(0, Math.floor(time - (this.difficulty * 2)));
+
+        return Math.max(5, (this.difficulty * 10) - minusToken);
     }
 
     private static final class SudokuButton extends Button {
@@ -124,7 +139,7 @@ public class SudokuState extends ScreenState {
 
         @Override
         public boolean isDisabled() {
-            return sudoku.winCondition() && sudoku.getGeneratedGrid()[caseX][caseY] != 0;
+            return sudoku.winCondition() || sudoku.getGeneratedGrid()[caseX][caseY] != 0;
         }
 
         @Override
@@ -139,7 +154,17 @@ public class SudokuState extends ScreenState {
 
         @Override
         public ResourceHandle<Texture> getTexture() {
-            return sudoku.getGeneratedGrid()[caseX][caseY] == 0 ? new ResourceHandle<>("textures/caseSudoku.png") {} : new ResourceHandle<>("textures/caseSudokuBase.png") {};
+            return Constants.SUDOKU_FREE_CASE;
+        }
+
+        @Override
+        public ResourceHandle<Texture> getHoverTexture() {
+            return null;
+        }
+
+        @Override
+        public ResourceHandle<Texture> getDisabledTexture() {
+            return Constants.SUDOKU_FIXED_CASE;
         }
     }
 
@@ -147,8 +172,18 @@ public class SudokuState extends ScreenState {
         private final int value;
 
         public SudokuCandidateButton(int id, float x, float y, int value) {
-            super(id, x, y, 20.0f, 20.0f, true, String.valueOf(value), new ResourceHandle<>("textures/candidateValuesTextures.png") {});
+            super(id, x, y, 20.0f, 20.0f, true, String.valueOf(value));
             this.value = value;
+        }
+
+        @Override
+        public ResourceHandle<Texture> getTexture() {
+            return Constants.SUDOKU_CANDIDATES_VALUE_CASE;
+        }
+
+        @Override
+        public ResourceHandle<Texture> getHoverTexture() {
+            return null;
         }
 
         public int getValue() {

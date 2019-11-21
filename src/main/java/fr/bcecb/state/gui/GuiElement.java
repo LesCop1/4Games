@@ -1,6 +1,5 @@
 package fr.bcecb.state.gui;
 
-import fr.bcecb.event.MouseEvent;
 import fr.bcecb.render.IRenderable;
 
 public abstract class GuiElement implements IRenderable {
@@ -76,11 +75,4 @@ public abstract class GuiElement implements IRenderable {
 
     public abstract void onUpdate();
 
-    public abstract void onClick(MouseEvent.Click event);
-
-    public abstract void onDrag(MouseEvent.Click clickEvent, MouseEvent.Move moveEvent);
-
-    public abstract void onHover(MouseEvent.Move event);
-
-    public abstract void onScroll(MouseEvent.Scroll event);
 }

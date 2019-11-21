@@ -1,5 +1,6 @@
 package fr.bcecb.state.gui;
 
+import com.google.common.base.MoreObjects;
 import com.google.common.base.Strings;
 import fr.bcecb.render.RenderManager;
 import fr.bcecb.render.Renderer;
@@ -16,7 +17,13 @@ public class ButtonRenderer extends Renderer<Button> {
 
     @Override
     public ResourceHandle<Texture> getTexture(Button button) {
-        return button.isHovered() ? button.getHoverTexture() : button.getTexture();
+        if (button.isDisabled()) {
+            return MoreObjects.firstNonNull(button.getDisabledTexture(), button.getTexture());
+        } else if (button.isHovered()) {
+            return MoreObjects.firstNonNull(button.getHoverTexture(), button.getTexture());
+        } else {
+            return button.getTexture();
+        }
     }
 
     @Override

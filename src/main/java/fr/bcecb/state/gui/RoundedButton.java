@@ -1,7 +1,6 @@
 package fr.bcecb.state.gui;
 
 import com.google.common.base.MoreObjects;
-import fr.bcecb.event.MouseEvent;
 import fr.bcecb.resources.ResourceHandle;
 import fr.bcecb.resources.Texture;
 import fr.bcecb.util.Resources;
@@ -24,26 +23,6 @@ public class RoundedButton extends GuiElement {
 
     @Override
     public void onUpdate() {
-
-    }
-
-    @Override
-    public void onClick(MouseEvent.Click event) {
-
-    }
-
-    @Override
-    public void onDrag(MouseEvent.Click clickEvent, MouseEvent.Move moveEvent) {
-
-    }
-
-    @Override
-    public void onHover(MouseEvent.Move event) {
-
-    }
-
-    @Override
-    public void onScroll(MouseEvent.Scroll event) {
 
     }
 
