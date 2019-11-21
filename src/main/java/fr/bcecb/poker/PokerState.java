@@ -4,11 +4,10 @@ import fr.bcecb.event.MouseEvent;
 import fr.bcecb.resources.ResourceHandle;
 import fr.bcecb.resources.Texture;
 import fr.bcecb.state.StateManager;
-import fr.bcecb.state.gui.Button;
-import fr.bcecb.state.gui.GuiElement;
-import fr.bcecb.state.gui.ScreenState;
-import fr.bcecb.state.gui.Text;
+import fr.bcecb.state.gui.*;
+import fr.bcecb.util.Constants;
 import fr.bcecb.util.Resources;
+import org.joml.Vector4f;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,11 +16,11 @@ public class PokerState extends ScreenState {
     public static final List<GuiElement> middleCards = new ArrayList<>();
     private static final ResourceHandle<Texture> BACK_CARD_TEXTURE = new ResourceHandle<Texture>("textures/back_card.png") {
     };
-    private int playerCount;
     private static final ResourceHandle<Texture> BACKGROUND = new ResourceHandle<>("textures/poker_background.jpg") {
     };
-    private GuiElement[] playersUI;
     private final Poker poker;
+    private int playerCount;
+    private GuiElement[] playersUI;
 
     public PokerState(StateManager stateManager, int playerAmount) {
         super(stateManager, "poker_game");
@@ -64,9 +63,49 @@ public class PokerState extends ScreenState {
 
     @Override
     public void initGui() {
-        Button botFirstCard = new Button(1, (width / 2f) - 40, height - 60, 40, 60, false, BACK_CARD_TEXTURE);
+        System.out.println(poker.getNumTurns());
+        RoundedButton botFirstCard = new RoundedButton(1, (width / 2f) - 40, height - 60, 40, 60, 5f, BACK_CARD_TEXTURE) {
+            @Override
+            public ResourceHandle<Texture> getTexture() {
+                return getCardTexture(poker.getPlayers().get(poker.getCurrentPlayer()).getHand().getCards().get(0));
+            }
 
-        Button botSecondCard = new Button(2, (width / 2f) + 5, height - 60, 40, 60, false, BACK_CARD_TEXTURE);
+            @Override
+            public String getTitle() {
+                return getCardNum(poker.getPlayers().get(poker.getCurrentPlayer()).getHand().getCards().get(0).getNum());
+            }
+
+            @Override
+            public Vector4f getTitleColor() {
+                return Constants.COLOR_WHITE;
+            }
+
+            @Override
+            public float getTitleScale() {
+                return 1f;
+            }
+        };
+        RoundedButton botSecondCard = new RoundedButton(2, (width / 2f) + 5, height - 60, 40, 60, 5f, BACK_CARD_TEXTURE) {
+            @Override
+            public ResourceHandle<Texture> getTexture() {
+                return getCardTexture(poker.getPlayers().get(poker.getCurrentPlayer()).getHand().getCards().get(1));
+            }
+
+            @Override
+            public String getTitle() {
+                return getCardNum(poker.getPlayers().get(poker.getCurrentPlayer()).getHand().getCards().get(1).getNum());
+            }
+
+            @Override
+            public Vector4f getTitleColor() {
+                return Constants.COLOR_WHITE;
+            }
+
+            @Override
+            public float getTitleScale() {
+                return 1f;
+            }
+        };
 
         Text botPlayerTitle = new Text(18, width / 2f, height - 70, true, null) {
             @Override
@@ -82,9 +121,9 @@ public class PokerState extends ScreenState {
             }
         };
 
-        Button topFirstCard = new Button(3, (width / 2f) - 42.5f, 0, 40, 60, false, BACK_CARD_TEXTURE);
+        RoundedButton topFirstCard = new RoundedButton(3, (width / 2f) - 42.5f, 0, 40, 60, 5f, BACK_CARD_TEXTURE);
 
-        Button topSecondCard = new Button(4, (width / 2f) + 2.5f, 0, 40, 60, false, BACK_CARD_TEXTURE);
+        RoundedButton topSecondCard = new RoundedButton(4, (width / 2f) + 2.5f, 0, 40, 60, 5f, BACK_CARD_TEXTURE);
 
         Text topPlayerTitle = new Text(19, width / 2f, 70, true, null) {
             @Override
@@ -111,10 +150,10 @@ public class PokerState extends ScreenState {
         this.playersUI[7] = topPoint;
 
         if (this.playerCount > 2) {
-            Button leftFirstCard = new Button(5, 0, (height / 2f) - 42.5f, 60, 40, false, "", new ResourceHandle<Texture>("textures/horizontal_back_card.png") {
+            RoundedButton leftFirstCard = new RoundedButton(5, 0, (height / 2f) - 42.5f, 60, 40, 5f, new ResourceHandle<Texture>("textures/horizontal_back_card.png") {
             });
 
-            Button leftSecondCard = new Button(6, 0, (height / 2f) + 2.5f, 60, 40, false, "", new ResourceHandle<Texture>("textures/horizontal_back_card.png") {
+            RoundedButton leftSecondCard = new RoundedButton(6, 0, (height / 2f) + 2.5f, 60, 40, 5f, new ResourceHandle<Texture>("textures/horizontal_back_card.png") {
             });
 
 
@@ -141,10 +180,10 @@ public class PokerState extends ScreenState {
         }
 
         if (this.playerCount > 3) {
-            Button rightFirstCard = new Button(7, width - 60, (height / 2f) - 40, 60, 40, false, "", new ResourceHandle<Texture>("textures/horizontal_back_card.png") {
+            RoundedButton rightFirstCard = new RoundedButton(7, width - 60, (height / 2f) - 40, 60, 40, 5f, new ResourceHandle<Texture>("textures/horizontal_back_card.png") {
             });
 
-            Button rightSecondCard = new Button(8, width - 60, (height / 2f) + 5, 60, 40, false, "", new ResourceHandle<Texture>("textures/horizontal_back_card.png") {
+            RoundedButton rightSecondCard = new RoundedButton(8, width - 60, (height / 2f) + 5, 60, 40, 5f, new ResourceHandle<Texture>("textures/horizontal_back_card.png") {
             });
 
             Text rightPlayerTitle = new Text(21, width - 60, (height / 2f) - 47.5f, false, null) {
@@ -169,53 +208,54 @@ public class PokerState extends ScreenState {
             this.playersUI[15] = rightBank;
         }
 
-        Button middle_card1 = new Button(9, (width / 2f) - (115 * 2), height / 2f, 110, 150, true, "", BACK_CARD_TEXTURE);
+        RoundedButton middle_card1 = new RoundedButton(9, (width / 2f) - 110, height / 2f - 30, 40, 60, 5f, BACK_CARD_TEXTURE);
         middle_card1.setDisabled(true);
         middleCards.add(middle_card1);
 
-        Button middle_card2 = new Button(10, (width / 2f) - 115, height / 2f, 110, 150, true, "", BACK_CARD_TEXTURE);
+        RoundedButton middle_card2 = new RoundedButton(10, (width / 2f) - 65, height / 2f - 30, 40, 60, 5f, BACK_CARD_TEXTURE);
         middle_card2.setDisabled(true);
         middleCards.add(middle_card2);
 
-        Button middle_card3 = new Button(11, width / 2f, height / 2f, 40, 60, true, "", new ResourceHandle<Texture>("textures/back_card.png") {
+        RoundedButton middle_card3 = new RoundedButton(11, width / 2f - 20, height / 2f - 30, 40, 60, 5f, new ResourceHandle<Texture>("textures/back_card.png") {
         });
         middleCards.add(middle_card3);
 
-        Button middle_card4 = new Button(12, (width / 2f) + 115, height / 2f, 110, 150, true, "", new ResourceHandle<Texture>("textures/back_card.png") {
+        RoundedButton middle_card4 = new RoundedButton(12, (width / 2f) + 25, height / 2f - 30, 40, 60, 5f, new ResourceHandle<Texture>("textures/back_card.png") {
         });
         middle_card4.setDisabled(true);
         middleCards.add(middle_card4);
 
-        Button middle_card5 = new Button(13, (width / 2f) + (115 * 2), height / 2f, 110, 150, true, "", new ResourceHandle<Texture>("textures/back_card.png") {
+        RoundedButton middle_card5 = new RoundedButton(13, (width / 2f) + 70, height / 2f - 30, 40, 60, 5f, new ResourceHandle<Texture>("textures/back_card.png") {
         });
         middle_card5.setDisabled(true);
         middleCards.add(middle_card5);
 
         for (GuiElement middleCard : middleCards) middleCard.setVisible(false);
 
-        Button followButton = new Button(14, (width / 2f) + 52.5f, height - 60, 40, 20, false, "Suivre", new ResourceHandle<Texture>("textures/bet_texture.jpg") {
-        }) {
-            @Override
-            public void onClick(MouseEvent.Click event) {
-                poker.updateGame(this);
+        if (poker.getNumTurns() == 1) {
+            for (int i = 0; i < 3; i++) {
+                middleCards.get(i).setVisible(true);
             }
-        };
+        }
+          if (poker.getNumTurns() == 2) middleCards.get(3).setVisible(true);
+          if (poker.getNumTurns() == 3) middleCards.get(4).setVisible(true);
+
+
+        Button followButton = new Button(14, (width / 2f) + 52.5f, height - 60, 40, 20, false, "Suivre", new ResourceHandle<Texture>("textures/bet_texture.jpg") {
+        });
+
 
         Button relaunchButton = new Button(15, (width / 2f) + 97.5f, height - 60, 40, 20, false, "Relancer", new ResourceHandle<Texture>("textures/bet_texture.jpg") {
         }) {
             @Override
             public void onClick(MouseEvent.Click event) {
-                poker.updateGame(this);
+
             }
         };
 
         Button checkButton = new Button(16, (width / 2f) + 52.5f, height - 35, 40, 20, false, "Check", new ResourceHandle<Texture>("textures/bet_texture.jpg") {
-        }) {
-            @Override
-            public void onClick(MouseEvent.Click event) {
-                poker.updateGame(this);
-            }
-        };
+        });
+
 
         Button bedButton = new Button(17, (width / 2f) + 97.5f, height - 35, 40, 20, false, "Se coucher", new ResourceHandle<Texture>("textures/bet_texture.jpg") {
         }) {
@@ -229,7 +269,8 @@ public class PokerState extends ScreenState {
         GuiElement backButton = new Button(BACK_BUTTON_ID, (width / 20f), (height - (height / 20f) - (height / 10f)), (height / 10f), (height / 10f), false, "Back", Resources.DEFAULT_BUTTON_TEXTURE);
 
 
-        for (GuiElement playerUI : playersUI) playerUI.setDisabled(false);
+        for (GuiElement playerUI : playersUI) playerUI.setDisabled(true);
+
 
         addGuiElement(this.playersUI);
 
@@ -249,10 +290,27 @@ public class PokerState extends ScreenState {
         }
 
 
+
     }
 
     @Override
     public boolean mouseClicked(int id) {
+        if (id == 14) {
+            this.poker.updateGame((Button) getGuiElementById(id));
+            return true;
+        }
+        if (id == 15) {
+            this.poker.updateGame((Button) getGuiElementById(id));
+            return true;
+        }
+        if (id == 16) {
+            this.poker.updateGame((Button) getGuiElementById(id));
+            return true;
+        }
+        if (id == 17) {
+            this.poker.updateGame((Button) getGuiElementById(id));
+            return true;
+        }
         return false;
     }
 

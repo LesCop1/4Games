@@ -56,6 +56,10 @@ public class Poker {
         updateGame(button);
     }
 
+    public int getNumTurns() {
+        return numTurns;
+    }
+
     public HashMap<Integer, Player> getPlayers() {
         return players;
     }
@@ -111,7 +115,8 @@ public class Poker {
     public void updateGame(fr.bcecb.state.gui.Button button) {
         // Let the players play and switch to the next one
         this.players.get(this.currentPlayer).play(this, button);
-        this.currentPlayer = this.currentPlayer++ % this.playerAmount;
+        this.currentPlayer = (this.currentPlayer + 1)  % this.playerAmount;
+        this.currentPlayer = (this.currentPlayer + 1)  % this.playerAmount;
         updateTurn();
 
         // Increase blind
@@ -238,9 +243,8 @@ public class Poker {
          *
          * @param pokerInstance The current poker Instance
          */
-        // donc la ta la derniere version de dev sur la branche poker. et genre ce qui est en dessous faut juste le relier a des btns
-        //dacco:)
-        private void play(Poker pokerInstance, fr.bcecb.state.gui.Button button) {
+
+        public void play(Poker pokerInstance, fr.bcecb.state.gui.Button button) {
             if (this.playing) {
                 if (button.getTitle().equals("Relancer")) {
                     actionBet(pokerInstance, 50);
@@ -260,7 +264,7 @@ public class Poker {
 
         private void actionBet(Poker pokerInstance, int amount) {
             if (this.bankroll > 0) {
-                if (this.bankroll >= amount && amount > pokerInstance.getCurrentHighestBet()) {
+                if (this.bankroll >= amount && amount >= pokerInstance.getCurrentHighestBet()) {
                     this.addToTable(amount);
                     pokerInstance.setCurrentHighestBet(amount);
                     this.lastBet = amount;
