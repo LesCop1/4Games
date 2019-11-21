@@ -1,6 +1,5 @@
 package fr.bcecb.poker;
 
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -15,8 +14,12 @@ public class Poker {
     private static final int STARTING_SMALL_BLIND = DEFAULT_BANKROLL / 100;
     private static final int BLIND_GAME_INCREASE = 5;
 
-    private int playerAmount;
+    public static final int ACTION_BET = 0;
+    public static final int ACTION_CHECK = 1;
+    public static final int ACTION_FOLLOW = 2;
+    public static final int ACTION_BED = 3;
 
+    private int playerAmount;
 
     private HashMap<Integer, Player> players = new HashMap<>();
     private Deck deck;
@@ -44,24 +47,6 @@ public class Poker {
         this.startingGamePlayer = 0;
         this.numGame = 0;
         this.currentSmallBlind = STARTING_SMALL_BLIND;
-    }
-
-    /**
-     * This function is called every event and update the game
-     */
-    public void update(fr.bcecb.state.gui.Button button) {
-        if (!this.isGameInit) {
-            initGame();
-        }
-        updateGame(button);
-    }
-
-    public int getNumTurns() {
-        return numTurns;
-    }
-
-    public HashMap<Integer, Player> getPlayers() {
-        return players;
     }
 
     /**
@@ -110,13 +95,23 @@ public class Poker {
     }
 
     /**
+     * This function is called every event and update the game
+     */
+    public void update(int action) {
+        System.out.println("this = " + this.currentPlayer);
+        if (!this.isGameInit) {
+            initGame();
+        }
+        updateGame(action);
+    }
+
+    /**
      * Update the game logic
      */
-    public void updateGame(fr.bcecb.state.gui.Button button) {
+    private void updateGame(int action) {
         // Let the players play and switch to the next one
-        this.players.get(this.currentPlayer).play(this, button);
-        this.currentPlayer = (this.currentPlayer + 1)  % this.playerAmount;
-        this.currentPlayer = (this.currentPlayer + 1)  % this.playerAmount;
+        this.players.get(this.currentPlayer).play(this, action);
+        this.currentPlayer = ++this.currentPlayer % this.playerAmount;
         updateTurn();
 
         // Increase blind
@@ -188,10 +183,17 @@ public class Poker {
         return winner;
     }
 
+    public Player getPlayer(int i) {
+        return this.players.get(i);
+    }
+
+    public int getNumTurns() {
+        return numTurns;
+    }
+
     private int getCurrentHighestBet() {
         return this.currentHighestBet;
     }
-
 
     private void setCurrentHighestBet(int currentHighestBet) {
         this.currentHighestBet = currentHighestBet;
@@ -226,6 +228,10 @@ public class Poker {
             return points;
         }
 
+        public Deck.Card getCard(int i) {
+            return this.hand.getCards().get(i);
+        }
+
         /**
          * Initialize a player, reset every variable
          */
@@ -243,26 +249,25 @@ public class Poker {
          *
          * @param pokerInstance The current poker Instance
          */
-
-        public void play(Poker pokerInstance, fr.bcecb.state.gui.Button button) {
+        private void play(Poker pokerInstance, int action) {
             if (this.playing) {
-                if (button.getTitle().equals("Relancer")) {
+                if (action == Poker.ACTION_BET) {
                     actionBet(pokerInstance, 50);
-                } else if (button.getTitle().equals("Suivre")) {
+                } else if (action == Poker.ACTION_FOLLOW) {
                     actionFollow(pokerInstance);
-                } else if (button.getTitle().equals("Check")) {
+                } else if (action == Poker.ACTION_CHECK) {
                     actionCheck();
-                } else if (button.getTitle().equals("Se coucher")) {
+                } else if (action == Poker.ACTION_BED) {
                     actionLeave();
                 }
             }
         }
 
-        private void actionCheck() {
+        public void actionCheck() {
             this.lastBet = 0;
         }
 
-        private void actionBet(Poker pokerInstance, int amount) {
+        public void actionBet(Poker pokerInstance, int amount) {
             if (this.bankroll > 0) {
                 if (this.bankroll >= amount && amount >= pokerInstance.getCurrentHighestBet()) {
                     this.addToTable(amount);
@@ -275,11 +280,11 @@ public class Poker {
             }
         }
 
-        private void actionFollow(Poker pokerInstance) {
+        public void actionFollow(Poker pokerInstance) {
             actionBet(pokerInstance, pokerInstance.getCurrentHighestBet());
         }
 
-        private void actionLeave() {
+        public void actionLeave() {
             this.playing = false;
         }
 
