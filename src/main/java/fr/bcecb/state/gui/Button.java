@@ -1,27 +1,20 @@
 package fr.bcecb.state.gui;
 
-import com.google.common.base.Strings;
-import fr.bcecb.render.RenderEngine;
-import fr.bcecb.render.RenderManager;
-import fr.bcecb.render.Renderer;
+import fr.bcecb.render.animation.Animation;
+import fr.bcecb.render.animation.BounceAnimation;
 import fr.bcecb.resources.ResourceHandle;
-import fr.bcecb.resources.ResourceManager;
 import fr.bcecb.resources.Texture;
+import fr.bcecb.util.Constants;
+import fr.bcecb.util.Resources;
 import org.joml.Vector4f;
 
 public class Button extends GuiElement {
-    private String title;
+    private final Animation<Float> hoverAnimation = new BounceAnimation(1.0f, 0.1f, 3.0f);
 
-    public Button(int id, float x, float y, float width, float height) {
-        this(id, x, y, width, height, false);
-    }
+    private final String title;
 
     public Button(int id, float x, float y, float width, float height, boolean centered) {
         this(id, x, y, width, height, centered, null);
-    }
-
-    public Button(int id, float x, float y, float width, float height, String title) {
-        this(id, x, y, width, height, false, title);
     }
 
     public Button(int id, float x, float y, float width, float height, boolean centered, String title) {
@@ -29,33 +22,38 @@ public class Button extends GuiElement {
         this.title = title;
     }
 
+    public Animation<Float> getHoverAnimation() {
+        return hoverAnimation;
+    }
+
+    @Override
+    public void onUpdate() {
+        if (isVisible() && !isDisabled() && isHovered()) {
+            hoverAnimation.update();
+        } else hoverAnimation.reset();
+    }
+
     public String getTitle() {
         return title;
     }
 
-    public void setTitle(String title) {
-        this.title = title;
+    public float getTitleScale() {
+        return 0.0f;
     }
 
-    public static class ButtonRenderer extends Renderer<Button> {
+    public Vector4f getTitleColor() {
+        return Constants.COLOR_BLACK;
+    }
 
-        public ButtonRenderer(RenderManager renderManager) {
-            super(renderManager);
-        }
+    public ResourceHandle<Texture> getTexture() {
+        return Resources.DEFAULT_BUTTON_TEXTURE;
+    }
 
-        @Override
-        public ResourceHandle<Texture> getTexture(Button button) {
-            return new ResourceHandle<>("textures/btn.png") {};
-        }
+    public ResourceHandle<Texture> getHoverTexture() {
+        return Resources.DEFAULT_BUTTON_HOVER_TEXTURE;
+    }
 
-        @Override
-        public void render(Button button, float partialTick) {
-            RenderEngine renderEngine = renderManager.getRenderEngine();
-            renderEngine.drawTexturedRect(getTexture(button), button.getX(), button.getY(), button.getX() + button.getWidth(), button.getY() + button.getHeight());
-
-            if (!Strings.isNullOrEmpty(button.getTitle())) {
-                renderEngine.drawCenteredText(ResourceManager.DEFAULT_FONT, button.getTitle(), button.getX() + (button.getWidth() / 2.0f), button.getY() + (button.getHeight() / 2.0f), 1.0f, new Vector4f(0.0f, 0.0f, 0.0f, 1.0f));
-            }
-        }
+    public ResourceHandle<Texture> getDisabledTexture() {
+        return Resources.DEFAULT_BUTTON_DISABLED_TEXTURE;
     }
 }

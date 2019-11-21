@@ -27,6 +27,7 @@ public class Shaders {
         String infoLog = glGetProgramInfoLog(program, glGetProgrami(program, GL_INFO_LOG_LENGTH));
         if (!Strings.isNullOrEmpty(infoLog)) {
             Log.SYSTEM.warning("Shader program linking returned with warnings : {0}", infoLog);
+            Log.SYSTEM.debug("Shader descriptor : {0}", descriptor);
         }
 
         if (glGetProgrami(program, GL_LINK_STATUS) == GL_FALSE) {
@@ -49,7 +50,7 @@ public class Shaders {
             return 0;
         }
 
-        StringResource resource = Game.instance().getResourceManager().loadResource(resourceHandle);
+        StringResource resource = Game.instance().getResourceManager().getResource(resourceHandle);
 
         if (resource == null) {
             return 0;
@@ -74,15 +75,11 @@ public class Shaders {
     }
 
     private static String getShaderName(int type) {
-        switch (type) {
-            case GL_VERTEX_SHADER:
-                return "Vertex";
-            case GL_FRAGMENT_SHADER:
-                return "Fragment";
-            case GL_GEOMETRY_SHADER:
-                return "Geometry";
-            default:
-                return "";
-        }
+        return switch (type) {
+            case GL_VERTEX_SHADER -> "Vertex";
+            case GL_FRAGMENT_SHADER -> "Fragment";
+            case GL_GEOMETRY_SHADER -> "Geometry";
+            default -> "";
+        };
     }
 }

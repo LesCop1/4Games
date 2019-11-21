@@ -1,93 +1,128 @@
 package fr.bcecb.render;
 
 import fr.bcecb.Game;
-import fr.bcecb.event.Event;
-import fr.bcecb.event.GameEvent;
-import fr.bcecb.event.WindowEvent;
-import fr.bcecb.input.MouseManager;
 import fr.bcecb.util.Log;
-import org.lwjgl.glfw.GLFWVidMode;
-import org.lwjgl.system.MemoryStack;
+import org.lwjgl.glfw.GLFW;
+import org.lwjgl.glfw.GLFWErrorCallback;
+import org.lwjgl.opengl.GL;
 
-import java.nio.IntBuffer;
-
-import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.system.MemoryUtil.NULL;
 
-public class Window {
-    private final long windowId;
+public class Window implements AutoCloseable {
+    private final Game game;
 
-    private final MouseManager mouseManager;
+    private final long handle;
 
-    private int width, minWidth;
-    private int height, minHeight;
+    private final GLFWErrorCallback errorCallback;
 
-    private Window(String title, int width, int height, boolean fullscreen) {
-        this.windowId = glfwCreateWindow(width, height, title, fullscreen ? glfwGetPrimaryMonitor() : NULL, NULL);
-        this.mouseManager = new MouseManager(this);
-    }
+    private int width;
+    private int height;
 
-    public static Window newInstance(String title, int width, int height, boolean fullscreen) {
-        glfwDefaultWindowHints();
-        glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
-        glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
+    private int framebufferWidth;
+    private int framebufferHeight;
 
-        GLFWVidMode vidMode = glfwGetVideoMode(glfwGetPrimaryMonitor());
+    private int guiScale;
 
-        if (vidMode != null) {
-            glfwWindowHint(GLFW_RED_BITS, vidMode.redBits());
-            glfwWindowHint(GLFW_GREEN_BITS, vidMode.greenBits());
-            glfwWindowHint(GLFW_BLUE_BITS, vidMode.blueBits());
-            glfwWindowHint(GLFW_REFRESH_RATE, vidMode.refreshRate());
-        } else Log.SYSTEM.warning("No video mode available !");
+    private int scaledWidth;
+    private int scaledHeight;
 
-        glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
-        glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 4);
+    public Window(Game game, String title, int width, int height) {
+        this.game = game;
+
+        this.errorCallback = Log.createErrorCallback();
+        GLFW.glfwSetErrorCallback(this.errorCallback);
+
+        GLFW.glfwDefaultWindowHints();
+        GLFW.glfwWindowHint(GLFW.GLFW_VISIBLE, GLFW.GLFW_FALSE);
+
+        GLFW.glfwWindowHint(GLFW.GLFW_CONTEXT_VERSION_MAJOR, 4);
+        GLFW.glfwWindowHint(GLFW.GLFW_CONTEXT_VERSION_MINOR, 1);
 
         Log.SYSTEM.config("Window size is {0}x{1}", width, height);
 
-        Window window = new Window(title, width, height, fullscreen);
+        this.handle = GLFW.glfwCreateWindow(width, height, title, GLFW.GLFW_FALSE, NULL);
+        this.width = width;
+        this.height = height;
 
-        if (window.getId() == NULL) {
-            return null;
+        GLFW.glfwMakeContextCurrent(this.handle);
+        GL.createCapabilities();
+
+        GLFW.glfwSetWindowSizeCallback(this.handle, this::setWindowSize);
+        GLFW.glfwSetFramebufferSizeCallback(this.handle, this::setFramebufferSize);
+
+        this.updateFramebufferSize();
+        this.updateGuiScale();
+    }
+
+    public void update() {
+        if (GLFW.glfwGetWindowAttrib(this.handle, GLFW.GLFW_VISIBLE) == GLFW.GLFW_FALSE) {
+            GLFW.glfwShowWindow(this.handle);
         }
 
-        if (!fullscreen) {
-            try (MemoryStack stack = MemoryStack.stackPush()) {
-                IntBuffer pWidth = stack.mallocInt(1);
-                IntBuffer pHeight = stack.mallocInt(1);
+        GLFW.glfwSwapBuffers(this.handle);
+        GLFW.glfwPollEvents();
 
-                glfwGetWindowSize(window.getId(), pWidth, pHeight);
+        if (GLFW.glfwWindowShouldClose(this.handle)) {
+            this.game.stop();
+        }
+    }
 
-                if (vidMode != null) {
-                    glfwSetWindowPos(window.getId(), (vidMode.width() - pWidth.get(0)) / 2, (vidMode.height() - pHeight.get(0)) / 2);
-                } else Log.SYSTEM.warning("No video mode available !");
+    @Override
+    public void close() {
+        this.errorCallback.close();
+
+        GLFW.glfwDestroyWindow(this.handle);
+        GLFW.glfwTerminate();
+    }
+
+    public void updateFramebufferSize() {
+        int[] framebufferWidth = new int[1];
+        int[] framebufferHeight = new int[1];
+
+        GLFW.glfwGetFramebufferSize(this.handle, framebufferWidth, framebufferHeight);
+        this.framebufferWidth = framebufferWidth[0];
+        this.framebufferHeight = framebufferHeight[0];
+    }
+
+    public int computeGuiScale() {
+        int computedScale = 1;
+        while (computedScale < this.framebufferWidth && computedScale < this.framebufferHeight && this.framebufferWidth / (computedScale + 1) >= 320 && this.framebufferHeight / (computedScale + 1) >= 240) {
+            ++computedScale;
+        }
+
+        return computedScale;
+    }
+
+    public void updateGuiScale() {
+        this.guiScale = computeGuiScale();
+        int frameBufferWidthRatio = (int) ((float) this.framebufferWidth / (float) this.guiScale);
+        this.scaledWidth = (float) this.framebufferWidth / (float) this.guiScale > (float) frameBufferWidthRatio ? frameBufferWidthRatio + 1 : frameBufferWidthRatio;
+        int framebufferHeightRatio = (int) ((float) this.framebufferHeight / (float) this.guiScale);
+        this.scaledHeight = (float) this.framebufferHeight / (float) this.guiScale > (float) framebufferHeightRatio ? framebufferHeightRatio + 1 : framebufferHeightRatio;
+    }
+
+    private void setWindowSize(long window, int width, int height) {
+        this.width = width;
+        this.height = height;
+    }
+
+    private void setFramebufferSize(long window, int width, int height) {
+        float lastFramebufferWidth = framebufferWidth;
+        float lastFramebufferHeight = framebufferHeight;
+
+        if (width != 0 && height != 0) {
+            this.framebufferWidth = width;
+            this.framebufferHeight = height;
+
+            if (lastFramebufferWidth != this.framebufferWidth || lastFramebufferHeight != this.framebufferHeight) {
+                this.updateGuiScale();
+                this.game.updateWindowSize();
             }
         }
-
-        glfwSetFramebufferSizeCallback(window.getId(), window::setFramebufferSize);
-        glfwSetWindowCloseCallback(window.getId(), window::close);
-
-        glfwMakeContextCurrent(window.getId());
-        glfwSwapInterval(1);
-
-        return window;
     }
 
-    public static Window getCurrentWindow() {
-        return Game.instance().getRenderEngine().getWindow();
-    }
-
-    public MouseManager getMouseManager() {
-        return mouseManager;
-    }
-
-    public void destroy() {
-        glfwDestroyWindow(windowId);
-    }
-
-    public long getId() {
-        return windowId;
+    public long getHandle() {
+        return handle;
     }
 
     public int getWidth() {
@@ -98,36 +133,23 @@ public class Window {
         return height;
     }
 
-    public void setFullscreen(boolean fullscreen) {
-        GLFWVidMode vidMode = glfwGetVideoMode(glfwGetPrimaryMonitor());
-
-        if (vidMode != null) {
-            if (fullscreen) {
-                this.minWidth = this.width;
-                this.minHeight = this.height;
-                glfwSetWindowMonitor(windowId, glfwGetPrimaryMonitor(), 0, 0, vidMode.width(), vidMode.height(), GLFW_DONT_CARE);
-            } else {
-                glfwSetWindowMonitor(windowId, NULL, (vidMode.width() - this.minWidth) / 2, (vidMode.height() - this.minHeight) / 2, minWidth, minHeight, GLFW_DONT_CARE);
-            }
-        } else Log.SYSTEM.warning("No video mode available !");
+    public int getFramebufferWidth() {
+        return framebufferWidth;
     }
 
-    public boolean shouldClose() {
-        return glfwWindowShouldClose(windowId);
+    public int getFramebufferHeight() {
+        return framebufferHeight;
     }
 
-    private void close(long window) {
-        Event event = new GameEvent.Close();
-        Game.getEventBus().post(event);
+    public int getScaledWidth() {
+        return scaledWidth;
     }
 
-    private void setFramebufferSize(long window, int width, int height) {
-        assert window == this.windowId;
+    public int getScaledHeight() {
+        return scaledHeight;
+    }
 
-        this.width = width;
-        this.height = height;
-
-        Event event = new WindowEvent.Size(this.width, this.height);
-        Game.getEventBus().post(event);
+    public int getGuiScale() {
+        return guiScale;
     }
 }

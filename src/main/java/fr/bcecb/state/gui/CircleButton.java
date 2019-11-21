@@ -1,16 +1,7 @@
 package fr.bcecb.state.gui;
 
-import fr.bcecb.render.RenderManager;
-import fr.bcecb.render.Renderer;
-import fr.bcecb.resources.ResourceHandle;
-import fr.bcecb.resources.Texture;
-
 public class CircleButton extends Button {
-    private float radius;
-
-    public CircleButton(int id, float x, float y, float radius) {
-        this(id, x, y, radius, false);
-    }
+    private final float radius;
 
     public CircleButton(int id, float x, float y, float radius, boolean centered) {
         super(id, x, y, radius * 2, radius * 2, centered);
@@ -18,33 +9,11 @@ public class CircleButton extends Button {
     }
 
     @Override
-    boolean checkBounds(float x, float y) {
-        return super.checkBounds(x, y) && Math.pow((getX() + getRadius()) - x, 2) + Math.pow((getY() + getRadius()) - y, 2) < Math.pow(getRadius(), 2);
+    public boolean checkBounds(float x, float y) {
+        return super.checkBounds(x, y) && Math.pow((getX() + radius) - x, 2) + Math.pow((getY() + radius) - y, 2) < Math.pow(radius, 2);
     }
 
     public float getRadius() {
         return radius;
-    }
-
-    public void setRadius(float radius) {
-        this.radius = radius;
-    }
-
-    public static class CircleButtonRenderer extends Renderer<CircleButton> {
-
-        public CircleButtonRenderer(RenderManager renderManager) {
-            super(renderManager);
-        }
-
-        @Override
-        public ResourceHandle<Texture> getTexture(CircleButton button) {
-            return new ResourceHandle<>("textures/person.png") {
-            };
-        }
-
-        @Override
-        public void render(CircleButton button, float partialTick) {
-            renderManager.getRenderEngine().drawTexturedCircle(getTexture(button), button.getX(), button.getY(), button.getRadius());
-        }
     }
 }

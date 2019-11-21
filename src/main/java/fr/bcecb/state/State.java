@@ -1,12 +1,14 @@
 package fr.bcecb.state;
 
-import fr.bcecb.event.Event;
 import fr.bcecb.render.IRenderable;
 
 public abstract class State implements IRenderable {
+    protected final StateManager stateManager;
+
     private final String name;
 
-    protected State(String name) {
+    protected State(StateManager stateManager, String name) {
+        this.stateManager = stateManager;
         this.name = name;
     }
 
@@ -18,41 +20,9 @@ public abstract class State implements IRenderable {
 
     public abstract void onExit();
 
-    public abstract void update();
+    public abstract void onUpdate();
 
     public abstract boolean shouldRenderBelow();
 
-    public abstract boolean shouldUpdateBelow();
-
-    @Event.Cancellable
-    public static abstract class StateEvent extends Event {
-        private final State state;
-
-        StateEvent(State state) {
-            this.state = state;
-        }
-
-        public State getState() {
-            return state;
-        }
-
-        static class Exit extends StateEvent {
-            Exit(State state) {
-                super(state);
-            }
-        }
-
-        public static class Enter extends StateEvent {
-            private final State currentState;
-
-            Enter(State newState, State currentState) {
-                super(newState);
-                this.currentState = currentState;
-            }
-
-            public State getCurrentState() {
-                return currentState;
-            }
-        }
-    }
+    public abstract boolean shouldPauseBelow();
 }

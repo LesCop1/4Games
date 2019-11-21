@@ -33,11 +33,11 @@ public abstract class ResourceHandle<R extends IResource> {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         ResourceHandle<?> that = (ResourceHandle<?>) o;
-        return Objects.equal(getHandle(), that.getHandle());
+        return Objects.equal(handle, that.handle);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(getHandle());
+        return Objects.hashCode(handle);
     }
 }

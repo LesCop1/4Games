@@ -1,122 +1,111 @@
 package fr.bcecb;
 
-import com.google.common.eventbus.AsyncEventBus;
 import com.google.common.eventbus.EventBus;
-import com.google.common.eventbus.Subscribe;
-import fr.bcecb.event.Event;
 import fr.bcecb.event.EventExceptionHandler;
-import fr.bcecb.event.GameEvent;
-import fr.bcecb.render.RenderEngine;
+import fr.bcecb.input.InputManager;
+import fr.bcecb.render.RenderManager;
+import fr.bcecb.render.Window;
 import fr.bcecb.resources.ResourceManager;
-import fr.bcecb.state.MainMenuScreen;
-import fr.bcecb.state.StateEngine;
+import fr.bcecb.state.StateManager;
 import fr.bcecb.util.Log;
+import fr.bcecb.util.RenderHelper;
 
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.SynchronousQueue;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
+import static org.lwjgl.glfw.GLFW.glfwGetTime;
+import static org.lwjgl.glfw.GLFW.glfwInit;
 
-import static org.lwjgl.glfw.GLFW.*;
-
-public final class Game {
-    private static final Game INSTANCE = new Game();
-
+public final class Game implements AutoCloseable {
     private static final int ticksPerSecond = 60;
 
-    private static final ExecutorService EVENT_EXECUTOR = new ThreadPoolExecutor(0, 5, 60L, TimeUnit.SECONDS, new SynchronousQueue<>(), (r, executor) -> {
-    });
-    private static final EventBus EVENT_BUS = new AsyncEventBus(EVENT_EXECUTOR, EventExceptionHandler.getInstance());
+    public static final EventBus EVENT_BUS = new EventBus(EventExceptionHandler.getInstance());
 
-    private final RenderEngine renderEngine;
-    private final StateEngine stateEngine;
+    private final Window window;
+
+    private final RenderManager renderManager;
+    private final StateManager stateManager;
+
+    private final InputManager inputManager;
 
     private final ResourceManager resourceManager;
 
     private boolean running = false;
+
+    private static final Game INSTANCE = new Game();
 
     private Game() {
         if (!glfwInit()) {
             Log.SYSTEM.severe("Couldn't initialize GLFW");
         }
 
-        glfwSetErrorCallback(Log.createErrorCallback());
+        this.window = new Window(this, "4Games", 800, 600);
 
         this.resourceManager = new ResourceManager();
 
-        this.renderEngine = new RenderEngine(resourceManager);
-        this.stateEngine = new StateEngine();
+        this.stateManager = new StateManager(this, this.window.getScaledWidth(), this.window.getScaledHeight());
+        this.renderManager = new RenderManager(this.resourceManager);
+
+        this.inputManager = new InputManager(this, this.window);
     }
 
     private void start() {
-        glfwShowWindow(renderEngine.getWindow().getId());
+        Log.SYSTEM.info("Starting the game");
+        this.running = true;
 
-        Log.SYSTEM.debug("Starting the game");
-        running = true;
-
-        stateEngine.pushState(new MainMenuScreen());
-
-        float ticks = 1.0f / ticksPerSecond;
+        final float ticks = 1.0f / ticksPerSecond;
         float currentTime;
         float lastTime = 0.0f;
         float delta = 0.0f;
 
-        while (this.isRunning()) {
+        while (this.running) {
             currentTime = (float) glfwGetTime();
             delta += (currentTime - lastTime) / ticks;
             lastTime = currentTime;
 
             while (delta >= 1.0) {
-                Event event = new GameEvent.Tick();
-                Game.getEventBus().post(event);
+                this.stateManager.update();
 
                 --delta;
             }
 
-            renderEngine.render(stateEngine, delta);
+            RenderHelper.setupProjection(window.getFramebufferWidth(), window.getFramebufferHeight(), window.getGuiScale());
+            this.renderManager.render(this.stateManager, delta);
 
-            glfwSwapBuffers(renderEngine.getWindow().getId());
-            glfwPollEvents();
+            this.window.update();
         }
-
-        resourceManager.cleanUp();
-        renderEngine.cleanUp();
     }
 
-    @Subscribe
-    public void stop(GameEvent.Close event) {
-        EVENT_EXECUTOR.shutdown();
-        running = false;
+    @Override
+    public void close() {
+        try {
+            this.renderManager.close();
+            this.resourceManager.close();
+        } finally {
+            this.window.close();
+        }
     }
 
-    private boolean isRunning() {
-        return running;
+    public void stop() {
+        this.running = false;
     }
 
-    public RenderEngine getRenderEngine() {
-        return renderEngine;
+    public void updateWindowSize() {
+        this.renderManager.getFontRenderer().setGuiScale(this.window.getGuiScale());
+        this.stateManager.rebuildGui(this.window.getScaledWidth(), this.window.getScaledHeight());
     }
 
-    public StateEngine getStateEngine() {
-        return stateEngine;
+    public StateManager getStateManager() {
+        return stateManager;
+    }
+
+    public InputManager getInputManager() {
+        return inputManager;
     }
 
     public ResourceManager getResourceManager() {
         return resourceManager;
     }
 
-    public static EventBus getEventBus() {
-        return EVENT_BUS;
-    }
-
     public static Game instance() {
         return INSTANCE;
-    }
-
-    static {
-        Game.getEventBus().register(INSTANCE);
-        Game.getEventBus().register(INSTANCE.getStateEngine());
-        Game.getEventBus().register(INSTANCE.getRenderEngine());
     }
 
     public static void main(String[] args) {

@@ -1,32 +1,28 @@
 package fr.bcecb.state;
 
-import fr.bcecb.Game;
-import fr.bcecb.event.MouseEvent;
+import fr.bcecb.input.MouseButton;
 import fr.bcecb.state.gui.Button;
+import fr.bcecb.state.gui.GuiElement;
 import fr.bcecb.state.gui.ScreenState;
 
 public class AboutScreen extends ScreenState {
-    protected AboutScreen() {
-        super("about_menu");
+    public AboutScreen(StateManager stateManager) {
+        super(stateManager, "about_menu");
     }
 
     @Override
     public void initGui() {
-        addGuiElement(new Button(0, 0, 0, 100, 100) {
-            @Override
-            protected void onClick(MouseEvent.Click event) {
-                Game.instance().getStateEngine().popState();
-            }
-        });
+        GuiElement backButton = new Button(BACK_BUTTON_ID, (width / 20f), (height - (height / 20f) - (height / 10f)), (height / 10f), (height / 10f), false, "Back");
+
+        addGuiElement(backButton);
     }
 
     @Override
-    public boolean shouldRenderBelow() {
-        return false;
-    }
-
-    @Override
-    public boolean shouldUpdateBelow() {
+    public boolean mouseClicked(int id, MouseButton button) {
+        if (id == BACK_BUTTON_ID) {
+            stateManager.popState();
+            return true;
+        }
         return false;
     }
 }

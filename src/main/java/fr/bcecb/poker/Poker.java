@@ -1,6 +1,5 @@
 package fr.bcecb.poker;
 
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -11,11 +10,17 @@ import java.util.List;
  */
 public class Poker {
     private static final int DEFAULT_BANKROLL = 500;
-    private static final int START_NUM_CARD = 2;
+    public static final int START_NUM_CARD = 2;
     private static final int STARTING_SMALL_BLIND = DEFAULT_BANKROLL / 100;
     private static final int BLIND_GAME_INCREASE = 5;
 
+    public static final int ACTION_BET = 0;
+    public static final int ACTION_CHECK = 1;
+    public static final int ACTION_FOLLOW = 2;
+    public static final int ACTION_BED = 3;
+
     private int playerAmount;
+
     private HashMap<Integer, Player> players = new HashMap<>();
     private Deck deck;
     private Deck table;
@@ -23,6 +28,11 @@ public class Poker {
     private int numGame;
     private int startingGamePlayer;
     private int currentSmallBlind;
+
+    public int getCurrentPlayer() {
+        return currentPlayer;
+    }
+
     private int currentPlayer;
     private int currentHighestBet;
     private int numTurns;
@@ -40,19 +50,9 @@ public class Poker {
     }
 
     /**
-     * This function is called every event and update the game
-     */
-    public void update() {
-        if (!this.isGameInit) {
-            initGame();
-        }
-        updateGame();
-    }
-
-    /**
      * Initialize the poker game
      */
-    private void initGame() {
+    public void initGame() {
         // Create a new deck, with the right numbers of cards and shuffle it.
         this.deck = new Deck();
         this.deck.init();
@@ -95,12 +95,23 @@ public class Poker {
     }
 
     /**
+     * This function is called every event and update the game
+     */
+    public void update(int action) {
+        System.out.println("this = " + this.currentPlayer);
+        if (!this.isGameInit) {
+            initGame();
+        }
+        updateGame(action);
+    }
+
+    /**
      * Update the game logic
      */
-    private void updateGame() {
+    private void updateGame(int action) {
         // Let the players play and switch to the next one
-        this.players.get(this.currentPlayer).play(this);
-        this.currentPlayer = this.currentPlayer++ % this.playerAmount;
+        this.players.get(this.currentPlayer).play(this, action);
+        this.currentPlayer = ++this.currentPlayer % this.playerAmount;
         updateTurn();
 
         // Increase blind
@@ -172,6 +183,14 @@ public class Poker {
         return winner;
     }
 
+    public Player getPlayer(int i) {
+        return this.players.get(i);
+    }
+
+    public int getNumTurns() {
+        return numTurns;
+    }
+
     private int getCurrentHighestBet() {
         return this.currentHighestBet;
     }
@@ -180,7 +199,7 @@ public class Poker {
         this.currentHighestBet = currentHighestBet;
     }
 
-    private static class Player {
+    public class Player {
         // Combination points
         private static final int COMBINATION_POINTS_ROYAL_FLUSH = 10000;
         private static final int COMBINATION_POINTS_STRAIGHT_FLUSH = 9000;
@@ -201,6 +220,18 @@ public class Poker {
         private int lastBet;
         private int points;
 
+        public Deck getHand() {
+            return hand;
+        }
+
+        public int getPoint() {
+            return points;
+        }
+
+        public Deck.Card getCard(int i) {
+            return this.hand.getCards().get(i);
+        }
+
         /**
          * Initialize a player, reset every variable
          */
@@ -218,27 +249,27 @@ public class Poker {
          *
          * @param pokerInstance The current poker Instance
          */
-        private void play(Poker pokerInstance) {
+        private void play(Poker pokerInstance, int action) {
             if (this.playing) {
-                if (Button.Bet.onclick) {
+                if (action == Poker.ACTION_BET) {
                     actionBet(pokerInstance, 50);
-                } else if (Button.Follow.onclick) {
+                } else if (action == Poker.ACTION_FOLLOW) {
                     actionFollow(pokerInstance);
-                } else if (Button.check.onclick) {
+                } else if (action == Poker.ACTION_CHECK) {
                     actionCheck();
-                } else if (Button.Leave.onclick) {
+                } else if (action == Poker.ACTION_BED) {
                     actionLeave();
                 }
             }
         }
 
-        private void actionCheck() {
+        public void actionCheck() {
             this.lastBet = 0;
         }
 
-        private void actionBet(Poker pokerInstance, int amount) {
+        public void actionBet(Poker pokerInstance, int amount) {
             if (this.bankroll > 0) {
-                if (this.bankroll >= amount && amount > pokerInstance.getCurrentHighestBet()) {
+                if (this.bankroll >= amount && amount >= pokerInstance.getCurrentHighestBet()) {
                     this.addToTable(amount);
                     pokerInstance.setCurrentHighestBet(amount);
                     this.lastBet = amount;
@@ -249,11 +280,11 @@ public class Poker {
             }
         }
 
-        private void actionFollow(Poker pokerInstance) {
+        public void actionFollow(Poker pokerInstance) {
             actionBet(pokerInstance, pokerInstance.getCurrentHighestBet());
         }
 
-        private void actionLeave() {
+        public void actionLeave() {
             this.playing = false;
         }
 
@@ -499,7 +530,7 @@ public class Poker {
             this.bankroll -= money;
         }
 
-        private int getBankroll() {
+        public int getBankroll() {
             return bankroll;
         }
 
