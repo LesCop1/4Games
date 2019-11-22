@@ -3,7 +3,7 @@ package fr.bcecb.state.gui;
 import fr.bcecb.render.RenderManager;
 import fr.bcecb.resources.ResourceHandle;
 import fr.bcecb.resources.Texture;
-import fr.bcecb.state.EndGameState;
+import fr.bcecb.state.EndGameScreen;
 import fr.bcecb.util.RenderHelper;
 import fr.bcecb.util.Transform;
 
@@ -14,26 +14,26 @@ public class EndGameStateRenderer extends ScreenStateRenderer {
 
     @Override
     public ResourceHandle<Texture> getTexture(ScreenState screenState) {
-        return this.getTexture((EndGameState) screenState);
+        return this.getTexture((EndGameScreen) screenState);
     }
 
-    public ResourceHandle<Texture> getTexture(EndGameState endGameState) {
-        return endGameState.getBackgroundTexture();
+    public ResourceHandle<Texture> getTexture(EndGameScreen endGameScreen) {
+        return endGameScreen.getBackgroundTexture();
     }
 
     @Override
     public void render(ScreenState screenState, float partialTick) {
-        this.render((EndGameState) screenState, partialTick);
+        this.render((EndGameScreen) screenState, partialTick);
     }
 
-    public void render(EndGameState endGameState, float partialTick) {
+    public void render(EndGameScreen endGameScreen, float partialTick) {
         Transform transform = RenderHelper.pushTransform();
         {
-            transform.translate(endGameState.width / 2f, endGameState.height / 2f);
-            renderManager.drawRoundedRect(null, 0, 0, endGameState.getBackgroundWidth(), endGameState.getBackgroundHeight(), 5f, true);
+            transform.translate(endGameScreen.width / 2f, endGameScreen.height / 2f);
+            renderManager.drawRoundedRect(null, 0, 0, endGameScreen.getBackgroundWidth(), endGameScreen.getBackgroundHeight(), 5f, true);
         }
         RenderHelper.popTransform();
 
-        super.render(endGameState, partialTick);
+        super.render(endGameScreen, partialTick);
     }
 }

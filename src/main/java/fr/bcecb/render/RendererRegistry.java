@@ -1,7 +1,7 @@
 package fr.bcecb.render;
 
 import fr.bcecb.resources.ResourceManager;
-import fr.bcecb.state.EndGameState;
+import fr.bcecb.state.EndGameScreen;
 import fr.bcecb.state.gui.*;
 
 import java.util.HashMap;
@@ -15,7 +15,7 @@ public class RendererRegistry {
         this.resourceManager = resourceManager;
 
         registerRenderer(ScreenState.class, new ScreenStateRenderer(renderManager));
-        registerRenderer(EndGameState.class, new EndGameStateRenderer(renderManager));
+        registerRenderer(EndGameScreen.class, new EndGameStateRenderer(renderManager));
         registerRenderer(Button.class, new ButtonRenderer(renderManager));
         registerRenderer(CircleButton.class, new CircleButtonRenderer(renderManager));
         registerRenderer(RoundedButton.class, new RoundedButtonRenderer(renderManager));
