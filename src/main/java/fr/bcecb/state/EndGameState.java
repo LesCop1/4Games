@@ -6,16 +6,13 @@ import fr.bcecb.util.Constants;
 
 import java.util.concurrent.TimeUnit;
 
-public class EndGameState extends ScreenState {
+public class EndGameState extends PopUpScreenState {
     private GuiElement replayButton;
     private GuiElement exitButton;
 
     private Constants.GameType gameType;
     private long time;
     private int moneyEarned;
-
-    private int backgroundWidth;
-    private int backgroundHeight;
 
     public EndGameState(StateManager stateManager, Constants.GameType gameType, long time, int moneyEarned) {
         super(stateManager, "end_game");
