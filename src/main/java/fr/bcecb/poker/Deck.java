@@ -53,6 +53,24 @@ public class Deck {
         return cards;
     }
 
+    public Card getCard(int i) {
+        if (i < size()) {
+            return this.cards.get(i);
+        } else {
+            return null;
+        }
+    }
+
+    public int size() {
+        return this.cards.size();
+    }
+
+    public void clear() {
+        if (!this.cards.isEmpty()) {
+            this.cards.clear();
+        }
+    }
+
     public enum Type {
         HEART,
         DIAMOND,

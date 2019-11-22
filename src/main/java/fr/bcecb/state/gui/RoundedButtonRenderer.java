@@ -1,5 +1,6 @@
 package fr.bcecb.state.gui;
 
+import com.google.common.base.MoreObjects;
 import com.google.common.base.Strings;
 import fr.bcecb.render.RenderManager;
 import fr.bcecb.render.Renderer;
@@ -15,7 +16,13 @@ public class RoundedButtonRenderer extends Renderer<RoundedButton> {
 
     @Override
     public ResourceHandle<Texture> getTexture(RoundedButton roundedButton) {
-        return roundedButton.isHovered() ? roundedButton.getOnHoverTexture() : roundedButton.getTexture();
+        if (roundedButton.isDisabled()) {
+            return MoreObjects.firstNonNull(roundedButton.getDisabledTexture(), roundedButton.getTexture());
+        } else if (roundedButton.isHovered()) {
+            return MoreObjects.firstNonNull(roundedButton.getHoverTexture(), roundedButton.getTexture());
+        } else {
+            return roundedButton.getTexture();
+        }
     }
 
     @Override

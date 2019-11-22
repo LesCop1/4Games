@@ -20,41 +20,41 @@ public class Poker {
     public static final int ACTION_BED = 3;
 
     private int playerAmount;
-
     private HashMap<Integer, Player> players = new HashMap<>();
+
     private Deck deck;
     private Deck table;
-    private boolean isGameInit;
+    private int onTableAmount;
     private int numGame;
     private int startingGamePlayer;
     private int currentSmallBlind;
-
-    public int getCurrentPlayer() {
-        return currentPlayer;
-    }
-
     private int currentPlayer;
-    private int currentHighestBet;
+    private int currentHighestPlayerBet;
     private int numTurns;
+    private int numPlayerInTurn;
+    private boolean newTurn = false;
+    private boolean doPokerEnds = false;
 
     public Poker(int playerAmount) {
+        this.deck = new Deck();
         this.playerAmount = playerAmount;
         this.table = new Deck();
         for (int i = 0; i < playerAmount; i++) {
             players.put(i, new Player());
         }
-        this.isGameInit = false;
         this.startingGamePlayer = 0;
-        this.numGame = 0;
+        this.numGame = 1;
         this.currentSmallBlind = STARTING_SMALL_BLIND;
+
+        initGame();
     }
 
     /**
      * Initialize the poker game
      */
-    public void initGame() {
+    private void initGame() {
         // Create a new deck, with the right numbers of cards and shuffle it.
-        this.deck = new Deck();
+        this.deck.clear();
         this.deck.init();
 
         // Init all the players.
@@ -69,18 +69,24 @@ public class Poker {
             }
         }
 
-        // Set basic var for the turn.
+        // Reset vars
+        this.table.clear();
+        this.onTableAmount = 0;
         this.numTurns = 0;
+        this.newTurn = false;
+        this.numPlayerInTurn = 0;
         this.currentPlayer = this.startingGamePlayer;
 
         // Subtract the blind to each players.
         this.players.get(this.currentPlayer).addToTable(this.currentSmallBlind);
+        this.addOnTableAmount(this.currentSmallBlind);
         for (int i = 0; i < this.playerAmount; i++) {
             if (!(i == this.currentPlayer)) {
                 this.players.get(i).addToTable(this.currentSmallBlind * 2);
+                this.addOnTableAmount(this.currentSmallBlind * 2);
             }
         }
-        this.currentHighestBet = currentSmallBlind * 2;
+        this.currentHighestPlayerBet = currentSmallBlind * 2;
 
         // Add the first 3 cards.
         for (int i = 0; i < 3; i++) {
@@ -89,59 +95,72 @@ public class Poker {
 
         // Increment numTurns
         this.numTurns++;
-
-        // Game is now init
-        this.isGameInit = true;
-    }
-
-    /**
-     * This function is called every event and update the game
-     */
-    public void update(int action) {
-        System.out.println("this = " + this.currentPlayer);
-        if (!this.isGameInit) {
-            initGame();
-        }
-        updateGame(action);
     }
 
     /**
      * Update the game logic
      */
-    private void updateGame(int action) {
+    public void update(int action) {
         // Let the players play and switch to the next one
         this.players.get(this.currentPlayer).play(this, action);
-        this.currentPlayer = ++this.currentPlayer % this.playerAmount;
+        updatePlayer();
         updateTurn();
 
         // Increase blind
         if (this.numGame % BLIND_GAME_INCREASE == 0) this.currentSmallBlind *= 2;
 
         // Last turns check
-        if (this.numTurns == 3) {
+        if (this.numTurns == 4) {
             // Evaluate the winner.
             Player winner = findWinner();
-            // Add currentBet on the winner account.
+            winner.addToBankroll(this.onTableAmount);
+            endGame();
+        } else if (isAlone()) {
             for (Player player : this.players.values()) {
-                if (player != winner) {
-                    winner.addToBankroll(player.getOnTable());
+                if (player.isPlaying()) {
+                    player.addToBankroll(this.onTableAmount);
                 }
             }
             endGame();
         }
     }
 
+    private void updatePlayer() {
+        int count = 0;
+        this.currentPlayer = ++this.currentPlayer % this.playerAmount;
+        while (!getPlayer(this.currentPlayer).isPlaying()) {
+            this.currentPlayer = ++this.currentPlayer % this.playerAmount;
+            count++;
+            if (count >= this.playerAmount) break;
+        }
+    }
+
+    private boolean isAlone() {
+        int counter = 0;
+        for (int i = 0; i < this.players.size(); i++) {
+            if (!getPlayer(i).isPlaying()) {
+                counter++;
+            }
+        }
+        return counter == this.playerAmount - 1;
+    }
+
     private void updateTurn() {
+        this.newTurn = false;
+        this.numPlayerInTurn++;
+
         boolean nextTurn = true;
         for (int i = 1; i < this.players.size(); i++) {
-            if (this.players.get(i - 1).getLastBet() != this.players.get(i).getLastBet()) {
+            if (this.players.get(i - 1).getOnTable() != this.players.get(i).getOnTable()) {
                 nextTurn = false;
                 break;
             }
         }
-        if (nextTurn) {
+        if (nextTurn && this.numPlayerInTurn >= this.playerAmount) {
             this.currentPlayer = this.startingGamePlayer;
             this.table.push(this.deck.pop());
+            this.newTurn = true;
+            this.numPlayerInTurn = 0;
             this.numTurns++;
         }
     }
@@ -150,22 +169,15 @@ public class Poker {
      * Check if the poker ends or just the game
      */
     private void endGame() {
-        this.startingGamePlayer = this.startingGamePlayer++ % 4;
-        this.isGameInit = false;
-        boolean doPokerEnds = false;
         for (Player player : this.players.values()) {
-            if (player.getBankroll() == (playerAmount - 1) * DEFAULT_BANKROLL) {
-                doPokerEnds = true;
+            if (player.getBankroll() == this.playerAmount * DEFAULT_BANKROLL) {
+                this.doPokerEnds = true;
                 break;
             }
         }
-        if (doPokerEnds) {
-            endPoker();
-        }
-    }
-
-    private void endPoker() {
-        System.out.println("Poker ends");
+        this.startingGamePlayer = ++this.startingGamePlayer % this.playerAmount;
+        this.numGame++;
+        initGame();
     }
 
     private Player findWinner() {
@@ -183,20 +195,44 @@ public class Poker {
         return winner;
     }
 
+    public int getCurrentPlayer() {
+        return currentPlayer;
+    }
+
     public Player getPlayer(int i) {
         return this.players.get(i);
+    }
+
+    public Deck getTable() {
+        return table;
     }
 
     public int getNumTurns() {
         return numTurns;
     }
 
-    private int getCurrentHighestBet() {
-        return this.currentHighestBet;
+    public boolean isNewTurn() {
+        return newTurn;
     }
 
-    private void setCurrentHighestBet(int currentHighestBet) {
-        this.currentHighestBet = currentHighestBet;
+    public int getOnTableAmount() {
+        return onTableAmount;
+    }
+
+    public void addOnTableAmount(int onTableAmount) {
+        this.onTableAmount += onTableAmount;
+    }
+
+    public int getCurrentHighestPlayerBet() {
+        return currentHighestPlayerBet;
+    }
+
+    public void setCurrentHighestPlayerBet(int currentHighestPlayerBet) {
+        this.currentHighestPlayerBet = currentHighestPlayerBet;
+    }
+
+    public boolean doPokerEnds() {
+        return doPokerEnds;
     }
 
     public class Player {
@@ -217,19 +253,14 @@ public class Poker {
         private int bankroll;
         private Deck hand;
         private int onTable;
-        private int lastBet;
         private int points;
 
-        public Deck getHand() {
-            return hand;
-        }
-
-        public int getPoint() {
-            return points;
-        }
-
-        public Deck.Card getCard(int i) {
-            return this.hand.getCards().get(i);
+        public Player() {
+            this.playing = true;
+            this.bankroll = DEFAULT_BANKROLL;
+            this.hand = new Deck();
+            this.onTable = 0;
+            this.points = 0;
         }
 
         /**
@@ -237,10 +268,8 @@ public class Poker {
          */
         private void init() {
             this.playing = true;
-            this.bankroll = DEFAULT_BANKROLL;
-            this.hand = new Deck();
+            this.hand.clear();
             this.onTable = 0;
-            this.lastBet = -1;
             this.points = 0;
         }
 
@@ -263,28 +292,28 @@ public class Poker {
             }
         }
 
-        public void actionCheck() {
-            this.lastBet = 0;
+        private void actionCheck() {
+
         }
 
-        public void actionBet(Poker pokerInstance, int amount) {
+        private void actionBet(Poker pokerInstance, int amount) {
             if (this.bankroll > 0) {
-                if (this.bankroll >= amount && amount >= pokerInstance.getCurrentHighestBet()) {
+                if (this.bankroll >= amount && (this.onTable + amount) >= pokerInstance.getCurrentHighestPlayerBet()) {
                     this.addToTable(amount);
-                    pokerInstance.setCurrentHighestBet(amount);
-                    this.lastBet = amount;
+                    pokerInstance.addOnTableAmount(amount);
+                    pokerInstance.setCurrentHighestPlayerBet(this.onTable);
                 } else {
+                    pokerInstance.addOnTableAmount(this.bankroll);
                     this.addToTable(this.bankroll);
-                    this.lastBet = this.bankroll;
                 }
             }
         }
 
-        public void actionFollow(Poker pokerInstance) {
-            actionBet(pokerInstance, pokerInstance.getCurrentHighestBet());
+        private void actionFollow(Poker pokerInstance) {
+            actionBet(pokerInstance, pokerInstance.getCurrentHighestPlayerBet() - this.onTable);
         }
 
-        public void actionLeave() {
+        private void actionLeave() {
             this.playing = false;
         }
 
@@ -522,6 +551,10 @@ public class Poker {
             }
         }
 
+        public Deck.Card getCard(int i) {
+            return this.hand.getCards().get(i);
+        }
+
         private void addToBankroll(int money) {
             this.bankroll += money;
         }
@@ -534,16 +567,16 @@ public class Poker {
             return bankroll;
         }
 
-        private int getOnTable() {
+        public int getOnTable() {
             return onTable;
-        }
-
-        private int getLastBet() {
-            return lastBet;
         }
 
         private int getPoints() {
             return points;
+        }
+
+        public boolean isPlaying() {
+            return playing;
         }
     }
 }

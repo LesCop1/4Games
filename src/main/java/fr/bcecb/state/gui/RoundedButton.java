@@ -44,16 +44,20 @@ public class RoundedButton extends Button {
         this.radius = radius;
     }
 
-    public ResourceHandle<Texture> getTexture() {
-        return texture;
-    }
-
     public void setTexture(ResourceHandle<Texture> texture) {
         this.texture = texture;
     }
 
-    public ResourceHandle<Texture> getOnHoverTexture() {
-        return onHoverTexture;
+    public ResourceHandle<Texture> getTexture() {
+        return Resources.DEFAULT_BUTTON_TEXTURE;
+    }
+
+    public ResourceHandle<Texture> getHoverTexture() {
+        return Resources.DEFAULT_BUTTON_HOVER_TEXTURE;
+    }
+
+    public ResourceHandle<Texture> getDisabledTexture() {
+        return Resources.DEFAULT_BUTTON_DISABLED_TEXTURE;
     }
 
     public void setOnHoverTexture(ResourceHandle<Texture> onHoverTexture) {

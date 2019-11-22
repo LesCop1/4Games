@@ -13,13 +13,8 @@ public class PokerSettingsScreen extends ScreenState {
     @Override
     public void initGui() {
 
-        float x = (width / 4f);
-        float y = (height / 2f) - (height / 10f);
-        float btnWidth = (width / 8f);
-        float btnHeight = (height / 10f);
-
-        for (int i = 0; i < 3; i++, x += (btnWidth + 5f)) {
-            Button xPlayers = new Button(i, x, y, btnWidth, btnHeight, true, (i + 2) + "Players");
+        for (int i = 0; i < 3; i++) {
+            Button xPlayers = new Button(i, (width / 4f) + ((width / 4f) * i), (height / 2f) - (height / 10f), (width / 8f), (height / 10f), true, (i + 2) + "Players");
             addGuiElement(xPlayers);
         }
 
