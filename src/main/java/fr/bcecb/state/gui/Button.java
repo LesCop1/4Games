@@ -42,7 +42,7 @@ public class Button extends GuiElement {
     }
 
     public Vector4f getTitleColor() {
-        return Constants.COLOR_BLACK;
+        return Constants.COLOR_WHITE;
     }
 
     public ResourceHandle<Texture> getTexture() {
