@@ -85,7 +85,7 @@ public class BattleshipScreen extends ScreenState {
             }
         };
 
-        Button backButton = new Button(BACK_BUTTON_ID, 0, 0, 50 / ((float) 1920 / width), 50 / ((float) 1920 / width), false);
+        Button backButton = new Button(BACK_BUTTON_ID, (width / 20f), (height - (height / 20f) - (height / 10f)), (height / 10f), (height / 10f), false, "Back");
         addGuiElement(this.changePlayerButton, backButton);
     }
 

@@ -6,6 +6,7 @@ import fr.bcecb.resources.Texture;
 import fr.bcecb.state.StateManager;
 import fr.bcecb.state.gui.Button;
 import fr.bcecb.state.gui.ScreenState;
+import fr.bcecb.state.gui.Text;
 import fr.bcecb.util.Constants;
 
 import java.util.ArrayList;
@@ -73,7 +74,6 @@ public class FirstPhaseBattleshipScreen extends ScreenState {
                         };
                     }
                 };
-
                 addGuiElement(caseButton);
             }
         }
@@ -115,13 +115,25 @@ public class FirstPhaseBattleshipScreen extends ScreenState {
             }
         };
 
-        Button backButton = new Button(BACK_BUTTON_ID, 0, 0, 50 / ((float) 1920 / width), 50 / ((float) 1920 / width), false);
-        addGuiElement(this.nextButton, backButton);
+        Text whichPlayer = new Text(801, (width / 2f), (height / 5f), true, null) {
+            @Override
+            public String getText() {
+                return currentPlayer==0 ? "Joueur 1" : "Joueur 2";
+            }
+        };
+
+
+        Button backButton = new Button(9090, (width / 20f), (height - (height / 20f) - (height / 10f)), (height / 10f), (height / 10f), false, "Back");
+        addGuiElement(this.nextButton, backButton, whichPlayer);
     }
 
     @Override
     public boolean mouseClicked(int id, MouseButton button) {
-        if (id == this.nextButton.getId()) {
+        if(id == 9090){
+            stateManager.popState();
+            stateManager.popState();
+            return true;
+        } else if (id == this.nextButton.getId()) {
             if (this.currentPlayer == 0) {
                 this.currentPlayer = 1;
                 this.addedBoats.clear();
