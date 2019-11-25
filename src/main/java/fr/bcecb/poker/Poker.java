@@ -9,7 +9,7 @@ import java.util.List;
  * The main poker class which includes all the logic of the game
  */
 public class Poker {
-    private static final int DEFAULT_BANKROLL = 500;
+    public static final int DEFAULT_BANKROLL = 500;
     public static final int START_NUM_CARD = 2;
     private static final int STARTING_SMALL_BLIND = DEFAULT_BANKROLL / 100;
     private static final int BLIND_GAME_INCREASE = 5;
@@ -43,16 +43,14 @@ public class Poker {
             players.put(i, new Player());
         }
         this.startingGamePlayer = 0;
-        this.numGame = 1;
+        this.numGame = 0;
         this.currentSmallBlind = STARTING_SMALL_BLIND;
-
-        initGame();
     }
 
     /**
      * Initialize the poker game
      */
-    private void initGame() {
+    public void initGame() {
         // Create a new deck, with the right numbers of cards and shuffle it.
         this.deck.clear();
         this.deck.init();
@@ -95,6 +93,7 @@ public class Poker {
 
         // Increment numTurns
         this.numTurns++;
+        this.numGame++;
     }
 
     /**
@@ -108,21 +107,6 @@ public class Poker {
 
         // Increase blind
         if (this.numGame % BLIND_GAME_INCREASE == 0) this.currentSmallBlind *= 2;
-
-        // Last turns check
-        if (this.numTurns == 4) {
-            // Evaluate the winner.
-            Player winner = findWinner();
-            winner.addToBankroll(this.onTableAmount);
-            endGame();
-        } else if (isAlone()) {
-            for (Player player : this.players.values()) {
-                if (player.isPlaying()) {
-                    player.addToBankroll(this.onTableAmount);
-                }
-            }
-            endGame();
-        }
     }
 
     private void updatePlayer() {
@@ -135,7 +119,7 @@ public class Poker {
         }
     }
 
-    private boolean isAlone() {
+    public boolean isAlone() {
         int counter = 0;
         for (int i = 0; i < this.players.size(); i++) {
             if (!getPlayer(i).isPlaying()) {
@@ -168,7 +152,7 @@ public class Poker {
     /**
      * Check if the poker ends or just the game
      */
-    private void endGame() {
+    public void endGame() {
         for (Player player : this.players.values()) {
             if (player.getBankroll() == this.playerAmount * DEFAULT_BANKROLL) {
                 this.doPokerEnds = true;
@@ -176,11 +160,19 @@ public class Poker {
             }
         }
         this.startingGamePlayer = ++this.startingGamePlayer % this.playerAmount;
-        this.numGame++;
-        initGame();
     }
 
-    private Player findWinner() {
+    public Player findAlonePlayer() {
+        Player alone = null;
+        for (Player player : this.players.values()) {
+            if (player.isPlaying()) {
+                alone = player;
+            }
+        }
+        return alone;
+    }
+
+    public Player findWinner() {
         Player winner = null;
         int winnerPoints = 0;
         for (Player player : players.values()) {
@@ -199,12 +191,30 @@ public class Poker {
         return currentPlayer;
     }
 
+    public int getPlayerNumber(Player player) {
+        int find = -1;
+        for (int i = 0; i < this.players.size(); i++) {
+            if (this.players.get(i) == player) {
+                find = i;
+            }
+        }
+        return find;
+    }
+
     public Player getPlayer(int i) {
         return this.players.get(i);
     }
 
+    public int getPlayerAmount() {
+        return playerAmount;
+    }
+
     public Deck getTable() {
         return table;
+    }
+
+    public int getNumGame() {
+        return numGame;
     }
 
     public int getNumTurns() {
@@ -414,7 +424,7 @@ public class Poker {
                     for (int j = 14; j >= 2; j--) {
                         int comparisionPair = 0;
                         for (int k = 0; k < 5; k++) {
-                            if (j != i && hand.getCards().get(i).getNum() == j) {
+                            if (j != i && hand.getCards().get(k).getNum() == j) {
                                 comparisionPair++;
                             }
                         }
@@ -555,7 +565,7 @@ public class Poker {
             return this.hand.getCards().get(i);
         }
 
-        private void addToBankroll(int money) {
+        public void addToBankroll(int money) {
             this.bankroll += money;
         }
 

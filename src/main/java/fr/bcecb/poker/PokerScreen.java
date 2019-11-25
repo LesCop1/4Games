@@ -31,159 +31,48 @@ public class PokerScreen extends ScreenState {
         this.stopwatch = Stopwatch.createStarted();
     }
 
+    public static ResourceHandle<Texture> getCardTexture(Deck.Card card) {
+        if (card != null) {
+            Deck.Type type = card.getType();
+            if (type.equals(Deck.Type.SPADE)) {
+                return Constants.POKER_SPADE;
+            } else if (type.equals(Deck.Type.HEART)) {
+                return Constants.POKER_HEART;
+            } else if (type.equals(Deck.Type.CLUB)) {
+                return Constants.POKER_CLUB;
+            } else if (type.equals(Deck.Type.DIAMOND)) {
+                return Constants.POKER_DIAMOND;
+            }
+        }
+        return null;
+    }
+
     @Override
     public ResourceHandle<Texture> getBackgroundTexture() {
         return Constants.POKER_BACKGROUND;
     }
 
-    @Override
-    public void onUpdate() {
-        super.onUpdate();
-        if (poker.doPokerEnds()) {
-            this.stopwatch.stop();
-            long time = this.stopwatch.elapsed(TimeUnit.MILLISECONDS);
-            stateManager.pushState(new EndGameState(stateManager, Constants.GameType.POKER, time, calculatePoints()));
+    public static String getCardTitle(Deck.Card card) {
+        if (card != null) {
+            int value = card.getNum();
+            if (value < 11) {
+                return String.valueOf(value);
+            } else if (value == 11) {
+                return "J";
+            } else if (value == 12) {
+                return "Q";
+            } else if (value == 13) {
+                return "K";
+            } else if (value == 14) {
+                return "A";
+            }
         }
+        return null;
     }
 
     @Override
-    public void initGui() {
-        drawBottomPlayerUI(0);
-        switch (this.playerCount) {
-            case 2 -> drawTopPlayerUI(1);
-            case 3 -> {
-                drawTopPlayerUI(1);
-                drawLeftPlayerUI(2);
-            }
-            case 4 -> {
-                drawRightPlayerUI(1);
-                drawTopPlayerUI(2);
-                drawLeftPlayerUI(3);
-            }
-        }
-
-        for (int i = 0; i < 5; i++) {
-            int finalI = i;
-            RoundedButton middleCard = new RoundedButton((30 + finalI), ((width / 2f) - 110 + (45 * finalI)), height / 2f, 40, 60, 5f, true, null, null) {
-                @Override
-                public ResourceHandle<Texture> getTexture() {
-                    return getCardTexture(poker.getTable().getCard(finalI));
-                }
-
-                @Override
-                public ResourceHandle<Texture> getHoverTexture() {
-                    return null;
-                }
-
-                @Override
-                public String getTitle() {
-                    return getCardTitle(poker.getTable().getCard(finalI));
-                }
-
-                @Override
-                public float getTitleScale() {
-                    return 1f;
-                }
-
-                @Override
-                public Vector4f getTitleColor() {
-                    return Constants.COLOR_WHITE;
-                }
-
-                @Override
-                public boolean isVisible() {
-                    return finalI < poker.getTable().size();
-                }
-            };
-
-            addGuiElement(middleCard);
-        }
-
-        Text numTurns = new Text(40, (width / 8f), 4.5f * (height / 6f), true, null) {
-            @Override
-            public String getText() {
-                return "Tour n " + poker.getNumTurns();
-            }
-        };
-
-        Text onTableAmount = new Text(41, (width / 2f), (height / 2f) + 35, true, null) {
-            @Override
-            public String getText() {
-                return "Mise :" + poker.getOnTableAmount();
-            }
-        };
-
-        this.followButton = new Button(50, (width / 2f) + 52.5f, height - 60, 40, 20, false, "Suivre") {
-            @Override
-            public boolean isDisabled() {
-                return poker.isNewTurn() || poker.doPokerEnds();
-            }
-
-            @Override
-            public ResourceHandle<Texture> getTexture() {
-                return Constants.POKER_BUTTON;
-            }
-
-            @Override
-            public ResourceHandle<Texture> getHoverTexture() {
-                return null;
-            }
-        };
-
-        this.betButton = new Button(51, (width / 2f) + 97.5f, height - 60, 40, 20, false, "Relancer") {
-            @Override
-            public boolean isDisabled() {
-                return poker.doPokerEnds();
-            }
-
-            @Override
-            public ResourceHandle<Texture> getTexture() {
-                return Constants.POKER_BUTTON;
-            }
-
-            @Override
-            public ResourceHandle<Texture> getHoverTexture() {
-                return null;
-            }
-        };
-
-        this.checkButton = new Button(52, (width / 2f) + 52.5f, height - 35, 40, 20, false, "Check") {
-            @Override
-            public boolean isDisabled() {
-                return poker.getPlayer(poker.getCurrentPlayer()).getOnTable() != poker.getCurrentHighestPlayerBet() || poker.doPokerEnds();
-            }
-
-            @Override
-            public ResourceHandle<Texture> getTexture() {
-                return Constants.POKER_BUTTON;
-            }
-
-            @Override
-            public ResourceHandle<Texture> getHoverTexture() {
-                return null;
-            }
-        };
-
-        this.bedButton = new Button(53, (width / 2f) + 97.5f, height - 35, 40, 20, false, "Se coucher") {
-            @Override
-            public boolean isDisabled() {
-                return poker.doPokerEnds();
-            }
-
-            @Override
-            public ResourceHandle<Texture> getTexture() {
-                return Constants.POKER_BUTTON;
-            }
-
-            @Override
-            public ResourceHandle<Texture> getHoverTexture() {
-                return null;
-            }
-        };
-
-        GuiElement backButton = new Button(BACK_BUTTON_ID, (width / 20f), (height - (height / 20f) - (height / 10f)), (height / 10f), (height / 10f), false, "Back");
-
-        addGuiElement(numTurns, onTableAmount, this.followButton, this.betButton, this.checkButton, this.bedButton, backButton);
+    public void onEnter() {
+        stateManager.pushState(new PokerGameEnds(stateManager, this.poker, -1));
     }
 
     private void drawBottomPlayerUI(int order) {
@@ -324,38 +213,160 @@ public class PokerScreen extends ScreenState {
         addGuiElement(rightPlayerTitle, rightFirstCard, rightSecondCard, rightBankAmountText);
     }
 
-    private ResourceHandle<Texture> getCardTexture(Deck.Card card) {
-        if (card != null) {
-            Deck.Type type = card.getType();
-            if (type.equals(Deck.Type.SPADE)) {
-                return Constants.POKER_SPADE;
-            } else if (type.equals(Deck.Type.HEART)) {
-                return Constants.POKER_HEART;
-            } else if (type.equals(Deck.Type.CLUB)) {
-                return Constants.POKER_CLUB;
-            } else if (type.equals(Deck.Type.DIAMOND)) {
-                return Constants.POKER_DIAMOND;
-            }
+    @Override
+    public void onUpdate() {
+        super.onUpdate();
+        if (poker.doPokerEnds()) {
+            this.stopwatch.stop();
+            long time = this.stopwatch.elapsed(TimeUnit.MILLISECONDS);
+            stateManager.pushState(new EndGameState(stateManager, Constants.GameType.POKER, time, calculatePoints()));
+        } else if (this.poker.getNumTurns() == 4) {
+            stateManager.pushState(new PokerGameEnds(stateManager, poker, poker.getPlayerNumber(poker.findWinner())));
+        } else if (this.poker.isAlone()) {
+            stateManager.pushState(new PokerGameEnds(stateManager, poker, poker.getPlayerNumber(poker.findAlonePlayer())));
         }
-        return null;
     }
 
-    private String getCardTitle(Deck.Card card) {
-        if (card != null) {
-            int value = card.getNum();
-            if (value < 11) {
-                return String.valueOf(value);
-            } else if (value == 11) {
-                return "J";
-            } else if (value == 12) {
-                return "Q";
-            } else if (value == 13) {
-                return "K";
-            } else if (value == 14) {
-                return "A";
+    @Override
+    public void initGui() {
+        if (this.poker.getNumGame() != 0) {
+            drawBottomPlayerUI(0);
+            switch (this.playerCount) {
+                case 2 -> drawTopPlayerUI(1);
+                case 3 -> {
+                    drawTopPlayerUI(1);
+                    drawLeftPlayerUI(2);
+                }
+                case 4 -> {
+                    drawRightPlayerUI(1);
+                    drawTopPlayerUI(2);
+                    drawLeftPlayerUI(3);
+                }
             }
+
+            for (int i = 0; i < 5; i++) {
+                int finalI = i;
+                RoundedButton middleCard = new RoundedButton((30 + finalI), ((width / 2f) - 110 + (45 * finalI)), height / 2f, 40, 60, 5f, true, null, null) {
+                    @Override
+                    public ResourceHandle<Texture> getTexture() {
+                        return getCardTexture(poker.getTable().getCard(finalI));
+                    }
+
+                    @Override
+                    public ResourceHandle<Texture> getHoverTexture() {
+                        return null;
+                    }
+
+                    @Override
+                    public String getTitle() {
+                        return getCardTitle(poker.getTable().getCard(finalI));
+                    }
+
+                    @Override
+                    public float getTitleScale() {
+                        return 1f;
+                    }
+
+                    @Override
+                    public Vector4f getTitleColor() {
+                        return Constants.COLOR_WHITE;
+                    }
+
+                    @Override
+                    public boolean isVisible() {
+                        return finalI < poker.getTable().size();
+                    }
+                };
+
+                addGuiElement(middleCard);
+            }
+
+            Text numTurns = new Text(40, (width / 8f), 4.5f * (height / 6f), true, null) {
+                @Override
+                public String getText() {
+                    return "Tour n " + poker.getNumTurns();
+                }
+            };
+
+            Text onTableAmount = new Text(41, (width / 2f), (height / 2f) + 35, true, null) {
+                @Override
+                public String getText() {
+                    return "Mise :" + poker.getOnTableAmount();
+                }
+            };
+
+            this.followButton = new Button(50, (width / 2f) + 52.5f, height - 60, 40, 20, false, "Suivre") {
+                @Override
+                public boolean isDisabled() {
+                    return poker.isNewTurn() || poker.doPokerEnds();
+                }
+
+                @Override
+                public ResourceHandle<Texture> getTexture() {
+                    return Constants.POKER_BUTTON;
+                }
+
+                @Override
+                public ResourceHandle<Texture> getHoverTexture() {
+                    return null;
+                }
+            };
+
+            this.betButton = new Button(51, (width / 2f) + 97.5f, height - 60, 40, 20, false, "Relancer") {
+                @Override
+                public boolean isDisabled() {
+                    return poker.doPokerEnds();
+                }
+
+                @Override
+                public ResourceHandle<Texture> getTexture() {
+                    return Constants.POKER_BUTTON;
+                }
+
+                @Override
+                public ResourceHandle<Texture> getHoverTexture() {
+                    return null;
+                }
+            };
+
+            this.checkButton = new Button(52, (width / 2f) + 52.5f, height - 35, 40, 20, false, "Check") {
+                @Override
+                public boolean isDisabled() {
+                    return poker.getPlayer(poker.getCurrentPlayer()).getOnTable() != poker.getCurrentHighestPlayerBet() || poker.doPokerEnds();
+                }
+
+                @Override
+                public ResourceHandle<Texture> getTexture() {
+                    return Constants.POKER_BUTTON;
+                }
+
+                @Override
+                public ResourceHandle<Texture> getHoverTexture() {
+                    return null;
+                }
+            };
+
+            this.bedButton = new Button(53, (width / 2f) + 97.5f, height - 35, 40, 20, false, "Se coucher") {
+                @Override
+                public boolean isDisabled() {
+                    return poker.doPokerEnds();
+                }
+
+                @Override
+                public ResourceHandle<Texture> getTexture() {
+                    return Constants.POKER_BUTTON;
+                }
+
+                @Override
+                public ResourceHandle<Texture> getHoverTexture() {
+                    return null;
+                }
+            };
+
+            GuiElement backButton = new Button(BACK_BUTTON_ID, (width / 20f), (height - (height / 20f) - (height / 10f)), (height / 10f), (height / 10f), false, "Back");
+
+            addGuiElement(numTurns, onTableAmount, this.followButton, this.betButton, this.checkButton, this.bedButton, backButton);
         }
-        return null;
     }
 
     @Override
