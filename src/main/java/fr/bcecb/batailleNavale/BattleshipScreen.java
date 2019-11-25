@@ -4,7 +4,7 @@ import com.google.common.base.Stopwatch;
 import fr.bcecb.input.MouseButton;
 import fr.bcecb.resources.ResourceHandle;
 import fr.bcecb.resources.Texture;
-import fr.bcecb.state.EndGameState;
+import fr.bcecb.state.EndGameScreen;
 import fr.bcecb.state.StateManager;
 import fr.bcecb.state.gui.Button;
 import fr.bcecb.state.gui.ScreenState;
@@ -104,7 +104,7 @@ public class BattleshipScreen extends ScreenState {
                 if (this.battleship.checkWinCondition(this.currentPlayer)) {
                     this.stopwatch.stop();
                     long time = this.stopwatch.elapsed(TimeUnit.MILLISECONDS);
-                    stateManager.pushState(new EndGameState(stateManager, Constants.GameType.BATTLESHIP, time, calculatePoints()));
+                    stateManager.pushState(new EndGameScreen(stateManager, Constants.GameType.BATTLESHIP, time, calculatePoints()));
                 }
             }
         }

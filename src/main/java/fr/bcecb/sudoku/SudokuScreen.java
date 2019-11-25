@@ -4,7 +4,7 @@ import com.google.common.base.Stopwatch;
 import fr.bcecb.input.MouseButton;
 import fr.bcecb.resources.ResourceHandle;
 import fr.bcecb.resources.Texture;
-import fr.bcecb.state.EndGameState;
+import fr.bcecb.state.EndGameScreen;
 import fr.bcecb.state.StateManager;
 import fr.bcecb.state.gui.Button;
 import fr.bcecb.state.gui.GuiElement;
@@ -105,7 +105,7 @@ public class SudokuScreen extends ScreenState {
         if (sudoku.winCondition()) {
             stopwatch.stop();
             long time = stopwatch.elapsed(TimeUnit.MILLISECONDS);
-            stateManager.pushState(new EndGameState(stateManager, Constants.GameType.SUDOKU, time, calculateMoneyEarned()));
+            stateManager.pushState(new EndGameScreen(stateManager, Constants.GameType.SUDOKU, time, calculateMoneyEarned()));
         }
     }
 

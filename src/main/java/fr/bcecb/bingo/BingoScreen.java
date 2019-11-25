@@ -4,7 +4,7 @@ import com.google.common.base.Stopwatch;
 import fr.bcecb.input.MouseButton;
 import fr.bcecb.resources.ResourceHandle;
 import fr.bcecb.resources.Texture;
-import fr.bcecb.state.EndGameState;
+import fr.bcecb.state.EndGameScreen;
 import fr.bcecb.state.StateManager;
 import fr.bcecb.state.gui.Button;
 import fr.bcecb.state.gui.GuiElement;
@@ -48,7 +48,7 @@ public class BingoScreen extends ScreenState {
         if (!this.bingo.hasRemaining() || this.bingo.getPlayer().checkWin()) {
             stopwatch.stop();
             long time = stopwatch.elapsed(TimeUnit.MILLISECONDS);
-            stateManager.pushState(new EndGameState(stateManager, Constants.GameType.BINGO, time, 32));
+            stateManager.pushState(new EndGameScreen(stateManager, Constants.GameType.BINGO, time, 32));
         }
 
         if (++this.ticks > tickMultiplier * 60) {
