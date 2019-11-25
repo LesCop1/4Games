@@ -28,6 +28,7 @@ public class PopUpRenderer extends ScreenStateRenderer {
     public void render(PopUpScreenState popUpScreenState, float partialTick) {
         Transform transform = RenderHelper.pushTransform();
         {
+            transform.color(popUpScreenState.getBackgroundColor());
             transform.translate(popUpScreenState.width / 2f, popUpScreenState.height / 2f);
             renderManager.drawRoundedRect(null, 0, 0, popUpScreenState.getBackgroundWidth(), popUpScreenState.getBackgroundHeight(), 5f, true);
         }

@@ -13,6 +13,7 @@ public class Constants {
     public static final Vector4f COLOR_WHITE = new Vector4f(1.0f);
     public static final Vector4f COLOR_BLACK = new Vector4f();
     public static final Vector4f COLOR_GREY = new Vector4f(0.5f, 0.5f, 0.5f, 1f);
+    public static final Vector4f COLOR_LIGHT_GREY = new Vector4f(0.8f, 0.8f, 0.8f, 1f);
     public static final Vector4f COLOR_GREEN = new Vector4f(0f, 1f, 0f, 1f);
 
     /* SUDOKU */
@@ -46,20 +47,12 @@ public class Constants {
     public static final ResourceHandle<Texture> POKER_SPADE = new ResourceHandle<Texture>("textures/poker/spade.png") {};
 
     /* GAME BASED VARS */
+    public static final Collector<?, ?, ?> SHUFFLER = Collectors.collectingAndThen(Collectors.toCollection(ArrayList::new), list -> {
+        Collections.shuffle(list);
+        return list;
+    });
+    /* PROFILE */
     public static final String MONEY_NAME = "FourCoins";
-    public static final String MONEY_NAME_SHORT = "FC";
-    public static final Collector<?, ?, ?> SHUFFLER = Collectors.collectingAndThen(Collectors.toCollection(ArrayList::new), list -> { Collections.shuffle(list); return list; });
-    public static int BANKROLL = 0;
-
-    public static Map<GameType, Long> BEST_TIMES = new EnumMap<>(GameType.class) {{
-        put(GameType.SUDOKU, 0L);
-        put(GameType.BINGO, 0L);
-        put(GameType.BATTLESHIP, 0L);
-        put(GameType.POKER, 52543L);
-    }};
-
-    private Constants() {
-    }
 
     public static <T> Collector<T, ?, List<T>> toShuffledList() {
         return (Collector<T, ?, List<T>>) Constants.SHUFFLER;
@@ -86,5 +79,17 @@ public class Constants {
         public int getNbState() {
             return nbState;
         }
+    }
+    public static final String MONEY_NAME_SHORT = "FC";
+    public static int BANKROLL = 0;
+
+    public static Map<GameType, Long> BEST_TIMES = new EnumMap<>(GameType.class) {{
+        put(GameType.SUDOKU, 0L);
+        put(GameType.BINGO, 0L);
+        put(GameType.BATTLESHIP, 0L);
+        put(GameType.POKER, 52543L);
+    }};
+
+    private Constants() {
     }
 }
