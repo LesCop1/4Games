@@ -73,4 +73,9 @@ public class Battleship { //Gère tous les aspects d'une partie, création de la
     public int[][] getPlayerGrid(int player) {
         return this.boards[player];
     }
+
+    public int[][] getNextPlayerGrid(int player) {
+        if(player==0) return this.boards[1];
+        else return this.boards[0];
+    }
 }

@@ -8,6 +8,7 @@ import fr.bcecb.state.EndGameScreen;
 import fr.bcecb.state.StateManager;
 import fr.bcecb.state.gui.Button;
 import fr.bcecb.state.gui.ScreenState;
+import fr.bcecb.state.gui.Text;
 import fr.bcecb.util.Constants;
 import fr.bcecb.util.MathHelper;
 
@@ -78,15 +79,64 @@ public class BattleshipScreen extends ScreenState {
             }
         }
 
-        this.changePlayerButton = new Button(100, (width / 20f), 50, (height / 10f), (height / 10f), false, "Joueur Suivant") {
+        float btnSize2 = 7.99f;
+
+        float m = 5*(width / 6f) - (9 * btnSize2 / 2) - 4;
+        for (int i = 0; i < Battleship.GRID_SIZE; i++, m += btnSize2) {
+
+            float n = 5*(height / 6f) - (9 * btnSize2 / 2) - 4;
+            for (int j = 0; j < Battleship.GRID_SIZE; j++, n += btnSize2) {
+                int finalI = i;
+                int finalJ = j;
+                Button caseButton2 = new Button(((10 * finalI) + finalJ + 500), m, n, btnSize2, btnSize2, false) {
+                    @Override
+                    public boolean isDisabled() {
+                        return true;
+                    }
+
+                    @Override
+                    public ResourceHandle<Texture> getTexture() {
+                        int value = battleship.getNextPlayerGrid(currentPlayer)[finalI][finalJ];
+                        return value == Battleship.SUCCESS_HIT ? touch : value == Battleship.FAILED_HIT ? sink : defaultTexture;
+                    }
+
+                    @Override
+                    public ResourceHandle<Texture> getHoverTexture() {
+                        return null;
+                    }
+
+                    @Override
+                    public ResourceHandle<Texture> getDisabledTexture() {
+                        return null;
+                    }
+                };
+                addGuiElement(caseButton2);
+            }
+        }
+
+        this.changePlayerButton = new Button(120, (width / 20f), 50, (height / 10f), (height / 10f), false, "Joueur Suivant") {
             @Override
             public boolean isVisible() {
                 return shoot;
             }
         };
 
+        Text whichPlayer = new Text(121, (width / 2f), (height / 5f), true, null) {
+            @Override
+            public String getText() {
+                return currentPlayer==0 ? "Au joueur 1 de tirer" : "Au joueur 2 de tirer";
+            }
+        };
+
+        Text whichGrid = new Text(123, 5f*(width / 6f) - (9 * btnSize2 / 2) - 4, 4f*(height / 6f), false, null) {
+            @Override
+            public String getText() {
+                return currentPlayer==0 ? "Tirs du joueur 2" : "Tirs du joueur 1";
+            }
+        };
+
         Button backButton = new Button(BACK_BUTTON_ID, (width / 20f), (height - (height / 20f) - (height / 10f)), (height / 10f), (height / 10f), false, "Back");
-        addGuiElement(this.changePlayerButton, backButton);
+        addGuiElement(this.changePlayerButton, backButton, whichPlayer, whichGrid);
     }
 
     @Override

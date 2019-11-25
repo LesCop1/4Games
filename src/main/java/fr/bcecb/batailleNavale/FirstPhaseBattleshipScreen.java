@@ -103,7 +103,7 @@ public class FirstPhaseBattleshipScreen extends ScreenState {
             addGuiElement(boatButton);
         }
 
-        this.nextButton = new Button(110, 4.5f * (width / 5f), 50, (height / 10f), (height / 10f), false) {
+        this.nextButton = new Button(110, (width / 2.9f), (height - (height / 20f) - (height / 10f)), (height / 3f), (height / 10f), false) {
             @Override
             public String getTitle() {
                 return currentPlayer == 0 ? "Joueur Suivant" : "Commencer la partie";
