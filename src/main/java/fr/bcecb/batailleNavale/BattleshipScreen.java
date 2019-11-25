@@ -114,7 +114,7 @@ public class BattleshipScreen extends ScreenState {
             }
         }
 
-        this.changePlayerButton = new Button(120, (width / 20f), 50, (height / 10f), (height / 10f), false, "Joueur Suivant") {
+        this.changePlayerButton = new Button(120, 1.5f*(width / 3f), (height - (height / 20f) - (height / 10f)), (height / 10f), (height / 10f), false, "Joueur Suivant") {
             @Override
             public boolean isVisible() {
                 return shoot;
@@ -135,8 +135,22 @@ public class BattleshipScreen extends ScreenState {
             }
         };
 
+        Text boatLeft = new Text(124, (width / 24f), 2f*(height / 6f), false, null) {
+            @Override
+            public String getText() {
+                return currentPlayer==0 ? "Nombre de bateaux en vie : " + battleship.countBoat(1) : "Nombre de bateaux en vie : " + battleship.countBoat(0) ;
+            }
+        };
+
+        Text ennemyBoatLeft = new Text(125, (width / 24f), 3f*(height / 6f), false, null) {
+            @Override
+            public String getText() {
+                return currentPlayer==0 ? "Nombre de bateaux à couler : " + battleship.countBoat(0) : "Nombre de bateaux à couler : " + battleship.countBoat(1) ;
+            }
+        };
+
         Button backButton = new Button(BACK_BUTTON_ID, (width / 20f), (height - (height / 20f) - (height / 10f)), (height / 10f), (height / 10f), false, "Back");
-        addGuiElement(this.changePlayerButton, backButton, whichPlayer, whichGrid);
+        addGuiElement(this.changePlayerButton, backButton, whichPlayer, whichGrid, boatLeft, ennemyBoatLeft);
     }
 
     @Override

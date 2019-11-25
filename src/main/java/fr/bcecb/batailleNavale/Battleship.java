@@ -78,4 +78,24 @@ public class Battleship { //Gère tous les aspects d'une partie, création de la
         if(player==0) return this.boards[1];
         else return this.boards[0];
     }
+
+    public int countBoat(int currentPlayer){
+        int[][] playerGrid = getPlayerGrid(currentPlayer);
+        int nbT = 0, nbS = 0, nbF = 0, nbC = 0, nbA = 0, res = 5;
+        for (int i = 0; i < GRID_SIZE; i++) {
+            for (int j = 0; j < GRID_SIZE; j++) {
+                if(playerGrid[i][j]==0) nbT++;
+                if(playerGrid[i][j]==1) nbS++;
+                if(playerGrid[i][j]==2) nbF++;
+                if(playerGrid[i][j]==3) nbC++;
+                if(playerGrid[i][j]==4) nbA++;
+            }
+        }
+        if(nbT == 0) res--;
+        if(nbS == 0) res--;
+        if(nbF == 0) res--;
+        if(nbC == 0) res--;
+        if(nbA == 0) res--;
+        return res;
+    }
 }
