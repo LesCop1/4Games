@@ -23,14 +23,12 @@ public class EndGameState extends PopUpScreenState {
             Constants.BEST_TIMES.put(gameType, this.time);
         }
         Constants.BANKROLL += this.moneyEarned;
+
+        setBackground(200, 150, Constants.COLOR_LIGHT_GREY);
     }
 
     @Override
     public void initGui() {
-        this.backgroundWidth = 200;
-        this.backgroundHeight = 150;
-        setBackgroundTexture(null);
-
         Text gameTypeTitle = new Text(1001, (width / 2f), (height / 2f) - 65f, true, this.gameType.getName() + " terminé !");
 
         Text timeTitle = new Text(1002, (width / 2f) - 80f, (height / 2f) - 40f, false, "Votre temps :", 0.7f);
