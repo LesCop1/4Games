@@ -29,7 +29,7 @@ public class Text extends GuiElement {
     }
 
     public Vector4f getColor() {
-        return Constants.COLOR_BLACK;
+        return Constants.COLOR_WHITE;
     }
 
     public boolean isCentered() {
