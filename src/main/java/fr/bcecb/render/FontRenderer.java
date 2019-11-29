@@ -36,7 +36,7 @@ public class FontRenderer implements AutoCloseable {
     }
 
     public void drawString(String string, float x, float y, boolean centered) {
-        this.drawString(string, x, y, 1.0f, centered);
+        this.drawString(string, x, y, 0.7f, centered);
     }
 
     public void drawStringBoxed(String string, float x, float y, float width, float height) {
@@ -46,7 +46,7 @@ public class FontRenderer implements AutoCloseable {
                 (this.getFontScale(scale) * this.getFontHeight() / 10f) > height - 5f) {
             scale = scale - 0.1f;
         }
-        this.drawString(string, x, y, scale, true);
+        this.drawString(string, x, y, scale - 0.3f, true);
     }
 
     public void drawString(String string, float x, float y, float scale, boolean centered) {

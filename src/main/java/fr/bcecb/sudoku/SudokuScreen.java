@@ -52,20 +52,7 @@ public class SudokuScreen extends ScreenState {
         }
 
         for (int i = 0; i < 9; i++) {
-            GuiElement candidateValueButton = new SudokuCandidateButton(++id, (width / 2f) - (9 * btnSize / 2) + (btnSize * i) + 8, height - btnSize, i + 1) {
-                @Override
-                public boolean isVisible() {
-                    if (selectedX != -1 && selectedY != -1) {
-                        int[] candidateValues = sudoku.computeCandidates(selectedX, selectedY);
-
-                        for (int candidateValue : candidateValues) {
-                            if (candidateValue == getValue()) return true;
-                        }
-                    }
-
-                    return false;
-                }
-            };
+            GuiElement candidateValueButton = new SudokuCandidateButton(++id, (width / 2f) - (9 * btnSize / 2) + (btnSize * i), height - btnSize, i + 1);
 
             addGuiElement(candidateValueButton);
         }
@@ -168,7 +155,7 @@ public class SudokuScreen extends ScreenState {
         }
     }
 
-    private static class SudokuCandidateButton extends Button {
+    private final class SudokuCandidateButton extends Button {
         private final int value;
 
         public SudokuCandidateButton(int id, float x, float y, int value) {
@@ -177,13 +164,34 @@ public class SudokuScreen extends ScreenState {
         }
 
         @Override
+        public boolean isDisabled() {
+            int[] candidateValues = sudoku.computeCandidates(SudokuScreen.this.selectedX, SudokuScreen.this.selectedY);
+
+            for (int candidateValue : candidateValues) {
+                if (candidateValue == this.value) return false;
+            }
+
+            return true;
+        }
+
+        @Override
+        public boolean isVisible() {
+            return SudokuScreen.this.selectedX != -1 && SudokuScreen.this.selectedY != -1;
+        }
+
+        @Override
         public ResourceHandle<Texture> getTexture() {
-            return Constants.SUDOKU_CANDIDATES_VALUE_CASE;
+            return Constants.SUDOKU_FREE_CASE;
         }
 
         @Override
         public ResourceHandle<Texture> getHoverTexture() {
             return null;
+        }
+
+        @Override
+        public ResourceHandle<Texture> getDisabledTexture() {
+            return Constants.SUDOKU_FIXED_CASE;
         }
 
         public int getValue() {
