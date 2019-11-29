@@ -307,6 +307,15 @@ public class Sudoku {
         return true;
     }
 
+    public boolean isCandidateValue(int[]candidatesValues,int value){
+        for (int candidateValue:candidatesValues) {
+            if (candidateValue == value) return true;
+        }
+        return false;
+
+    }
+
+
     public boolean winCondition() {
         for (int i = 0; i < SIZE; i++) {
             for (int j = 0; j < SIZE; j++) {
