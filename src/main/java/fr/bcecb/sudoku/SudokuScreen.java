@@ -1,6 +1,7 @@
 package fr.bcecb.sudoku;
 
 import com.google.common.base.Stopwatch;
+import com.google.common.collect.Lists;
 import fr.bcecb.input.MouseButton;
 import fr.bcecb.resources.ResourceHandle;
 import fr.bcecb.resources.Texture;
@@ -12,6 +13,7 @@ import fr.bcecb.state.gui.ScreenState;
 import fr.bcecb.util.Constants;
 import org.joml.Vector4f;
 
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 public class SudokuScreen extends ScreenState {
@@ -19,6 +21,7 @@ public class SudokuScreen extends ScreenState {
     private final Sudoku sudoku;
     private final int difficulty;
     private final Stopwatch stopwatch;
+    private List<Integer[]> conflicts = Lists.newArrayList();
 
     private int selectedX = -1;
     private int selectedY = -1;

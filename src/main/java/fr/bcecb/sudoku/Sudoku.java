@@ -3,6 +3,7 @@ package fr.bcecb.sudoku;
 import fr.bcecb.util.Constants;
 import fr.bcecb.util.MathHelper;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
@@ -43,19 +44,19 @@ public class Sudoku {
         }
     }
 
+    /**
+     * @return a random {@code int} between 1 and 9 (inclusive)
+     */
+    static int randomInt() {
+        return RANDOM.nextInt(9) + 1;
+    }
+
     public int[][] getGrid() {
         return grid;
     }
 
     public int[][] getGeneratedGrid() {
         return generatedGrid;
-    }
-
-    /**
-     * @return a random {@code int} between 1 and 9 (inclusive)
-     */
-    static int randomInt() {
-        return RANDOM.nextInt(9) + 1;
     }
 
     /**
@@ -67,6 +68,33 @@ public class Sudoku {
      */
     public int[] computeCandidates(int x, int y) {
         return IntStream.rangeClosed(1, 9).filter(n -> checkGrid(n, x, y)).toArray();
+    }
+
+    public List<Integer[]> computeConflicts(int n, int x, int y) {
+        List<Integer[]> conflictsList = new ArrayList<>();
+        if (checkRow(n, x)) {
+            for (int i = 0; i < SIZE; i++) {
+                if (grid[x][i] == n) conflictsList.add(new Integer[]{x, i});
+            }
+        }
+
+        if (checkColumn(n, y)) {
+            for (int i = 0; i < SIZE; i++) {
+                if (grid[i][y] == n) conflictsList.add(new Integer[]{i, y});
+            }
+        }
+
+        if (checkBox(n, x, y)) {
+            x -= (x % SIZE_BOX);
+            y -= (y % SIZE_BOX);
+            for (int i = x; i < x + SIZE_BOX; i++) {
+                for (int j = y; j < y + SIZE_BOX; j++) {
+                    if (grid[i][j] == n) conflictsList.add(new Integer[] { i,j});
+                }
+            }
+        }
+        return conflictsList;
+
     }
 
     /**
@@ -307,8 +335,8 @@ public class Sudoku {
         return true;
     }
 
-    public boolean isCandidateValue(int[]candidatesValues,int value){
-        for (int candidateValue:candidatesValues) {
+    public boolean isCandidateValue(int[] candidatesValues, int value) {
+        for (int candidateValue : candidatesValues) {
             if (candidateValue == value) return true;
         }
         return false;
