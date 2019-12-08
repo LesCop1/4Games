@@ -3,7 +3,6 @@ package fr.bcecb.sudoku;
 import fr.bcecb.util.Constants;
 import fr.bcecb.util.MathHelper;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
@@ -70,30 +69,23 @@ public class Sudoku {
         return IntStream.rangeClosed(1, 9).filter(n -> checkGrid(n, x, y)).toArray();
     }
 
-    public List<Integer[]> computeConflicts(int n, int x, int y) {
-        List<Integer[]> conflictsList = new ArrayList<>();
-        if (checkRow(n, x)) {
-            for (int i = 0; i < SIZE; i++) {
-                if (grid[x][i] == n) conflictsList.add(new Integer[]{x, i});
+    public boolean[][] computeConflicts(int n, int x, int y) {
+        boolean[][] conflicts = new boolean[SIZE][SIZE];
+
+        for (int i = 0; i < SIZE; i++) {
+            if (grid[x][i] == n) conflicts[x][i] = true;
+            if (grid[i][y] == n) conflicts[i][y] = true;
+        }
+
+        x -= (x % SIZE_BOX);
+        y -= (y % SIZE_BOX);
+        for (int i = x; i < x + SIZE_BOX; i++) {
+            for (int j = y; j < y + SIZE_BOX; j++) {
+                if (grid[i][j] == n) conflicts[i][j] = true;
             }
         }
 
-        if (checkColumn(n, y)) {
-            for (int i = 0; i < SIZE; i++) {
-                if (grid[i][y] == n) conflictsList.add(new Integer[]{i, y});
-            }
-        }
-
-        if (checkBox(n, x, y)) {
-            x -= (x % SIZE_BOX);
-            y -= (y % SIZE_BOX);
-            for (int i = x; i < x + SIZE_BOX; i++) {
-                for (int j = y; j < y + SIZE_BOX; j++) {
-                    if (grid[i][j] == n) conflictsList.add(new Integer[] { i,j});
-                }
-            }
-        }
-        return conflictsList;
+        return conflicts;
 
     }
 
