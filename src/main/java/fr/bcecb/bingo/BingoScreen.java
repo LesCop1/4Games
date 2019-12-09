@@ -60,7 +60,7 @@ public class BingoScreen extends ScreenState {
     @Override
     public void initGui() {
         float startX = 2.5f * (width / 20f);
-        float startY = (height / 5f);
+        float startY = (height / 5.1f);
 
         float gridW = (width / 3f);
         float gridH = (height / 5f);
@@ -83,7 +83,17 @@ public class BingoScreen extends ScreenState {
             }
         };
 
-        Button backButton = new Button(BACK_BUTTON_ID, (width / 20f), (height - (height / 20f) - (height / 10f)), (height / 10f), (height / 10f), false, "Back");
+        Button backButton = new Button(BACK_BUTTON_ID, (width / 20f), (height - (height / 20f) - (height / 10f)), (height / 10f), (height / 10f), false, "Back") {
+            @Override
+            public ResourceHandle<Texture> getTexture() {
+                return Constants.BINGO_BUTTON;
+            }
+
+            @Override
+            public ResourceHandle<Texture> getHoverTexture() {
+                return Constants.BINGO_BUTTON_HOVER;
+            }
+        };
 
         addGuiElement(backButton, ball);
     }
@@ -117,7 +127,7 @@ public class BingoScreen extends ScreenState {
         private final int caseY;
 
         public BingoButton(int id, float x, float y, int numGrid, int caseX, int caseY) {
-            super(id, (x + caseY * 15.75f), (y + caseX * 15.75f), 15, 15, false);
+            super(id, (x + caseY * 15f), (y + caseX * 15f), 15, 15, false);
             this.grid = numGrid;
             this.caseX = caseX;
             this.caseY = caseY;
@@ -125,18 +135,19 @@ public class BingoScreen extends ScreenState {
 
         @Override
         public ResourceHandle<Texture> getTexture() {
-            return getValue() != 0 ? Constants.BINGO_CASE : Constants.BINGO_CASE_CHECKED;
+            return getValue() != 0 ? Constants.BINGO_CASE : Constants.BINGO_CASE_OK;
         }
 
         @Override
         public ResourceHandle<Texture> getHoverTexture() {
             int value = getValue();
-            return value == 0 ? Constants.BINGO_CASE_CHECKED : value > 0 ? Constants.BINGO_CASE_HOVERED : Constants.BINGO_CASE;
+            return value >= 0 ? Constants.BINGO_CASE_OK : Constants.BINGO_CASE;
         }
 
         @Override
         public ResourceHandle<Texture> getDisabledTexture() {
-            return null;
+            int value = getValue();
+            return value == -1 ? Constants.BINGO_EMPTY_CASE : null;
         }
 
         @Override
