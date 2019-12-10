@@ -1,6 +1,8 @@
 package fr.bcecb.sudoku;
 
 import com.google.common.base.Stopwatch;
+import com.google.common.primitives.Booleans;
+import com.google.common.primitives.Ints;
 import fr.bcecb.input.MouseButton;
 import fr.bcecb.resources.ResourceHandle;
 import fr.bcecb.resources.Texture;
@@ -19,6 +21,7 @@ public class SudokuScreen extends ScreenState {
     private final Sudoku sudoku;
     private final int difficulty;
     private final Stopwatch stopwatch;
+    private boolean[][] conflicts;
 
     private int selectedX = -1;
     private int selectedY = -1;
@@ -71,10 +74,18 @@ public class SudokuScreen extends ScreenState {
 
             selectedX = sudokuButton.getCaseX();
             selectedY = sudokuButton.getCaseY();
+            conflicts = null;
 
             return true;
         } else if (guiElement instanceof SudokuCandidateButton) {
             SudokuCandidateButton sudokuCandidateButton = (SudokuCandidateButton) guiElement;
+
+            conflicts = sudoku.computeConflicts(sudokuCandidateButton.getValue(), selectedX, selectedY);
+
+            for (boolean[] aBooleans : conflicts) {
+                if (Booleans.contains(aBooleans, true)) return false;
+            }
+
             sudoku.getGrid()[selectedX][selectedY] = sudokuCandidateButton.getValue();
 
             selectedX = -1;
@@ -103,7 +114,7 @@ public class SudokuScreen extends ScreenState {
         return Math.max(5, (this.difficulty * 10) - minusToken);
     }
 
-    private static final class SudokuButton extends Button {
+    private final class SudokuButton extends Button {
         private final Sudoku sudoku;
 
         private final int caseX;
@@ -136,7 +147,7 @@ public class SudokuScreen extends ScreenState {
 
         @Override
         public Vector4f getTitleColor() {
-            return sudoku.getGeneratedGrid()[caseX][caseY] == 0 ? Constants.COLOR_BLACK : Constants.COLOR_WHITE;
+            return conflicts != null && conflicts[caseX][caseY] ? Constants.COLOR_RED : sudoku.getGeneratedGrid()[caseX][caseY] == 0 ? Constants.COLOR_BLACK : Constants.COLOR_WHITE;
         }
 
         @Override
@@ -165,13 +176,7 @@ public class SudokuScreen extends ScreenState {
 
         @Override
         public boolean isDisabled() {
-            int[] candidateValues = sudoku.computeCandidates(SudokuScreen.this.selectedX, SudokuScreen.this.selectedY);
-
-            for (int candidateValue : candidateValues) {
-                if (candidateValue == this.value) return false;
-            }
-
-            return true;
+            return false;
         }
 
         @Override
@@ -181,7 +186,7 @@ public class SudokuScreen extends ScreenState {
 
         @Override
         public ResourceHandle<Texture> getTexture() {
-            return Constants.SUDOKU_FREE_CASE;
+            return Ints.contains(sudoku.computeCandidates(selectedX, selectedY), value) ? Constants.SUDOKU_FREE_CASE : Constants.SUDOKU_FIXED_CASE;
         }
 
         @Override

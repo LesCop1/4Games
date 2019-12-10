@@ -15,6 +15,7 @@ public class Constants {
     public static final Vector4f COLOR_WHITE = new Vector4f(1.0f);
     public static final Vector4f COLOR_BLACK = new Vector4f();
     public static final Vector4f COLOR_GREY = new Vector4f(0.5f, 0.5f, 0.5f, 1f);
+    public static final Vector4f COLOR_RED = new Vector4f(1f, 0f, 0f, 1f);
     public static final Vector4f COLOR_GREEN = new Vector4f(0f, 1f, 0f, 1f);
 
     /* SUDOKU */
@@ -34,14 +35,14 @@ public class Constants {
 
 
     /* POKER */
-    public static final ResourceHandle<Texture> POKER_BACKGROUND = new ResourceHandle<Texture>("textures/poker/poker_background.jpg") {};
-    public static final ResourceHandle<Texture> POKER_BACK_CARD = new ResourceHandle<Texture>("textures/poker/back_card.png") {};
-    public static final ResourceHandle<Texture> POKER_HBACK_CARD = new ResourceHandle<Texture>("textures/poker/horizontal_back_card.png") {};
-    public static final ResourceHandle<Texture> POKER_BUTTON = new ResourceHandle<Texture>("textures/poker/btn_texture.jpg") {};
-    public static final ResourceHandle<Texture> POKER_CLUB = new ResourceHandle<Texture>("textures/poker/club.png") {};
-    public static final ResourceHandle<Texture> POKER_DIAMOND = new ResourceHandle<Texture>("textures/poker/diamond.png") {};
-    public static final ResourceHandle<Texture> POKER_HEART = new ResourceHandle<Texture>("textures/poker/heart.png") {};
-    public static final ResourceHandle<Texture> POKER_SPADE = new ResourceHandle<Texture>("textures/poker/spade.png") {};
+    public static final ResourceHandle<Texture> POKER_BACKGROUND = new ResourceHandle<>("textures/poker/poker_background.jpg") {};
+    public static final ResourceHandle<Texture> POKER_BACK_CARD = new ResourceHandle<>("textures/poker/back_card.png") {};
+    public static final ResourceHandle<Texture> POKER_HBACK_CARD = new ResourceHandle<>("textures/poker/horizontal_back_card.png") {};
+    public static final ResourceHandle<Texture> POKER_BUTTON = new ResourceHandle<>("textures/poker/btn_texture.jpg") {};
+    public static final ResourceHandle<Texture> POKER_CLUB = new ResourceHandle<>("textures/poker/club.png") {};
+    public static final ResourceHandle<Texture> POKER_DIAMOND = new ResourceHandle<>("textures/poker/diamond.png") {};
+    public static final ResourceHandle<Texture> POKER_HEART = new ResourceHandle<>("textures/poker/heart.png") {};
+    public static final ResourceHandle<Texture> POKER_SPADE = new ResourceHandle<>("textures/poker/spade.png") {};
 
     /* GAME BASED VARS */
     public static final String MONEY_NAME = "FourCoins";
