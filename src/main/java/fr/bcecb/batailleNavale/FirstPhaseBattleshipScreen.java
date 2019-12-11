@@ -8,20 +8,19 @@ import fr.bcecb.state.gui.Button;
 import fr.bcecb.state.gui.ScreenState;
 import fr.bcecb.state.gui.Text;
 import fr.bcecb.util.Constants;
+import org.joml.Vector4f;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class FirstPhaseBattleshipScreen extends ScreenState {
-    private static final ResourceHandle<Texture> defaultTexture = new ResourceHandle<>("textures/BatailleNavale/caseBattleship.png") {};
-
+    private static ResourceHandle<Texture> temp = null;
     private Battleship battleship;
     private List<Boat> addedBoats = new ArrayList<>();
     private Boat boat;
     private int currentPlayer;
-
     private Button nextButton;
-
+    
     public FirstPhaseBattleshipScreen(StateManager stateManager, Battleship battleship) {
         super(stateManager, "game_battleship.firstphase");
         this.battleship = battleship;
@@ -50,7 +49,7 @@ public class FirstPhaseBattleshipScreen extends ScreenState {
                     @Override
                     public ResourceHandle<Texture> getTexture() {
                         int value = battleship.getPlayerGrid(currentPlayer)[finalI][finalJ];
-                        return value != Battleship.DEFAULT_VALUE ? findTexture(value) : defaultTexture;
+                        return value != Battleship.DEFAULT_VALUE ? findTexture(value) : Constants.BS_DEFAULT_TEXTURE;
                     }
 
                     @Override
@@ -119,6 +118,11 @@ public class FirstPhaseBattleshipScreen extends ScreenState {
             @Override
             public String getText() {
                 return currentPlayer==0 ? "Joueur 1" : "Joueur 2";
+            }
+
+            @Override
+            public Vector4f getColor() {
+                return Constants.COLOR_BLACK;
             }
         };
 

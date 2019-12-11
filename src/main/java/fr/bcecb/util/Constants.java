@@ -32,6 +32,7 @@ public class Constants {
 
     /* BS */
     public static final ResourceHandle<Texture> BS_BACKGROUND = new ResourceHandle<>("textures/BatailleNavale/background_battleship.jpg") {};
+    public static final ResourceHandle<Texture> BS_DEFAULT_TEXTURE = new ResourceHandle<>("textures/BatailleNavale/caseBattleship.png") {};
 
 
     /* POKER */
