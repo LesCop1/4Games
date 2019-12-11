@@ -65,11 +65,11 @@ public class FirstPhaseBattleshipScreen extends ScreenState {
 
                     private ResourceHandle<Texture> findTexture(int i) {
                         return switch (i) {
-                            case 0 -> new ResourceHandle<>("textures/BatailleNavale/T.png") {};
-                            case 1 -> new ResourceHandle<>("textures/BatailleNavale/S.png") {};
-                            case 2 -> new ResourceHandle<>("textures/BatailleNavale/F.png") {};
-                            case 3 -> new ResourceHandle<>("textures/BatailleNavale/C.png") {};
-                            case 4 -> new ResourceHandle<>("textures/BatailleNavale/A.png") {};
+                            case 0 -> new ResourceHandle<>("textures/BatailleNavale/Torpedo.png") {};
+                            case 1 -> new ResourceHandle<>("textures/BatailleNavale/Submarine.png") {};
+                            case 2 -> new ResourceHandle<>("textures/BatailleNavale/Frigate.png") {};
+                            case 3 -> new ResourceHandle<>("textures/BatailleNavale/Cruiser.png") {};
+                            case 4 -> new ResourceHandle<>("textures/BatailleNavale/Aircraft_Carrier.png") {};
                             default -> null;
                         };
                     }
@@ -129,11 +129,11 @@ public class FirstPhaseBattleshipScreen extends ScreenState {
 
     @Override
     public boolean mouseClicked(int id, MouseButton button) {
-        if(id == 9090){
+        if(id == 9090){ //Retour Arrière
             stateManager.popState();
             stateManager.popState();
             return true;
-        } else if (id == this.nextButton.getId()) {
+        } else if (id == this.nextButton.getId()) { //Si on veut passer aux placements du joueur suivant
             if (this.currentPlayer == 0) {
                 this.currentPlayer = 1;
                 this.addedBoats.clear();
