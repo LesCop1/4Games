@@ -59,24 +59,30 @@ public class BingoScreen extends ScreenState {
 
     @Override
     public void initGui() {
-        float startX = 2.5f * (width / 20f);
-        float startY = (height / 5.1f);
-
         float gridW = (width / 3f);
         float gridH = (height / 5f);
         float marginW = (width / 10f);
         float marginH = (height / 20f);
 
+        float startX = 2.5f * (width / 20f);
+        float startY = (float) ((height / 5.1f) + ((3 - (Math.floor(gridCount / 2f) + (gridCount % 2))) * (gridH + marginH)) / 2);
+
         for (int i = 0; i < this.gridCount; i++) {
-            float offsetX = ((float) Math.floor(i / 3f)) * (gridW + marginW);
-            float offsetY = (i % 3) * (gridH + marginH);
+
+            float offsetX = (i % 2) * (gridW + marginW);
+            float offsetY = (float) (Math.floor(i / 2f) * (gridH + marginH));
             float gridX = startX + offsetX;
             float gridY = startY + offsetY;
 
-            generateGridButtons(gridX, gridY, i);
+
+            if (gridCount % 2 != 0 && i == gridCount - 1) {
+                generateGridButtons((width / 2f) - (gridW / 2), gridY, i, (i * 27));
+            } else {
+                generateGridButtons(gridX, gridY, i, (i * 27));
+            }
         }
 
-        GuiElement ball = new Text(2000, width / 2f, height / 10f, true, null, 3f) {
+        GuiElement ball = new Text(200, width / 2f, height / 10f, true, null, 3f) {
             @Override
             public String getText() {
                 return MathHelper.stringifyInteger(lastDrop);
@@ -109,12 +115,10 @@ public class BingoScreen extends ScreenState {
         return false;
     }
 
-    private void generateGridButtons(float gridX, float gridY, int numGrid) {
-        int id = (100 * numGrid);
-
+    private void generateGridButtons(float gridX, float gridY, int numGrid, int id) {
         for (int i = 0; i < 3; i++) {
-            for (int j = 0; j < 9; j++, id++) {
-                final Button caseButton = new BingoButton(id, gridX, gridY, numGrid, i, j);
+            for (int j = 0; j < 9; j++) {
+                final Button caseButton = new BingoButton(++id, gridX, gridY, numGrid, i, j);
 
                 addGuiElement(caseButton);
             }
