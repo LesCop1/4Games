@@ -6,13 +6,11 @@ import fr.bcecb.util.Constants;
 
 public class Boat {
     protected final Boat.Type type;
-    private int hits;
     private boolean horizontal;
     private int x, y;
 
     public Boat(Boat.Type type) {
         this.type = type;
-        this.hits = 0;
         this.horizontal = true;
     }
 
@@ -27,14 +25,6 @@ public class Boat {
 
     public int getY() {
         return y;
-    }
-
-    public int getHits() {
-        return hits;
-    }
-
-    public void hits() {
-        hits+=1;
     }
 
     public boolean isHorizontal() {

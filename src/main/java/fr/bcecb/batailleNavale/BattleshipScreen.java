@@ -7,6 +7,7 @@ import fr.bcecb.resources.Texture;
 import fr.bcecb.state.EndGameScreen;
 import fr.bcecb.state.StateManager;
 import fr.bcecb.state.gui.Button;
+import fr.bcecb.state.gui.Image;
 import fr.bcecb.state.gui.ScreenState;
 import fr.bcecb.state.gui.Text;
 import fr.bcecb.util.Constants;
@@ -135,14 +136,216 @@ public class BattleshipScreen extends ScreenState {
             }
         };
 
-        Text boatLeft = new Text(124, (width / 24f), 2f*(height / 6f), false, null) {
+        Button t1 = new Button(122, (width / 36f), (height / 12f), (width / 4f), (height / 6f),false){
             @Override
-            public String getText() {
-                return currentPlayer==0 ? "Nombre de bateaux en vie : " + battleship.countBoat(1) : "Nombre de bateaux en vie : " + battleship.countBoat(0) ;
+            public ResourceHandle<Texture> getTexture() {
+                return new ResourceHandle<>("textures/BatailleNavale/1.png") {};
+            }
+
+            @Override
+            public ResourceHandle<Texture> getHoverTexture() {
+                return null;
+            }
+
+            @Override
+            public ResourceHandle<Texture> getDisabledTexture() {
+                return null;
+            }
+
+            @Override
+            public boolean isDisabled() {
+                return true;
             }
         };
 
-        Text ennemyBoatLeft = new Text(125, (width / 24f), 3f*(height / 6f), false, null) {
+        Image b1 = new Image(124, new ResourceHandle<>("textures/BatailleNavale/minecraftBoat.png") {}, (width / 24f), (height / 6f), (width / 24f), (height / 6f), true){
+            @Override
+            public ResourceHandle<Texture> getImage() {
+                return battleship.hit(currentPlayer) > 4 ? new ResourceHandle<>("textures/BatailleNavale/minecraftBoatTouch.png") {} : new ResourceHandle<>("textures/BatailleNavale/minecraftBoat.png") {};
+            }
+
+            @Override
+            public boolean isVisible() {
+                return battleship.countBoat(currentPlayer) < 1 ? false : true;
+            }
+        };
+        Image b2 = new Image(125, new ResourceHandle<>("textures/BatailleNavale/minecraftBoat.png") {}, (width / 24f) + 20f, (height / 6f), (width / 24f), (height / 6f), true){
+            @Override
+            public ResourceHandle<Texture> getImage() {
+                return battleship.hit(currentPlayer) > 3 ? new ResourceHandle<>("textures/BatailleNavale/minecraftBoatTouch.png") {} : new ResourceHandle<>("textures/BatailleNavale/minecraftBoat.png") {};
+            }
+
+            @Override
+            public boolean isVisible() {
+                return battleship.countBoat(currentPlayer) < 2 ? false : true;
+            }
+        };
+        Image b3 = new Image(126, new ResourceHandle<>("textures/BatailleNavale/minecraftBoat.png") {}, (width / 24f) + 40f, (height / 6f), (width / 24f), (height / 6f), true){
+            @Override
+            public ResourceHandle<Texture> getImage() {
+                return battleship.hit(currentPlayer) > 2 ? new ResourceHandle<>("textures/BatailleNavale/minecraftBoatTouch.png") {} : new ResourceHandle<>("textures/BatailleNavale/minecraftBoat.png") {};
+            }
+
+            @Override
+            public boolean isVisible() {
+                return battleship.countBoat(currentPlayer) < 3 ? false : true;
+            }
+        };
+        Image b4 = new Image(127, new ResourceHandle<>("textures/BatailleNavale/minecraftBoat.png") {}, (width / 24f) + 60f, (height / 6f), (width / 24f), (height / 6f), true){
+            @Override
+            public ResourceHandle<Texture> getImage() {
+                return battleship.hit(currentPlayer) > 1 ? new ResourceHandle<>("textures/BatailleNavale/minecraftBoatTouch.png") {} : new ResourceHandle<>("textures/BatailleNavale/minecraftBoat.png") {};
+            }
+
+            @Override
+            public boolean isVisible() {
+                return battleship.countBoat(currentPlayer) < 4 ? false : true;
+            }
+        };
+        Image b5 = new Image(128, new ResourceHandle<>("textures/BatailleNavale/minecraftBoat.png") {}, (width / 24f) + 80f, (height / 6f), (width / 24f), (height / 6f), true){
+            @Override
+            public ResourceHandle<Texture> getImage() {
+                return battleship.hit(currentPlayer) > 0 ? new ResourceHandle<>("textures/BatailleNavale/minecraftBoatTouch.png") {} : new ResourceHandle<>("textures/BatailleNavale/minecraftBoat.png") {};
+            }
+
+            @Override
+            public boolean isVisible() {
+                return battleship.countBoat(currentPlayer) < 5 ? false : true;
+            }
+        };
+
+        Button d1 = new Button(129,  (width / 24f), (height / 3.5f), (width / 23f), (height / 16f), false){
+            @Override
+            public ResourceHandle<Texture> getTexture() {
+                return new ResourceHandle<>("textures/BatailleNavale/dead.png") {};
+            }
+
+            @Override
+            public ResourceHandle<Texture> getHoverTexture() {
+                return null;
+            }
+
+            @Override
+            public ResourceHandle<Texture> getDisabledTexture() {
+                return null;
+            }
+
+            @Override
+            public boolean isDisabled() {
+                return true;
+            }
+
+            @Override
+            public boolean isVisible() {
+                return battleship.countBoat(currentPlayer)<5 ? true : false;
+            }
+        };
+        Button d2 = new Button(130, (width / 24f) + 20f, (height / 3.5f), (width / 23f), (height / 16f), false){
+            @Override
+            public ResourceHandle<Texture> getTexture() {
+                return new ResourceHandle<>("textures/BatailleNavale/dead.png") {};
+            }
+
+            @Override
+            public ResourceHandle<Texture> getHoverTexture() {
+                return null;
+            }
+
+            @Override
+            public ResourceHandle<Texture> getDisabledTexture() {
+                return null;
+            }
+
+            @Override
+            public boolean isDisabled() {
+                return true;
+            }
+
+            @Override
+            public boolean isVisible() {
+                return battleship.countBoat(currentPlayer)<4 ? true : false;
+            }
+        };
+        Button d3 = new Button(131, (width / 24f) + 40f, (height / 3.5f), (width / 23f), (height / 16f), false){
+            @Override
+            public ResourceHandle<Texture> getTexture() {
+                return new ResourceHandle<>("textures/BatailleNavale/dead.png") {};
+            }
+
+            @Override
+            public ResourceHandle<Texture> getHoverTexture() {
+                return null;
+            }
+
+            @Override
+            public ResourceHandle<Texture> getDisabledTexture() {
+                return null;
+            }
+
+            @Override
+            public boolean isDisabled() {
+                return true;
+            }
+
+            @Override
+            public boolean isVisible() {
+                return battleship.countBoat(currentPlayer)<3 ? true : false;
+            }
+        };
+        Button d4 = new Button(132, (width / 24f) + 60f, (height / 3.5f), (width / 23f), (height / 16f), false){
+            @Override
+            public ResourceHandle<Texture> getTexture() {
+                return new ResourceHandle<>("textures/BatailleNavale/dead.png") {};
+            }
+
+            @Override
+            public ResourceHandle<Texture> getHoverTexture() {
+                return null;
+            }
+
+            @Override
+            public ResourceHandle<Texture> getDisabledTexture() {
+                return null;
+            }
+
+            @Override
+            public boolean isDisabled() {
+                return true;
+            }
+
+            @Override
+            public boolean isVisible() {
+                return battleship.countBoat(currentPlayer)<2 ? true : false;
+            }
+        };
+        Button d5 = new Button(133, (width / 24f) + 80f, (height / 3.5f), (width / 23f), (height / 16f), false){
+            @Override
+            public ResourceHandle<Texture> getTexture() {
+                return new ResourceHandle<>("textures/BatailleNavale/dead.png") {};
+            }
+
+            @Override
+            public ResourceHandle<Texture> getHoverTexture() {
+                return null;
+            }
+
+            @Override
+            public ResourceHandle<Texture> getDisabledTexture() {
+                return null;
+            }
+
+            @Override
+            public boolean isDisabled() {
+                return true;
+            }
+
+            @Override
+            public boolean isVisible() {
+                return battleship.countBoat(currentPlayer)<1 ? true : false;
+            }
+        };
+
+        Text ennemyBoatLeft = new Text(1201240210, (width / 24f), 3f*(height / 6f), false, null) {
             @Override
             public String getText() {
                 return currentPlayer==0 ? "Nombre de bateaux à couler : " + battleship.countBoat(0) : "Nombre de bateaux à couler : " + battleship.countBoat(1) ;
@@ -150,7 +353,7 @@ public class BattleshipScreen extends ScreenState {
         };
 
         Button backButton = new Button(BACK_BUTTON_ID, (width / 20f), (height - (height / 20f) - (height / 10f)), (height / 10f), (height / 10f), false, "Back");
-        addGuiElement(this.changePlayerButton, backButton, whichPlayer, whichGrid, boatLeft, ennemyBoatLeft);
+        addGuiElement(this.changePlayerButton, backButton, whichPlayer, whichGrid, t1, b1, b2, b3, b4, b5, d1, d2, d3, d4 , d5, ennemyBoatLeft);
     }
 
     @Override
@@ -163,6 +366,8 @@ public class BattleshipScreen extends ScreenState {
             if (!this.shoot) {
                 int x = id / 10;
                 int y = id % 10;
+                if(currentPlayer==0 && battleship.getPlayerGrid(currentPlayer)[x][y]>-1) this.battleship.hitGridJ1.set(battleship.getPlayerGrid(currentPlayer)[x][y],true);
+                else if(currentPlayer==1 && battleship.getPlayerGrid(currentPlayer)[x][y]>-1) this.battleship.hitGridJ2.set(battleship.getPlayerGrid(currentPlayer)[x][y],true);
                 this.battleship.shoot(this.currentPlayer, x, y);
                 this.shoot = true;
                 if (this.battleship.checkWinCondition(this.currentPlayer)) {

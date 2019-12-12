@@ -1,5 +1,9 @@
 package fr.bcecb.batailleNavale;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 public class Battleship { //Gère tous les aspects d'une partie, création de la grille, changer l'orientation d'un bateau, le placer, touché/coulé, win condition
     public static final int GRID_SIZE = 10;
     public static final int DEFAULT_VALUE = -1;
@@ -7,6 +11,22 @@ public class Battleship { //Gère tous les aspects d'une partie, création de la
     public static final int FAILED_HIT = 200;
 
     private final int[][][] boards = new int[2][GRID_SIZE][GRID_SIZE];
+    protected List<Boolean> hitGridJ1 = new ArrayList(Arrays.asList(false,false,false,false,false));
+    protected List<Boolean> hitGridJ2 = new ArrayList(Arrays.asList(false,false,false,false,false));
+
+    public int hit(int currentPlayer){
+        int count = 0;
+        if (currentPlayer==0) {
+            for (Boolean b : hitGridJ1) {
+                if (b) count++;
+            }
+        }else{
+            for (Boolean b : hitGridJ2) {
+                if (b) count++;
+            }
+        }
+        return count;
+    }
 
     public void init() {
         for (int i = 0; i < boards.length; i++) {
