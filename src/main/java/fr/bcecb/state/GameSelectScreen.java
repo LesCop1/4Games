@@ -25,6 +25,11 @@ public class GameSelectScreen extends ScreenState {
     }
 
     @Override
+    public boolean hasBackgroundMusic() {
+        return true;
+    }
+
+    @Override
     public void initGui() {
         this.sudokuGameButton = new Button(10, (width / 4f), (height / 2f) - (height / 10f), (width / 8f), (height / 10f), true, "Sudoku");
 

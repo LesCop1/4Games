@@ -6,6 +6,7 @@ import fr.bcecb.input.InputManager;
 import fr.bcecb.render.RenderManager;
 import fr.bcecb.render.Window;
 import fr.bcecb.resources.ResourceManager;
+import fr.bcecb.sound.SoundManager;
 import fr.bcecb.state.StateManager;
 import fr.bcecb.util.Log;
 import fr.bcecb.util.RenderHelper;
@@ -22,6 +23,7 @@ public final class Game implements AutoCloseable {
 
     private final RenderManager renderManager;
     private final StateManager stateManager;
+    private final SoundManager soundManager;
 
     private final InputManager inputManager;
 
@@ -40,6 +42,7 @@ public final class Game implements AutoCloseable {
 
         this.resourceManager = new ResourceManager();
 
+        this.soundManager = new SoundManager(this.resourceManager);
         this.stateManager = new StateManager(this, this.window.getScaledWidth(), this.window.getScaledHeight());
         this.renderManager = new RenderManager(this.resourceManager);
 
@@ -71,6 +74,8 @@ public final class Game implements AutoCloseable {
 
             this.window.update();
         }
+
+        this.close();
     }
 
     @Override
@@ -78,6 +83,7 @@ public final class Game implements AutoCloseable {
         try {
             this.renderManager.close();
             this.resourceManager.close();
+            this.soundManager.close();
         } finally {
             this.window.close();
         }
@@ -94,6 +100,10 @@ public final class Game implements AutoCloseable {
 
     public StateManager getStateManager() {
         return stateManager;
+    }
+
+    public SoundManager getSoundManager() {
+        return soundManager;
     }
 
     public InputManager getInputManager() {

@@ -1,8 +1,10 @@
 package fr.bcecb.state.gui;
 
 import fr.bcecb.Game;
+import fr.bcecb.input.Key;
 import fr.bcecb.input.MouseButton;
 import fr.bcecb.resources.ResourceHandle;
+import fr.bcecb.resources.Sound;
 import fr.bcecb.resources.Texture;
 import fr.bcecb.state.State;
 import fr.bcecb.state.StateManager;
@@ -49,6 +51,14 @@ public abstract class ScreenState extends State {
 
     public ResourceHandle<Texture> getBackgroundTexture() {
         return backgroundTexture;
+    }
+
+    public boolean hasBackgroundMusic() {
+        return false;
+    }
+
+    public ResourceHandle<Sound> getBackgroundMusic() {
+        return null;
     }
 
     public void setBackgroundTexture(ResourceHandle<Texture> backgroundTexture) {
@@ -134,5 +144,9 @@ public abstract class ScreenState extends State {
 
     public void mouseDragged(int id) {
 
+    }
+
+    public boolean keyPressed(Key key) {
+        return false;
     }
 }

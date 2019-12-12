@@ -35,12 +35,16 @@ public class Resources {
     public static final ResourceHandle<Shader> ROUNDED_SHADER = new ResourceHandle<>("shaders/rounded.json") {};
     public static final ResourceHandle<Shader> FONT_SHADER = new ResourceHandle<>("shaders/font.json") {};
 
-    public static ByteBuffer readBytes(InputStream inputStream) throws IOException {
+    public static ByteBuffer readByteBuffer(InputStream inputStream) throws IOException {
         ByteBuffer buffer = BufferUtils.createByteBuffer(inputStream.available());
         buffer.put(inputStream.readAllBytes());
         buffer.flip();
 
         return buffer;
+    }
+
+    public static byte[] readBytes(InputStream inputStream) throws IOException {
+        return inputStream.readAllBytes();
     }
 
     public static String readResource(InputStream inputStream) throws IOException {

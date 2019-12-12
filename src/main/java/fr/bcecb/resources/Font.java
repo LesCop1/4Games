@@ -53,7 +53,7 @@ public class Font extends Texture {
 
     @Override
     public int create(InputStream inputStream) throws IOException {
-        this.ttf = Resources.readBytes(inputStream);
+        this.ttf = Resources.readByteBuffer(inputStream);
 
         if (!stbtt_InitFont(info, ttf)) {
             return 0;

@@ -12,14 +12,14 @@ import java.io.InputStream;
 
 import static org.lwjgl.opengl.GL45.*;
 
-public class Shader extends GLResource {
+public class Shader extends LWJGLResource {
     private static final Gson GSON = new Gson();
 
     public Shader() {
     }
 
     private int getUniformLocation(String uniformName) {
-        return glGetUniformLocation(getGLId(), uniformName);
+        return glGetUniformLocation(getLWJGLId(), uniformName);
     }
 
     public void uniformVec4(String name, Vector4f vector) {
@@ -50,7 +50,7 @@ public class Shader extends GLResource {
 
     @Override
     public void bind() {
-        glUseProgram(getGLId());
+        glUseProgram(getLWJGLId());
     }
 
     @Override
@@ -65,6 +65,6 @@ public class Shader extends GLResource {
 
     @Override
     public void dispose() {
-        glDeleteProgram(getGLId());
+        glDeleteProgram(getLWJGLId());
     }
 }

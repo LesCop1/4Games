@@ -3,7 +3,7 @@ package fr.bcecb.resources;
 import java.io.IOException;
 import java.io.InputStream;
 
-public abstract class GLResource implements IResource {
+public abstract class LWJGLResource implements IResource {
     private int id = 0;
 
     @Override
@@ -14,6 +14,7 @@ public abstract class GLResource implements IResource {
     public abstract int create(InputStream inputStream) throws IOException;
 
     public abstract void bind();
+
     public abstract void unbind();
 
     @Override
@@ -21,7 +22,7 @@ public abstract class GLResource implements IResource {
         return id > 0;
     }
 
-    public int getGLId() {
+    public int getLWJGLId() {
         return id;
     }
 }
