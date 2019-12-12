@@ -33,6 +33,16 @@ public class Constants {
     /* BS */
     public static final ResourceHandle<Texture> BS_BACKGROUND = new ResourceHandle<>("textures/BatailleNavale/background_battleship.jpg") {};
     public static final ResourceHandle<Texture> BS_DEFAULT_TEXTURE = new ResourceHandle<>("textures/BatailleNavale/caseBattleship.png") {};
+    public static final ResourceHandle<Texture> BS_TORPEDO_H = new ResourceHandle<>("textures/BatailleNavale/Torpedo_H.png") {};
+    public static final ResourceHandle<Texture> BS_SUBMARINE_H = new ResourceHandle<>("textures/BatailleNavale/Submarine_H.png") {};
+    public static final ResourceHandle<Texture> BS_FRIGATE_H = new ResourceHandle<>("textures/BatailleNavale/Frigate_H.png") {};
+    public static final ResourceHandle<Texture> BS_CRUISER_H = new ResourceHandle<>("textures/BatailleNavale/Cruiser_H.png") {};
+    public static final ResourceHandle<Texture> BS_AIRCRAFT_CARRIER_H = new ResourceHandle<>("textures/BatailleNavale/Aircraft_Carrier_H.png") {};
+    public static final ResourceHandle<Texture> BS_TORPEDO_V = new ResourceHandle<>("textures/BatailleNavale/Torpedo_V.png") {};
+    public static final ResourceHandle<Texture> BS_SUBMARINE_V = new ResourceHandle<>("textures/BatailleNavale/Submarine_V.png") {};
+    public static final ResourceHandle<Texture> BS_FRIGATE_V = new ResourceHandle<>("textures/BatailleNavale/Frigate_V.png") {};
+    public static final ResourceHandle<Texture> BS_CRUISER_V = new ResourceHandle<>("textures/BatailleNavale/Cruiser_V.png") {};
+    public static final ResourceHandle<Texture> BS_AIRCRAFT_CARRIER_V = new ResourceHandle<>("textures/BatailleNavale/Aircraft_Carrier_V.png") {};
 
 
     /* POKER */

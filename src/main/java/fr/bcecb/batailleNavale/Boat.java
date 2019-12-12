@@ -2,12 +2,12 @@ package fr.bcecb.batailleNavale;
 
 import fr.bcecb.resources.ResourceHandle;
 import fr.bcecb.resources.Texture;
+import fr.bcecb.util.Constants;
 
 public class Boat {
-    private final Boat.Type type;
+    protected final Boat.Type type;
     private int hits;
     private boolean horizontal;
-
     private int x, y;
 
     public Boat(Boat.Type type) {
@@ -37,10 +37,6 @@ public class Boat {
         hits+=1;
     }
 
-    public boolean isAlive() {
-        return hits != type.getSize();
-    }
-
     public boolean isHorizontal() {
         return horizontal;
     }
@@ -58,20 +54,22 @@ public class Boat {
     }
 
     public enum Type {
-        TORPEDO("T", 2, new ResourceHandle<>("textures/BatailleNavale/Torpedo.png") {}),
-        SUBMARINE("S", 3, new ResourceHandle<>("textures/BatailleNavale/Submarine.png") {}),
-        FRIGATE("F", 3, new ResourceHandle<>("textures/BatailleNavale/Frigate.png") {}),
-        CRUISER("C", 4, new ResourceHandle<>("textures/BatailleNavale/Cruiser.png") {}),
-        AIRCRAFT_CARRIER("A", 5, new ResourceHandle<>("textures/BatailleNavale/Aircraft_Carrier.png") {});
+        TORPEDO("T", 2, Constants.BS_TORPEDO_H, Constants.BS_TORPEDO_V),
+        SUBMARINE("S", 3, Constants.BS_SUBMARINE_H, Constants.BS_SUBMARINE_V),
+        FRIGATE("F", 3, Constants.BS_FRIGATE_H, Constants.BS_FRIGATE_V),
+        CRUISER("C", 4, Constants.BS_CRUISER_H, Constants.BS_CRUISER_V),
+        AIRCRAFT_CARRIER("A", 5, Constants.BS_AIRCRAFT_CARRIER_H, Constants.BS_AIRCRAFT_CARRIER_V);
 
         private final String name;
         private final int sizeBoat;
-        private final ResourceHandle<Texture> textureHandle;
+        private final ResourceHandle<Texture> textureHandleH;
+        private final ResourceHandle<Texture> textureHandleV;
 
-        Type(String name, int sizeBoat, ResourceHandle<Texture> textureHandle) {
+        Type(String name, int sizeBoat, ResourceHandle<Texture> textureHandleH, ResourceHandle<Texture> textureHandleV) {
             this.name = name;
             this.sizeBoat = sizeBoat;
-            this.textureHandle = textureHandle;
+            this.textureHandleH = textureHandleH;
+            this.textureHandleV = textureHandleV;
         }
 
         public String getName() {
@@ -82,8 +80,12 @@ public class Boat {
             return sizeBoat;
         }
 
-        public ResourceHandle<Texture> getTextureHandle() {
-            return textureHandle;
+        public ResourceHandle<Texture> getTextureHandleH() {
+            return textureHandleH;
+        }
+
+        public ResourceHandle<Texture> getTextureHandleV() {
+            return textureHandleV;
         }
     }
 }

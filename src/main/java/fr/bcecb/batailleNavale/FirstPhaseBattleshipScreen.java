@@ -14,13 +14,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class FirstPhaseBattleshipScreen extends ScreenState {
-    private static ResourceHandle<Texture> temp = null;
     private Battleship battleship;
     private List<Boat> addedBoats = new ArrayList<>();
+    private List<Float> xButton = new ArrayList<>();
+    private List<Float> yButton = new ArrayList<>();
     private Boat boat;
-    private int currentPlayer;
     private Button nextButton;
-    
+    private int currentPlayer;
+    private float btnSize = 14.99f;
+
     public FirstPhaseBattleshipScreen(StateManager stateManager, Battleship battleship) {
         super(stateManager, "game_battleship.firstphase");
         this.battleship = battleship;
@@ -30,9 +32,6 @@ public class FirstPhaseBattleshipScreen extends ScreenState {
     @Override
     public void initGui() {
         setBackgroundTexture(Constants.BS_BACKGROUND);
-
-        float btnSize = 14.99f;
-
         float x = (width / 2f) - (9 * btnSize / 2) - 4;
         for (int i = 0; i < Battleship.GRID_SIZE; i++, x += btnSize) {
 
@@ -48,8 +47,7 @@ public class FirstPhaseBattleshipScreen extends ScreenState {
 
                     @Override
                     public ResourceHandle<Texture> getTexture() {
-                        int value = battleship.getPlayerGrid(currentPlayer)[finalI][finalJ];
-                        return value != Battleship.DEFAULT_VALUE ? findTexture(value) : Constants.BS_DEFAULT_TEXTURE;
+                        return Constants.BS_DEFAULT_TEXTURE;
                     }
 
                     @Override
@@ -61,18 +59,9 @@ public class FirstPhaseBattleshipScreen extends ScreenState {
                     public ResourceHandle<Texture> getDisabledTexture() {
                         return null;
                     }
-
-                    private ResourceHandle<Texture> findTexture(int i) {
-                        return switch (i) {
-                            case 0 -> new ResourceHandle<>("textures/BatailleNavale/Torpedo.png") {};
-                            case 1 -> new ResourceHandle<>("textures/BatailleNavale/Submarine.png") {};
-                            case 2 -> new ResourceHandle<>("textures/BatailleNavale/Frigate.png") {};
-                            case 3 -> new ResourceHandle<>("textures/BatailleNavale/Cruiser.png") {};
-                            case 4 -> new ResourceHandle<>("textures/BatailleNavale/Aircraft_Carrier.png") {};
-                            default -> null;
-                        };
-                    }
                 };
+                if(!xButton.contains(caseButton.getX())) xButton.add(caseButton.getX());
+                if(!yButton.contains(caseButton.getY())) yButton.add(caseButton.getY());
                 addGuiElement(caseButton);
             }
         }
@@ -86,7 +75,7 @@ public class FirstPhaseBattleshipScreen extends ScreenState {
 
                 @Override
                 public ResourceHandle<Texture> getTexture() {
-                    return type.getTextureHandle();
+                    return type.getTextureHandleH();
                 }
 
                 @Override
@@ -117,7 +106,7 @@ public class FirstPhaseBattleshipScreen extends ScreenState {
         Text whichPlayer = new Text(801, (width / 2f), (height / 5f), true, null) {
             @Override
             public String getText() {
-                return currentPlayer==0 ? "Joueur 1" : "Joueur 2";
+                return currentPlayer == 0 ? "Joueur 1" : "Joueur 2";
             }
 
             @Override
@@ -133,7 +122,7 @@ public class FirstPhaseBattleshipScreen extends ScreenState {
 
     @Override
     public boolean mouseClicked(int id, MouseButton button) {
-        if(id == 9090){ //Retour Arrière
+        if (id == 9090) { //Retour Arrière
             stateManager.popState();
             stateManager.popState();
             return true;
@@ -154,6 +143,16 @@ public class FirstPhaseBattleshipScreen extends ScreenState {
             if (this.boat != null && !this.battleship.cannotPlace(this.currentPlayer, this.boat, x, y) && !this.addedBoats.contains(this.boat)) {
                 this.addedBoats.add(this.boat);
                 this.battleship.putBoat(this.currentPlayer, this.boat, x, y);
+                float finalWidth, finalHeight;
+                if(boat.isHorizontal()) {
+                    finalWidth = btnSize * boat.type.getSize();
+                    finalHeight = btnSize;
+                }else{
+                    finalWidth = btnSize;
+                    finalHeight = btnSize * boat.type.getSize();
+                }
+                if(currentPlayer==0) putTextBoatJ1(x, y, finalHeight, finalWidth, boat);
+                else putTextBoatJ2(x, y, finalHeight, finalWidth, boat);
                 this.boat = null;
             }
             return true;
@@ -171,5 +170,67 @@ public class FirstPhaseBattleshipScreen extends ScreenState {
             }
         }
         return true;
+    }
+
+    private void putTextBoatJ1(int x, int y, float finalHeight, float finalWidth, Boat boat) {
+        Button boatTextureJ1 = new Button(10000 + boat.type.ordinal(), xButton.get(x), yButton.get(y), finalWidth, finalHeight, false) {
+            @Override
+            public boolean isVisible() {
+                return currentPlayer == 0 ? true : false;
+            }
+
+            @Override
+            public ResourceHandle<Texture> getTexture() {
+                if(boat.isHorizontal()) return boat.type.getTextureHandleH();
+                else return boat.type.getTextureHandleV();
+            }
+
+            @Override
+            public boolean isDisabled() {
+                return true;
+            }
+
+            @Override
+            public ResourceHandle<Texture> getHoverTexture() {
+                return null;
+            }
+
+            @Override
+            public ResourceHandle<Texture> getDisabledTexture() {
+                return null;
+            }
+        };
+        addGuiElement(boatTextureJ1);
+    }
+
+    private void putTextBoatJ2(int x, int y, float finalHeight, float finalWidth, Boat boat) {
+        Button boatTextureJ2 = new Button(10000 + boat.type.ordinal(), xButton.get(x), yButton.get(y), finalWidth, finalHeight, false) {
+            @Override
+            public boolean isVisible() {
+                return true;
+            }
+
+            @Override
+            public ResourceHandle<Texture> getTexture() {
+                if(boat.isHorizontal()) return boat.type.getTextureHandleH();
+                else return boat.type.getTextureHandleV();
+            }
+
+            @Override
+            public boolean isDisabled() {
+                return true;
+            }
+
+            @Override
+            public ResourceHandle<Texture> getHoverTexture() {
+                return null;
+            }
+
+            @Override
+            public ResourceHandle<Texture> getDisabledTexture() {
+                return null;
+            }
+        };
+        addGuiElement(boatTextureJ2);
     }
 }
