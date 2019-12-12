@@ -15,7 +15,7 @@ import java.util.Deque;
 import java.util.Iterator;
 
 public class StateManager {
-    private final Game game;
+    public final Game game;
 
     private int width;
     private int height;

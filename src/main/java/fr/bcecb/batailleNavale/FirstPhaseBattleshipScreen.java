@@ -1,5 +1,8 @@
 package fr.bcecb.batailleNavale;
 
+import fr.bcecb.event.KeyboardEvent;
+import fr.bcecb.input.InputManager;
+import fr.bcecb.input.Key;
 import fr.bcecb.input.MouseButton;
 import fr.bcecb.resources.ResourceHandle;
 import fr.bcecb.resources.Texture;
@@ -10,6 +13,7 @@ import fr.bcecb.state.gui.Text;
 import fr.bcecb.util.Constants;
 import org.joml.Vector4f;
 
+import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -151,14 +155,20 @@ public class FirstPhaseBattleshipScreen extends ScreenState {
                     finalWidth = btnSize;
                     finalHeight = btnSize * boat.type.getSize();
                 }
-                if(currentPlayer==0) putTextBoatJ1(x, y, finalHeight, finalWidth, boat);
-                else putTextBoatJ2(x, y, finalHeight, finalWidth, boat);
+                if(currentPlayer==0) putTextureBoatJ1(x, y, finalHeight, finalWidth, boat);
+                else putTextureBoatJ2(x, y, finalHeight, finalWidth, boat);
                 this.boat = null;
             }
             return true;
         } else if (id < 105) {
             this.boat = new Boat(Boat.Type.values()[id - 100]);
             return true;
+        } else if (id > 10000 && button == MouseButton.RIGHT){
+            if(stateManager.game.getInputManager().isKeyDown(Key.BS_DELETE_BOAT)) {
+                System.out.println("ttt");
+                this.addedBoats.remove(this.boat);
+                this.battleship.deleteBoat(currentPlayer, id);
+            }
         }
         return false;
     }
@@ -172,11 +182,11 @@ public class FirstPhaseBattleshipScreen extends ScreenState {
         return true;
     }
 
-    private void putTextBoatJ1(int x, int y, float finalHeight, float finalWidth, Boat boat) {
+    private void putTextureBoatJ1(int x, int y, float finalHeight, float finalWidth, Boat boat) {
         Button boatTextureJ1 = new Button(10000 + boat.type.ordinal(), xButton.get(x), yButton.get(y), finalWidth, finalHeight, false) {
             @Override
             public boolean isVisible() {
-                return currentPlayer == 0 ? true : false;
+                return !checkIfNotPlaced(boat.getType().getName());
             }
 
             @Override
@@ -187,7 +197,7 @@ public class FirstPhaseBattleshipScreen extends ScreenState {
 
             @Override
             public boolean isDisabled() {
-                return true;
+                return checkIfNotPlaced(boat.getType().getName());
             }
 
             @Override
@@ -203,7 +213,7 @@ public class FirstPhaseBattleshipScreen extends ScreenState {
         addGuiElement(boatTextureJ1);
     }
 
-    private void putTextBoatJ2(int x, int y, float finalHeight, float finalWidth, Boat boat) {
+    private void putTextureBoatJ2(int x, int y, float finalHeight, float finalWidth, Boat boat) {
         Button boatTextureJ2 = new Button(10000 + boat.type.ordinal(), xButton.get(x), yButton.get(y), finalWidth, finalHeight, false) {
             @Override
             public boolean isVisible() {
