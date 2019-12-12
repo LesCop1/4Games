@@ -1,5 +1,6 @@
 package fr.bcecb.state;
 
+import fr.bcecb.Game;
 import fr.bcecb.input.MouseButton;
 import fr.bcecb.state.gui.*;
 import fr.bcecb.util.Constants;
@@ -19,10 +20,12 @@ public class EndGameScreen extends PopUpScreenState {
         this.gameType = gameType;
         this.time = time;
         this.moneyEarned = moneyEarned;
-        if (Constants.BEST_TIMES.get(gameType) < this.time) {
-            Constants.BEST_TIMES.put(gameType, this.time);
+
+        if (Game.instance().getProfile().getRecord(gameType) > this.time) {
+            Game.instance().getProfile().setRecord(gameType, this.time);
         }
-        Constants.BANKROLL += this.moneyEarned;
+        Game.instance().getProfile().setMoneyAmount(Game.instance().getProfile().getMoneyAmount() + this.moneyEarned);
+        Game.instance().getProfile().save();
     }
 
     @Override
@@ -41,7 +44,7 @@ public class EndGameScreen extends PopUpScreenState {
         Text allMoneyTitle = new Text(1007, (width / 2f) - 80f, (height / 2f) + 10f, false, "Votre argent :", 0.6f);
 
         Text bestTime = new Text(1008, (width / 2f) + 50f, (height / 2f), false, findBestTime(this.gameType), 0.6f);
-        Text bankroll = new Text(1009, (width / 2f) + 50f, (height / 2f) + 10f, false, intToMoney(Constants.BANKROLL), 0.6f);
+        Text bankroll = new Text(1009, (width / 2f) + 50f, (height / 2f) + 10f, false, intToMoney((int) Game.instance().getProfile().getMoneyAmount()), 0.6f);
 
         RoundedRectangle lineSeparation2 = new RoundedRectangle(1010, (width / 2f), (height / 2f) + 20f, 180, 1, true, Constants.COLOR_GREY, Float.MAX_VALUE);
 
@@ -58,7 +61,7 @@ public class EndGameScreen extends PopUpScreenState {
     }
 
     private String findBestTime(Constants.GameType gameType) {
-        long bestTime = Constants.BEST_TIMES.get(gameType);
+        long bestTime = Game.instance().getProfile().getRecord(gameType);
         return longToTime(bestTime);
     }
 

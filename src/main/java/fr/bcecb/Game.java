@@ -8,8 +8,11 @@ import fr.bcecb.render.Window;
 import fr.bcecb.resources.ResourceManager;
 import fr.bcecb.sound.SoundManager;
 import fr.bcecb.state.StateManager;
+import fr.bcecb.util.Constants;
 import fr.bcecb.util.Log;
 import fr.bcecb.util.RenderHelper;
+
+import java.io.File;
 
 import static org.lwjgl.glfw.GLFW.glfwGetTime;
 import static org.lwjgl.glfw.GLFW.glfwInit;
@@ -32,6 +35,7 @@ public final class Game implements AutoCloseable {
     private boolean running = false;
 
     private static final Game INSTANCE = new Game();
+    private Profile profile;
 
     private Game() {
         if (!glfwInit()) {
@@ -47,9 +51,18 @@ public final class Game implements AutoCloseable {
         this.renderManager = new RenderManager(this.resourceManager);
 
         this.inputManager = new InputManager(this, this.window);
+
+        this.profile = new Profile();
     }
 
     private void start() {
+        File file = new File(Constants.PROFILE_FILE_PATH);
+        if (!file.exists()) {
+            this.profile.save();
+        } else {
+            this.profile.loadProfile();
+        }
+
         Log.SYSTEM.info("Starting the game");
         this.running = true;
 
@@ -112,6 +125,10 @@ public final class Game implements AutoCloseable {
 
     public ResourceManager getResourceManager() {
         return resourceManager;
+    }
+
+    public Profile getProfile() {
+        return profile;
     }
 
     public static Game instance() {

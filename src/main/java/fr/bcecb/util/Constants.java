@@ -4,7 +4,9 @@ import fr.bcecb.resources.ResourceHandle;
 import fr.bcecb.resources.Texture;
 import org.joml.Vector4f;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
@@ -34,7 +36,6 @@ public class Constants {
     /* BS */
     public static final ResourceHandle<Texture> BS_BACKGROUND = new ResourceHandle<>("textures/BatailleNavale/background_battleship.jpg") {};
 
-
     /* POKER */
     public static final ResourceHandle<Texture> POKER_BACKGROUND = new ResourceHandle<Texture>("textures/poker/poker_background.jpg") {};
     public static final ResourceHandle<Texture> POKER_BACK_CARD = new ResourceHandle<Texture>("textures/poker/back_card.png") {};
@@ -50,16 +51,11 @@ public class Constants {
         Collections.shuffle(list);
         return list;
     });
-    /* PROFILE */
     public static final String MONEY_NAME = "FourCoins";
     public static final String MONEY_NAME_SHORT = "FC";
-    public static int BANKROLL = 0;
-    public static Map<GameType, Long> BEST_TIMES = new EnumMap<>(GameType.class) {{
-        put(GameType.SUDOKU, 0L);
-        put(GameType.BINGO, 0L);
-        put(GameType.BATTLESHIP, 0L);
-        put(GameType.POKER, 52543L);
-    }};
+
+    /* PROFILE */
+    public static final String PROFILE_FILE_PATH = "./profile.json";
 
     private Constants() {
     }
@@ -89,5 +85,9 @@ public class Constants {
         public int getNbState() {
             return nbState;
         }
+    }
+
+    public enum ProfilePicture {
+        DEFAULT
     }
 }
