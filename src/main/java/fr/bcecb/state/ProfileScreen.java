@@ -3,9 +3,7 @@ package fr.bcecb.state;
 import fr.bcecb.input.MouseButton;
 import fr.bcecb.resources.ResourceHandle;
 import fr.bcecb.resources.Texture;
-import fr.bcecb.state.gui.Button;
-import fr.bcecb.state.gui.CircleButton;
-import fr.bcecb.state.gui.ScreenState;
+import fr.bcecb.state.gui.*;
 import fr.bcecb.util.Resources;
 
 public class ProfileScreen extends ScreenState {
@@ -28,6 +26,21 @@ public class ProfileScreen extends ScreenState {
         };
 
         Button backButton = new Button(BACK_BUTTON_ID, (width / 20f), (height - (height / 20f) - (height / 10f)), (height / 10f), (height / 10f), false, "Back");
+
+        for (int i = 0; i < 2; i++) {
+            for (int j = 0;j< 2;j++){
+                float centerX, centerY, radius;
+                radius = profileButton.getRadius();
+                centerX = i * (width / 2f) + (width / 4f);
+                centerY = j * (height / 2f) + (height / 4f);
+
+                drawCircle(centerX, centerY, radius,i,j);
+
+            }
+
+
+        }
+
         addGuiElement(profileButton, backButton);
     }
 
@@ -38,5 +51,11 @@ public class ProfileScreen extends ScreenState {
             return true;
         }
         return false;
+    }
+
+    public void drawCircle(float centerX, float centerY, float radius, int iCircle,int jCircle) {
+        GuiElement score = new CircleImage(300 * iCircle + jCircle, Resources.DEFAULT_BUTTON_TEXTURE, centerX - radius, centerY - radius, radius);
+        addGuiElement(score);
+
     }
 }
