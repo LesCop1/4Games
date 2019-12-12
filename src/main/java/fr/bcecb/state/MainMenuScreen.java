@@ -2,6 +2,7 @@ package fr.bcecb.state;
 
 import fr.bcecb.input.MouseButton;
 import fr.bcecb.resources.ResourceHandle;
+import fr.bcecb.resources.Sound;
 import fr.bcecb.resources.Texture;
 import fr.bcecb.state.gui.*;
 import fr.bcecb.util.Resources;
@@ -15,6 +16,20 @@ public class MainMenuScreen extends ScreenState {
 
     public MainMenuScreen(StateManager stateManager) {
         super(stateManager, "main_menu");
+    }
+
+    @Override
+    public void onEnter() {
+    }
+
+    @Override
+    public boolean hasBackgroundMusic() {
+        return true;
+    }
+
+    @Override
+    public ResourceHandle<Sound> getBackgroundMusic() {
+        return new ResourceHandle<>("sounds/test1.ogg") {};
     }
 
     @Override

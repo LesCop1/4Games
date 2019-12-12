@@ -10,7 +10,7 @@ import java.nio.ByteBuffer;
 import static org.lwjgl.opengl.GL45.*;
 import static org.lwjgl.stb.STBImage.*;
 
-public class Texture extends GLResource {
+public class Texture extends LWJGLResource {
     protected int width;
     protected int height;
 
@@ -27,7 +27,7 @@ public class Texture extends GLResource {
 
     @Override
     public void bind() {
-        glBindTexture(GL_TEXTURE_2D, getGLId());
+        glBindTexture(GL_TEXTURE_2D, getLWJGLId());
     }
 
     @Override
@@ -42,7 +42,7 @@ public class Texture extends GLResource {
         int[] height = new int[1];
         int[] channels = new int[1];
 
-        ByteBuffer imageBuffer = Resources.readBytes(inputStream);
+        ByteBuffer imageBuffer = Resources.readByteBuffer(inputStream);
         image = stbi_load_from_memory(imageBuffer, width, height, channels, 4);
 
         if (image == null) {
@@ -74,6 +74,6 @@ public class Texture extends GLResource {
 
     @Override
     public void dispose() {
-        glDeleteTextures(getGLId());
+        glDeleteTextures(getLWJGLId());
     }
 }

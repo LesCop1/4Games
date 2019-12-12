@@ -171,7 +171,7 @@ public final class Mesh implements AutoCloseable {
 
         @Override
         public void close() {
-            this.mesh.close();
+            if (this.mesh != null) this.mesh.close();
         }
     }
 }
