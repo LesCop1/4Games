@@ -15,7 +15,7 @@ import java.util.Deque;
 import java.util.Iterator;
 
 public class StateManager {
-    protected final Game game;
+    private final Game game;
 
     private int width;
     private int height;
@@ -30,6 +30,10 @@ public class StateManager {
         pushState(new MainMenuScreen(this));
 
         Game.EVENT_BUS.register(this);
+    }
+
+    public Game getGame() {
+        return game;
     }
 
     public void pushState(State state) {
