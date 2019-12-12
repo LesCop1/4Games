@@ -81,7 +81,7 @@ public class Grid {
     }
 
 
-    private boolean isInGrid(int n) {
+    public boolean isInGrid(int n) {
         if (n == 0) {
             return true;
         }
@@ -96,18 +96,6 @@ public class Grid {
         return false;
     }
 
-    public boolean checkWin() {
-        int compteur = 0;
-        for (int i = 0; i < 3; i++) {
-            for (int j = 0; j < 9; j++) {
-                if (this.grid[i][j] == 0) {
-                    compteur++;
-                }
-            }
-        }
-        return compteur == 24;
-    }
-
     public int[][] getGrid() {
         return grid;
     }
@@ -120,3 +108,4 @@ public class Grid {
         return this.grid[x][y];
     }
 }
+

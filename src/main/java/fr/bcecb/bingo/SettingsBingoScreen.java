@@ -6,7 +6,6 @@ import fr.bcecb.state.gui.Button;
 import fr.bcecb.state.gui.GuiElement;
 import fr.bcecb.state.gui.ScreenState;
 import fr.bcecb.state.gui.Text;
-import fr.bcecb.util.Constants;
 
 public class SettingsBingoScreen extends ScreenState {
     private int gridCount;
@@ -16,8 +15,6 @@ public class SettingsBingoScreen extends ScreenState {
 
     public SettingsBingoScreen(StateManager stateManager) {
         super(stateManager, "settings_bingo");
-        this.setBackgroundTexture(Constants.BINGO_BACKGROUND);
-
         this.gridCount = 0;
         this.difficulty = 0;
     }
