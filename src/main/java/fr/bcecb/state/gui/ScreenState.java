@@ -90,7 +90,7 @@ public abstract class ScreenState extends State {
         }
     }
 
-    public final boolean mouseClicked(MouseButton mouseButton, float x, float y) {
+    public boolean mouseClicked(MouseButton mouseButton, float x, float y) {
         for (GuiElement element : getGuiElements()) {
             if (!element.isVisible() || element.isDisabled()) continue;
 

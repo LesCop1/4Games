@@ -4,9 +4,7 @@ import fr.bcecb.resources.ResourceHandle;
 import fr.bcecb.resources.Texture;
 import org.joml.Vector4f;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
@@ -15,7 +13,7 @@ public class Constants {
     public static final Vector4f COLOR_WHITE = new Vector4f(1.0f);
     public static final Vector4f COLOR_BLACK = new Vector4f();
     public static final Vector4f COLOR_GREY = new Vector4f(0.5f, 0.5f, 0.5f, 1f);
-    public static final Vector4f COLOR_RED = new Vector4f(1f, 0f, 0f, 1f);
+    public static final Vector4f COLOR_LIGHT_GREY = new Vector4f(0.8f, 0.8f, 0.8f, 1f);
     public static final Vector4f COLOR_GREEN = new Vector4f(0f, 1f, 0f, 1f);
 
     /* SUDOKU */
@@ -29,66 +27,61 @@ public class Constants {
     };
 
     /* BINGO */
-    public static final ResourceHandle<Texture> BINGO_BACKGROUND = new ResourceHandle<>("textures/bingo/bingoBG.png") {
-    };
-    public static final ResourceHandle<Texture> BINGO_CASE = new ResourceHandle<>("textures/bingo/caseBG.png") {
-    };
-    public static final ResourceHandle<Texture> BINGO_EMPTY_CASE = new ResourceHandle<>("textures/bingo/emptyCaseBG.png") {
-    };
-    public static final ResourceHandle<Texture> BINGO_CASE_OK = new ResourceHandle<>("textures/bingo/caseBGOK.png") {
-    };
-    public static final ResourceHandle<Texture> BINGO_BUTTON = new ResourceHandle<>("textures/bingo/button.png") {
-    };
-    public static final ResourceHandle<Texture> BINGO_BUTTON_HOVER = new ResourceHandle<>("textures/bingo/buttonHover.png") {
-    };
+    public static final ResourceHandle<Texture> BINGO_BACKGROUND = new ResourceHandle<>("textures/bingo/bingoBG.png") {};
+    public static final ResourceHandle<Texture> BINGO_CASE = new ResourceHandle<>("textures/bingo/caseBG.png") {};
+    public static final ResourceHandle<Texture> BINGO_CASE_HOVERED = new ResourceHandle<>("textures/bingo/caseBGhovered.png") {};
+    public static final ResourceHandle<Texture> BINGO_CASE_CHECKED = new ResourceHandle<>("textures/bingo/caseBGchecked.png") {};
 
     /* BS */
-    public static final ResourceHandle<Texture> BS_BACKGROUND = new ResourceHandle<>("textures/BatailleNavale/background_battleship.jpg") {
-    };
+    public static final ResourceHandle<Texture> BS_BACKGROUND = new ResourceHandle<>("textures/BatailleNavale/background_battleship.jpg") {};
 
 
     /* POKER */
-    public static final ResourceHandle<Texture> POKER_BACKGROUND = new ResourceHandle<>("textures/poker/poker_background.jpg") {};
-    public static final ResourceHandle<Texture> POKER_BACK_CARD = new ResourceHandle<>("textures/poker/back_card.png") {};
-    public static final ResourceHandle<Texture> POKER_HBACK_CARD = new ResourceHandle<>("textures/poker/horizontal_back_card.png") {};
-    public static final ResourceHandle<Texture> POKER_BUTTON = new ResourceHandle<>("textures/poker/btn_texture.jpg") {};
-    public static final ResourceHandle<Texture> POKER_CLUB = new ResourceHandle<>("textures/poker/club.png") {};
-    public static final ResourceHandle<Texture> POKER_DIAMOND = new ResourceHandle<>("textures/poker/diamond.png") {};
-    public static final ResourceHandle<Texture> POKER_HEART = new ResourceHandle<>("textures/poker/heart.png") {};
-    public static final ResourceHandle<Texture> POKER_SPADE = new ResourceHandle<>("textures/poker/spade.png") {};
+    public static final ResourceHandle<Texture> POKER_BACKGROUND = new ResourceHandle<Texture>("textures/poker/poker_background.jpg") {};
+    public static final ResourceHandle<Texture> POKER_BACK_CARD = new ResourceHandle<Texture>("textures/poker/back_card.png") {};
+    public static final ResourceHandle<Texture> POKER_HBACK_CARD = new ResourceHandle<Texture>("textures/poker/horizontal_back_card.png") {};
+    public static final ResourceHandle<Texture> POKER_BUTTON = new ResourceHandle<Texture>("textures/poker/btn_texture.jpg") {};
+    public static final ResourceHandle<Texture> POKER_CLUB = new ResourceHandle<Texture>("textures/poker/club.png") {};
+    public static final ResourceHandle<Texture> POKER_DIAMOND = new ResourceHandle<Texture>("textures/poker/diamond.png") {};
+    public static final ResourceHandle<Texture> POKER_HEART = new ResourceHandle<Texture>("textures/poker/heart.png") {};
+    public static final ResourceHandle<Texture> POKER_SPADE = new ResourceHandle<Texture>("textures/poker/spade.png") {};
 
     /* GAME BASED VARS */
-    public static final String MONEY_NAME = "FourCoins";
-    public static final String MONEY_NAME_SHORT = "FC";
     public static final Collector<?, ?, ?> SHUFFLER = Collectors.collectingAndThen(Collectors.toCollection(ArrayList::new), list -> {
         Collections.shuffle(list);
         return list;
     });
-    public static int BANKROLL = 0;
-
-    private Constants() {
-    }
+    /* PROFILE */
+    public static final String MONEY_NAME = "FourCoins";
 
     public static <T> Collector<T, ?, List<T>> toShuffledList() {
         return (Collector<T, ?, List<T>>) Constants.SHUFFLER;
     }
 
+    public static final String MONEY_NAME_SHORT = "FC";
+    public static int BANKROLL = 0;
+    public static Map<GameType, Long> BEST_TIMES = new EnumMap<>(GameType.class) {{
+        put(GameType.SUDOKU, 0L);
+        put(GameType.BINGO, 0L);
+        put(GameType.BATTLESHIP, 0L);
+        put(GameType.POKER, 52543L);
+    }};
+
+    private Constants() {
+    }
+
     public enum GameType {
-        SUDOKU("Sudoku", 2, 0, 0),
-        BINGO("Bingo", 2, 0, 0),
-        BATTLESHIP("Bataille Navale", 1, 0, 0),
-        POKER("Poker", 2, 0, 0);
+        SUDOKU("Sudoku", 2),
+        BINGO("Bingo", 2),
+        BATTLESHIP("Bataille Navale", 1),
+        POKER("Poker", 2);
 
         private final String name;
         private final int nbState;
-        private int bestScore;
-        private long bestTime;
 
-        GameType(String name, int nbState, int bestScore, long bestTime) {
+        GameType(String name, int nbState) {
             this.name = name;
             this.nbState = nbState;
-            this.bestScore = bestScore;
-            this.bestTime = bestTime;
         }
 
         public String getName() {
@@ -97,22 +90,6 @@ public class Constants {
 
         public int getNbState() {
             return nbState;
-        }
-
-        public int getBestScore() {
-            return bestScore;
-        }
-
-        public void setBestScore(int bestScore) {
-            this.bestScore = bestScore;
-        }
-
-        public long getBestTime() {
-            return bestTime;
-        }
-
-        public void setBestTime(long bestTime) {
-            this.bestTime = bestTime;
         }
     }
 }

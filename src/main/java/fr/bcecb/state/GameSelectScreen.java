@@ -1,9 +1,9 @@
 package fr.bcecb.state;
 
-import fr.bcecb.batailleNavale.BattleshipScreen;
+import fr.bcecb.batailleNavale.SettingsBattleshipScreen;
 import fr.bcecb.bingo.SettingsBingoScreen;
 import fr.bcecb.input.MouseButton;
-import fr.bcecb.poker.PokerSettingsScreen;
+import fr.bcecb.poker.SettingsPokerScreen;
 import fr.bcecb.resources.ResourceHandle;
 import fr.bcecb.resources.Texture;
 import fr.bcecb.state.gui.Button;
@@ -65,10 +65,10 @@ public class GameSelectScreen extends ScreenState {
             stateManager.pushState(new SettingsBingoScreen(stateManager));
             return true;
         } else if (id == this.bsGameButton.getId()) {
-            stateManager.pushState(new BattleshipScreen(stateManager));
+            stateManager.pushState(new SettingsBattleshipScreen(stateManager));
             return true;
         } else if (id == this.pokerGameButton.getId()) {
-            stateManager.pushState(new PokerSettingsScreen(stateManager));
+            stateManager.pushState(new SettingsPokerScreen(stateManager));
             return true;
         } else if (id == this.profileButton.getId()) {
             stateManager.pushState(new ProfileScreen(stateManager));

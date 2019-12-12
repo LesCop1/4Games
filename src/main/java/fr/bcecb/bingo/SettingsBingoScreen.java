@@ -3,18 +3,22 @@ package fr.bcecb.bingo;
 import fr.bcecb.input.MouseButton;
 import fr.bcecb.state.StateManager;
 import fr.bcecb.state.gui.Button;
-import fr.bcecb.state.gui.GuiElement;
+import fr.bcecb.state.gui.RulesPopUpScreen;
 import fr.bcecb.state.gui.ScreenState;
 import fr.bcecb.state.gui.Text;
+import fr.bcecb.util.Constants;
 
 public class SettingsBingoScreen extends ScreenState {
     private int gridCount;
     private int difficulty;
 
+    private Button rulesButton;
     private Button startButton;
 
     public SettingsBingoScreen(StateManager stateManager) {
-        super(stateManager, "settings_bingo");
+        super(stateManager, "game_settings_bingo");
+        this.setBackgroundTexture(Constants.BINGO_BACKGROUND);
+
         this.gridCount = 0;
         this.difficulty = 0;
     }
@@ -23,19 +27,21 @@ public class SettingsBingoScreen extends ScreenState {
     public void initGui() {
         int id = 0;
 
-        GuiElement gridCountText = new Text(id++, (width / 10f), (height / 6f) + 10, false, "Grid count :");
+        Text gridCountText = new Text(++id, (width / 10f), (height / 6f) + 10, false, "Grid count :");
         for (int i = 0; i < 6; i++) {
-            Button gridCountButton = new GridCountSettingButton(id++, (width / 10f) + i * (width / 10f), (height / 6f) + 35, i + 1);
+            Button gridCountButton = new GridCountSettingButton(++id, (width / 10f) + i * (width / 10f), (height / 6f) + 35, i + 1);
             addGuiElement(gridCountButton);
         }
 
-        GuiElement difficultyText = new Text(id++, (width / 10f), (height / 3f) + 40, false, "Difficulty :");
+        Text difficultyText = new Text(++id, (width / 10f), (height / 3f) + 40, false, "Difficulty :");
         for (int i = 0; i < 3; i++) {
-            Button difficultyButton = new DifficultySettingButton(id++, (width / 10f) + i * (width / 10f), 2 * (height / 6f) + 65, i + 1);
+            Button difficultyButton = new DifficultySettingButton(++id, (width / 10f) + i * (width / 10f), 2 * (height / 6f) + 65, i + 1);
             addGuiElement(difficultyButton);
         }
 
-        this.startButton = new Button(++id, (width / 2f), (height / 4f) + 2 * (height / 4f), (width / 5f), (height / 10f), true, "Start") {
+        this.rulesButton = new Button(++id, (width / 2f) - (width / 5f), (height / 4f) + 2 * (height / 4f), (width / 5f), (height / 10f), true, "Règles");
+
+        this.startButton = new Button(++id, (width / 2f) + (width / 5f), (height / 4f) + 2 * (height / 4f), (width / 5f), (height / 10f), true, "Start") {
             @Override
             public boolean isDisabled() {
                 return gridCount == 0 || difficulty == 0;
@@ -44,7 +50,7 @@ public class SettingsBingoScreen extends ScreenState {
 
         Button backButton = new Button(BACK_BUTTON_ID, (width / 20f), (height - (height / 20f) - (height / 10f)), (height / 10f), (height / 10f), false, "Back");
 
-        addGuiElement(gridCountText, difficultyText, startButton, backButton);
+        addGuiElement(backButton, gridCountText, difficultyText, rulesButton, startButton);
     }
 
     @Override
@@ -52,13 +58,19 @@ public class SettingsBingoScreen extends ScreenState {
         if (id == this.startButton.getId()) {
             stateManager.pushState(new BingoScreen(stateManager, this.gridCount, this.difficulty));
             return true;
+        } else if (id == this.rulesButton.getId()) {
+            String rules = "Pour remporter une partie, les joueurs devront cliquer sur chaque cases correspondent aux numéros tiré puis le premier joueur a avoir rempli une/toutes ses grilles gagnera la partie";
+            stateManager.pushState(new RulesPopUpScreen(stateManager, "Bingo", rules, 200, 100));
+            return true;
         } else {
             SettingButton settingButton = (SettingButton) this.getGuiElementById(id);
 
             if (settingButton instanceof DifficultySettingButton) {
                 this.difficulty = settingButton.value;
+                return true;
             } else if (settingButton instanceof GridCountSettingButton) {
                 this.gridCount = settingButton.value;
+                return true;
             }
         }
 
