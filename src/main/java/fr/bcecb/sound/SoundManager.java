@@ -32,14 +32,16 @@ public class SoundManager implements AutoCloseable {
     }
 
     public void playSound(ResourceHandle<Sound> soundResourceHandle) {
-        Sound sound = resourceManager.getResource(soundResourceHandle);
+        if (soundResourceHandle != null) {
+            Sound sound = resourceManager.getResource(soundResourceHandle);
 
-        if (sound != null) {
-            sound.bind(this.source);
-            {
-                AL11.alSourcePlay(this.source);
+            if (sound != null) {
+                sound.bind(this.source);
+                {
+                    AL11.alSourcePlay(this.source);
+                }
+                sound.unbind(this.source);
             }
-            sound.unbind(this.source);
         }
     }
 
