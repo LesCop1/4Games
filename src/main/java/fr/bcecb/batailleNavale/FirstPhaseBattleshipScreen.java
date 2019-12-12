@@ -164,7 +164,7 @@ public class FirstPhaseBattleshipScreen extends ScreenState {
             this.boat = new Boat(Boat.Type.values()[id - 100]);
             return true;
         } else if (id > 10000 && button == MouseButton.RIGHT){
-            if(stateManager.game.getInputManager().isKeyDown(Key.BS_DELETE_BOAT)) {
+            if(stateManager.getGame().getInputManager().isKeyDown(Key.BS_DELETE_BOAT)) {
                 System.out.println("ttt");
                 this.addedBoats.remove(this.boat);
                 this.battleship.deleteBoat(currentPlayer, id);
