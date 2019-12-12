@@ -14,23 +14,22 @@ public class Constants {
     public static final Vector4f COLOR_BLACK = new Vector4f();
     public static final Vector4f COLOR_GREY = new Vector4f(0.5f, 0.5f, 0.5f, 1f);
     public static final Vector4f COLOR_LIGHT_GREY = new Vector4f(0.8f, 0.8f, 0.8f, 1f);
+    public static final Vector4f COLOR_RED = new Vector4f(1f, 0f, 0f, 1f);
     public static final Vector4f COLOR_GREEN = new Vector4f(0f, 1f, 0f, 1f);
 
     /* SUDOKU */
-    public static final ResourceHandle<Texture> SUDOKU_BACKGROUND = new ResourceHandle<>("textures/sudoku/sudokuBackground.png") {
-    };
-    public static final ResourceHandle<Texture> SUDOKU_FIXED_CASE = new ResourceHandle<>("textures/sudoku/caseSudokuBase.png") {
-    };
-    public static final ResourceHandle<Texture> SUDOKU_FREE_CASE = new ResourceHandle<>("textures/sudoku/caseSudoku.png") {
-    };
-    public static final ResourceHandle<Texture> SUDOKU_CANDIDATES_VALUE_CASE = new ResourceHandle<>("textures/sudoku/candidateValuesTextures.png") {
-    };
+    public static final ResourceHandle<Texture> SUDOKU_BACKGROUND = new ResourceHandle<>("textures/sudoku/sudokuBackground.png") {};
+    public static final ResourceHandle<Texture> SUDOKU_FIXED_CASE = new ResourceHandle<>("textures/sudoku/caseSudokuBase.png") {};
+    public static final ResourceHandle<Texture> SUDOKU_FREE_CASE = new ResourceHandle<>("textures/sudoku/caseSudoku.png") {};
+    public static final ResourceHandle<Texture> SUDOKU_CANDIDATES_VALUE_CASE = new ResourceHandle<>("textures/sudoku/candidateValuesTextures.png") {};
 
     /* BINGO */
     public static final ResourceHandle<Texture> BINGO_BACKGROUND = new ResourceHandle<>("textures/bingo/bingoBG.png") {};
     public static final ResourceHandle<Texture> BINGO_CASE = new ResourceHandle<>("textures/bingo/caseBG.png") {};
-    public static final ResourceHandle<Texture> BINGO_CASE_HOVERED = new ResourceHandle<>("textures/bingo/caseBGhovered.png") {};
-    public static final ResourceHandle<Texture> BINGO_CASE_CHECKED = new ResourceHandle<>("textures/bingo/caseBGchecked.png") {};
+    public static final ResourceHandle<Texture> BINGO_EMPTY_CASE = new ResourceHandle<>("textures/bingo/emptyCaseBG.png") {};
+    public static final ResourceHandle<Texture> BINGO_CASE_OK = new ResourceHandle<>("textures/bingo/caseBGOK.png") {};
+    public static final ResourceHandle<Texture> BINGO_BUTTON = new ResourceHandle<>("textures/bingo/button.png") {};
+    public static final ResourceHandle<Texture> BINGO_BUTTON_HOVER = new ResourceHandle<>("textures/bingo/buttonHover.png") {};
 
     /* BS */
     public static final ResourceHandle<Texture> BS_BACKGROUND = new ResourceHandle<>("textures/BatailleNavale/background_battleship.jpg") {};
@@ -53,11 +52,6 @@ public class Constants {
     });
     /* PROFILE */
     public static final String MONEY_NAME = "FourCoins";
-
-    public static <T> Collector<T, ?, List<T>> toShuffledList() {
-        return (Collector<T, ?, List<T>>) Constants.SHUFFLER;
-    }
-
     public static final String MONEY_NAME_SHORT = "FC";
     public static int BANKROLL = 0;
     public static Map<GameType, Long> BEST_TIMES = new EnumMap<>(GameType.class) {{
@@ -68,6 +62,10 @@ public class Constants {
     }};
 
     private Constants() {
+    }
+
+    public static <T> Collector<T, ?, List<T>> toShuffledList() {
+        return (Collector<T, ?, List<T>>) Constants.SHUFFLER;
     }
 
     public enum GameType {
