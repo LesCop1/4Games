@@ -14,7 +14,6 @@ import java.nio.ByteBuffer;
 import java.util.stream.Collectors;
 
 public class Resources {
-
     /* TEXTURES */
     public static final ResourceHandle<Texture> DEFAULT_TEXTURE = new ResourceHandle<>("textures/default/default.png") {
     };
