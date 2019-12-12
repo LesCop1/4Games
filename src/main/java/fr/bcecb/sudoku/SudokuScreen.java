@@ -2,7 +2,6 @@ package fr.bcecb.sudoku;
 
 import com.google.common.base.Stopwatch;
 import com.google.common.primitives.Booleans;
-import com.google.common.primitives.Ints;
 import fr.bcecb.input.MouseButton;
 import fr.bcecb.resources.ResourceHandle;
 import fr.bcecb.resources.Texture;
@@ -14,6 +13,8 @@ import fr.bcecb.state.gui.ScreenState;
 import fr.bcecb.util.Constants;
 import org.joml.Vector4f;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 public class SudokuScreen extends ScreenState {
@@ -21,6 +22,7 @@ public class SudokuScreen extends ScreenState {
     private final Sudoku sudoku;
     private final int difficulty;
     private final Stopwatch stopwatch;
+    private List<Integer> conflictCandidates;
     private boolean[][] conflicts;
 
     private int selectedX = -1;
@@ -30,6 +32,7 @@ public class SudokuScreen extends ScreenState {
         super(stateManager, "game_sudoku");
         this.sudoku = new Sudoku(difficulty);
         this.difficulty = difficulty;
+        this.conflictCandidates = new ArrayList<>();
         stopwatch = Stopwatch.createStarted();
     }
 
@@ -75,6 +78,7 @@ public class SudokuScreen extends ScreenState {
             selectedX = sudokuButton.getCaseX();
             selectedY = sudokuButton.getCaseY();
             conflicts = null;
+            conflictCandidates.clear();
 
             return true;
         } else if (guiElement instanceof SudokuCandidateButton) {
@@ -83,10 +87,14 @@ public class SudokuScreen extends ScreenState {
             conflicts = sudoku.computeConflicts(sudokuCandidateButton.getValue(), selectedX, selectedY);
 
             for (boolean[] aBooleans : conflicts) {
-                if (Booleans.contains(aBooleans, true)) return false;
+                if (Booleans.contains(aBooleans, true)) {
+                    conflictCandidates.add(sudokuCandidateButton.value);
+                    return false;
+                }
             }
 
             sudoku.getGrid()[selectedX][selectedY] = sudokuCandidateButton.getValue();
+            conflictCandidates.clear();
 
             selectedX = -1;
             selectedY = -1;
@@ -186,7 +194,12 @@ public class SudokuScreen extends ScreenState {
 
         @Override
         public ResourceHandle<Texture> getTexture() {
-            return Ints.contains(sudoku.computeCandidates(selectedX, selectedY), value) ? Constants.SUDOKU_FREE_CASE : Constants.SUDOKU_FIXED_CASE;
+            return conflictCandidates.contains(value) ? Constants.SUDOKU_FIXED_CASE : Constants.SUDOKU_FREE_CASE;
+        }
+
+        @Override
+        public Vector4f getTitleColor() {
+            return conflictCandidates.contains(value) ? Constants.COLOR_RED : super.getTitleColor();
         }
 
         @Override
