@@ -1,6 +1,10 @@
 import org.gradle.internal.os.OperatingSystem
-apply plugin: 'java'
-apply plugin: 'application'
+
+plugins {
+    id 'java'
+    id 'application'
+    id 'com.github.johnrengelman.shadow' version '5.2.0'
+}
 
 group 'fr.bcecb'
 version '1.0-SNAPSHOT'
@@ -18,6 +22,12 @@ switch (OperatingSystem.current()) {
 
 repositories {
     mavenCentral()
+}
+
+jar {
+    manifest {
+        attributes 'Main-Class': 'fr.bcecb.Game'
+    }
 }
 
 dependencies {

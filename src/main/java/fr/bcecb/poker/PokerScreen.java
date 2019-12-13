@@ -236,16 +236,19 @@ public class PokerScreen extends ScreenState {
         if (this.poker.getNumGame() != 0) {
             drawBottomPlayerUI(0);
             switch (this.playerCount) {
-                case 2 -> drawTopPlayerUI(1);
-                case 3 -> {
+                case 2: drawTopPlayerUI(1); break;
+                case 3: {
                     drawTopPlayerUI(1);
                     drawLeftPlayerUI(2);
+                    break;
                 }
-                case 4 -> {
+                case 4: {
                     drawRightPlayerUI(1);
                     drawTopPlayerUI(2);
                     drawLeftPlayerUI(3);
+                    break;
                 }
+                default: break;
             }
 
             for (int i = 0; i < 5; i++) {
