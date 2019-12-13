@@ -47,7 +47,7 @@ public class StateManager {
                 screenState.initGui(this.width, this.height);
 
                 if (screenState.hasBackgroundMusic()) {
-                    game.getSoundManager().playSound(screenState.getBackgroundMusic());
+//                    game.getSoundManager().playSound(screenState.getBackgroundMusic());
                 } else {
                     game.getSoundManager().stopSound();
                 }
