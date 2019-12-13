@@ -34,8 +34,7 @@ public class MainMenuScreen extends ScreenState {
 
     @Override
     public void initGui() {
-        Image logoImage = new Image(100, Resources.DEFAULT_LOGO_TEXTURE, (width / 2f), (height / 8f), 50, 50, true, true);
-
+        setBackgroundTexture(Resources.DEFAULT_START_BACKGROUND_TEXTURE);
         this.playButton = new Button(1, (width / 2f), (height / 2f) - (height / 10f) - (height / 10f), 50, 25, true, "Play");
 
         this.profileButton = new CircleButton(2, width / 2.0f, height / 2.0f, (height / 10f), true) {
@@ -53,7 +52,7 @@ public class MainMenuScreen extends ScreenState {
 
         GuiElement quitButton = new Button(BACK_BUTTON_ID, (width / 2f) + 25, (height / 2f) + (height / 3.5f), (width / 5f), (height / 10f), false, "Quit");
 
-        addGuiElement(logoImage, playButton, profileButton, achievementButton, shopButton, aboutButton, quitButton);
+        addGuiElement(playButton, profileButton, achievementButton, shopButton, aboutButton, quitButton);
     }
 
     @Override
