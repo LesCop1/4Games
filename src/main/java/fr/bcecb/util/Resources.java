@@ -18,19 +18,17 @@ public class Resources {
     };
     public static final ResourceHandle<Texture> DEFAULT_BACKGROUND_TEXTURE = new ResourceHandle<>("textures/default/defaultBackground.png") {
     };
-    public static final ResourceHandle<Texture> DEFAULT_BUTTON_TEXTURE = new ResourceHandle<>("textures/default/defaultButton.png") {
-    };
-    public static final ResourceHandle<Texture> DEFAULT_BUTTON_HOVER_TEXTURE = new ResourceHandle<>("textures/default/defaultButtonHover.png") {
-    };
-    public static final ResourceHandle<Texture> DEFAULT_BUTTON_DISABLED_TEXTURE = new ResourceHandle<>("textures/default/defaultButtonDisabled.png") {
-    };
+    public static final ResourceHandle<Texture> DEFAULT_BUTTON_TEXTURE = new ResourceHandle<>("textures/default/defaultButton.png") {};
+    public static final ResourceHandle<Texture> DEFAULT_BUTTON_HOVER_TEXTURE = new ResourceHandle<>("textures/default/defaultButtonHover.png") {};
+    public static final ResourceHandle<Texture> DEFAULT_BUTTON_DISABLED_TEXTURE = new ResourceHandle<>("textures/default/defaultButtonDisabled.png") {};
+    public static final ResourceHandle<Texture> DEFAULT_BUTTON_STATS_TEXTURE = new ResourceHandle<>("textures/statsProfile.png") {};
     public static final ResourceHandle<Texture> CURRENT_PROFILE_TEXTURE = new ResourceHandle<>("textures/default/defaultProfile.jpg") {
     };
     public static final ResourceHandle<Texture> DEFAULT_BUTTON_CONFIRMED = new ResourceHandle<>("textures/default/defaultButtonConfirmed.png") {
     };
 
-    public static final ResourceHandle<Font> DEFAULT_FONT = new ResourceHandle<>("font.ttf") {
-    };
+
+    public static final ResourceHandle<Font> DEFAULT_FONT = new ResourceHandle<>("font.ttf") {};
     /* SHADERS */
     public static final ResourceHandle<Shader> DEFAULT_SHADER = new ResourceHandle<>("shaders/base.json") {
     };
