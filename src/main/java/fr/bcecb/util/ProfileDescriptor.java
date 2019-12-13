@@ -1,5 +1,6 @@
 package fr.bcecb.util;
 
+import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
@@ -10,17 +11,19 @@ public class ProfileDescriptor {
     private int avatarIndex;
     private Map<Constants.GameType, Long> timeRecords = new EnumMap<>(Constants.GameType.class);
     private Map<Constants.GameType, List<Integer>> achievements = new EnumMap<>(Constants.GameType.class);
+    private List<Integer> itemsOwned = new ArrayList<>();
 
     public ProfileDescriptor() {
 
     }
 
-    public ProfileDescriptor(String name, Long moneyAmount, int avatarIndex, Map<Constants.GameType, Long> timeRecords, Map<Constants.GameType, List<Integer>> achievements) {
+    public ProfileDescriptor(String name, Long moneyAmount, int avatarIndex, Map<Constants.GameType, Long> timeRecords, Map<Constants.GameType, List<Integer>> achievements, List<Integer> itemsOwned) {
         this.name = name;
         this.moneyAmount = moneyAmount;
         this.avatarIndex = avatarIndex;
         this.timeRecords = timeRecords;
         this.achievements = achievements;
+        this.itemsOwned = itemsOwned;
     }
 
     public void setName(String name) {
@@ -61,5 +64,13 @@ public class ProfileDescriptor {
 
     public Map<Constants.GameType, List<Integer>> getAchievements() {
         return achievements;
+    }
+
+    public void setItemsOwned(List<Integer> itemsOwned) {
+        this.itemsOwned = itemsOwned;
+    }
+
+    public List<Integer> getItemsOwned() {
+        return itemsOwned;
     }
 }

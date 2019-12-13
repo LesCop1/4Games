@@ -91,13 +91,11 @@ public class Profile implements IResource {
 
     @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder("Profile{");
-        sb.append("name='").append(name).append('\'');
-        sb.append(", moneyAmount=").append(moneyAmount);
-        sb.append(", profilePictureValue=").append(profilePictureValue);
-        sb.append(", records=").append(records);
-        sb.append('}');
-        return sb.toString();
+        return "Profile{" + "name='" + name + '\'' +
+                ", moneyAmount=" + moneyAmount +
+                ", profilePictureValue=" + profilePictureValue +
+                ", records=" + records +
+                '}';
     }
 
     @Override
@@ -109,11 +107,12 @@ public class Profile implements IResource {
         this.profilePictureValue = descriptor.getAvatarIndex();
         this.records = descriptor.getTimeRecords();
         this.achievementsSucceed = descriptor.getAchievements();
+        this.itemsOwns = descriptor.getItemsOwned();
     }
 
     @Override
     public void dispose() {
-        this.descriptor = new ProfileDescriptor(name, moneyAmount, profilePictureValue, records, achievementsSucceed);
+        this.descriptor = new ProfileDescriptor(name, moneyAmount, profilePictureValue, records, achievementsSucceed, itemsOwns);
 
         try (FileWriter fw = new FileWriter(Constants.PROFILE_FILE_PATH)) {
             GSON.toJson(this.descriptor, fw);
