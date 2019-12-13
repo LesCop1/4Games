@@ -55,7 +55,8 @@ public class Constants {
     public static final ResourceHandle<Texture> BS_FRIGATE_V = new ResourceHandle<>("textures/BatailleNavale/Frigate_V.png") {};
     public static final ResourceHandle<Texture> BS_CRUISER_V = new ResourceHandle<>("textures/BatailleNavale/Cruiser_V.png") {};
     public static final ResourceHandle<Texture> BS_AIRCRAFT_CARRIER_V = new ResourceHandle<>("textures/BatailleNavale/Aircraft_Carrier_V.png") {};
-
+    public static final ResourceHandle<Texture> BS_J1 = new ResourceHandle<>("textures/BatailleNavale/j1.png"){};
+    public static final ResourceHandle<Texture> BS_J2 = new ResourceHandle<>("textures/BatailleNavale/j2.png"){};
 
     /* POKER */
     public static final ResourceHandle<Texture> POKER_BACKGROUND = new ResourceHandle<>("textures/poker/poker_background.jpg") {};

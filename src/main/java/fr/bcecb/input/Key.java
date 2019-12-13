@@ -12,8 +12,7 @@ public enum Key {
     DEBUG_REBUILD_GUI(GLFW_KEY_G),
     BACK(GLFW_KEY_ESCAPE),
     LEFT(GLFW_KEY_LEFT),
-    RIGHT(GLFW_KEY_RIGHT),
-    BS_DELETE_BOAT(GLFW_KEY_BACKSPACE);
+    RIGHT(GLFW_KEY_RIGHT);
 
     private final int glfwKey;
 

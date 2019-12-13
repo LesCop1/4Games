@@ -9,7 +9,6 @@ public class Battleship { //Gère tous les aspects d'une partie, création de la
     public static final int DEFAULT_VALUE = -1;
     public static final int SUCCESS_HIT = 100;
     public static final int FAILED_HIT = 200;
-
     private final int[][][] boards = new int[2][GRID_SIZE][GRID_SIZE];
     protected List<Boolean> hitGridJ1 = new ArrayList(Arrays.asList(false, false, false, false, false));
     protected List<Boolean> hitGridJ2 = new ArrayList(Arrays.asList(false, false, false, false, false));
