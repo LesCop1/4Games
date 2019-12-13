@@ -68,6 +68,7 @@ public class MainMenuScreen extends ScreenState {
             stateManager.pushState(new AchievementScreen(stateManager));
             return true;
         } else if (id == shopButton.getId()) {
+            stateManager.pushState(new ShopScreen(stateManager));
             return true;
         } else if (id == aboutButton.getId()) {
             stateManager.pushState(new AboutScreen(stateManager));

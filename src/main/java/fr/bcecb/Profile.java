@@ -13,29 +13,29 @@ import java.util.Map;
 
 public class Profile {
     private String name;
-    private long moneyAmount;
-    private Constants.ProfilePicture profilePictureValue;
+    private Long moneyAmount;
+    private Long profilePictureValue;
     private Map<Constants.GameType, Long> records = new HashMap<>();
     private Map<Constants.GameType, List<Integer>> achievementsSucceed = new HashMap<>();
+    private List<Integer> itemsOwns = new ArrayList<>();
 
     public Profile() {
         this.name = "Default";
-        this.moneyAmount = 0;
-        this.profilePictureValue = Constants.ProfilePicture.DEFAULT;
+        this.moneyAmount = 0L;
+        this.profilePictureValue = 0L;
         for (Constants.GameType gameType : Constants.GameType.values()) {
             this.records.put(gameType, 0L);
             this.achievementsSucceed.put(gameType, new ArrayList<>());
         }
-
-        // TODO Add bought stuff.
     }
 
     public void loadProfile() {
         JSONObject profileJSON = JsonLoader.load(Constants.PROFILE_FILE_PATH);
 
         this.name = (String) profileJSON.get(Info.NAME.getValue());
-        this.moneyAmount = (long) profileJSON.get(Info.MONEY.getValue());
-        this.profilePictureValue = Constants.ProfilePicture.valueOf((String) profileJSON.get(Info.PROFILE_PIC.getValue()));
+        System.out.println(profileJSON.get(Info.MONEY.getValue()).getClass());
+        this.moneyAmount = (Long) profileJSON.get(Info.MONEY.getValue());
+        this.profilePictureValue = (Long) profileJSON.get(Info.PROFILE_PIC.getValue());
 
         JSONArray recordsJSON = (JSONArray) profileJSON.get(Info.RECORDS.getValue());
         for (Constants.GameType gameType : Constants.GameType.values()) {
@@ -48,7 +48,7 @@ public class Profile {
 
         profile.put(Info.NAME.getValue(), this.name);
         profile.put(Info.MONEY.getValue(), this.moneyAmount);
-        profile.put(Info.PROFILE_PIC.getValue(), this.profilePictureValue.toString());
+        profile.put(Info.PROFILE_PIC.getValue(), this.profilePictureValue);
 
         JSONArray records = new JSONArray();
         for (Constants.GameType gameType : Constants.GameType.values()) {
@@ -72,19 +72,23 @@ public class Profile {
         this.name = name;
     }
 
-    public long getMoneyAmount() {
-        return this.moneyAmount;
+    public int getMoneyAmount() {
+        return this.moneyAmount.intValue();
     }
 
-    public void setMoneyAmount(long moneyAmount) {
+    public void setMoneyAmount(Long moneyAmount) {
         this.moneyAmount = moneyAmount;
     }
 
-    public Constants.ProfilePicture getProfilePictureValue() {
-        return this.profilePictureValue;
+    public void remMoneyAmount(int moneyAmount) {
+        this.moneyAmount -= moneyAmount;
     }
 
-    public void setProfilePictureValue(Constants.ProfilePicture profilePictureValue) {
+    public int getProfilePictureValue() {
+        return this.profilePictureValue.intValue();
+    }
+
+    public void setProfilePictureValue(Long profilePictureValue) {
         this.profilePictureValue = profilePictureValue;
     }
 
@@ -106,6 +110,14 @@ public class Profile {
 
     public void addAchievement(Constants.GameType gameType, int id) {
         this.achievementsSucceed.get(gameType).add(id);
+    }
+
+    public List<Integer> getItemsOwns() {
+        return itemsOwns;
+    }
+
+    public void addItem(int itemId) {
+        this.itemsOwns.add(itemId);
     }
 
     public void setRecord(Constants.GameType gameType, long value) {

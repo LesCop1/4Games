@@ -35,8 +35,7 @@ public class AchievementScreen extends ScreenState {
 
     @Override
     public void initGui() {
-        Rectangle secBG = new Rectangle(1, 0, 2 * (height / 20f), width, 3 * (height / 20f), false, Constants.COLOR_ACHIEVEMENT_2ND_BG);
-
+        Rectangle topBanner = new Rectangle(1, 0, 2 * (height / 20f), width, 3 * (height / 20f), false, Constants.COLOR_BANNER);
         Text title = new Text(2, (width / 2f), (height / 20f), true, "Succès", 2f);
         title.setColor(Constants.COLOR_WHITE);
 
@@ -146,7 +145,6 @@ public class AchievementScreen extends ScreenState {
                 return selectedAchievement != -1;
             }
         };
-
         Text previewHowTo = new Text(10, previewCenter, achievementStartY + (3 * (previewBGHeight / 4f)) + 15f, true, "", 0.8f) {
             @Override
             public String getText() {
@@ -159,20 +157,18 @@ public class AchievementScreen extends ScreenState {
             }
         };
         previewHowTo.setColor(Constants.COLOR_GREY);
-        addGuiElement(previewAchievementBG, previewRewardTitle, previewReward, previewTitle, previewHowTo);
 
+        float backButtonY = achievementStartY + 3 * achievementHeight;
+        RoundedButton backButton = new RoundedButton(3, (2 * (height / 20f) + 15) / 2, backButtonY + ((height - backButtonY) / 2), 2 * (height / 20f), 2 * (height / 20f), 5f, true, "Quitter", Resources.DEFAULT_BUTTON_TEXTURE);
 
-        float backButtonHeight = achievementStartY + 3 * achievementHeight;
-        RoundedButton backButton = new RoundedButton(3, (2 * (height / 20f) + 15) / 2, backButtonHeight + ((height - backButtonHeight) / 2), 2 * (height / 20f), 2 * (height / 20f), 5f, true, "Quitter", Resources.DEFAULT_BUTTON_TEXTURE);
-
-        RoundedButton prevButton = new RoundedButton(4, (width / 5f), backButtonHeight + ((height - backButtonHeight) / 2), (width / 5f) - 4, 2 * (height / 20f),
+        RoundedButton prevButton = new RoundedButton(4, (width / 5f), backButtonY + ((height - backButtonY) / 2), (width / 5f) - 4, 2 * (height / 20f),
                 2f, true, "Retour", Resources.DEFAULT_BUTTON_TEXTURE) {
             @Override
             public boolean isVisible() {
                 return currentPage > 1;
             }
         };
-        RoundedButton nextButton = new RoundedButton(5, 2 * (width / 5f), backButtonHeight + ((height - backButtonHeight) / 2), (width / 5f) - 4, 2 * (height / 20f),
+        RoundedButton nextButton = new RoundedButton(5, 2 * (width / 5f), backButtonY + ((height - backButtonY) / 2), (width / 5f) - 4, 2 * (height / 20f),
                 2f, true, "Suivant", Resources.DEFAULT_BUTTON_TEXTURE) {
             @Override
             public boolean isVisible() {
@@ -180,7 +176,7 @@ public class AchievementScreen extends ScreenState {
             }
         };
 
-        addGuiElement(secBG, title, backButton, prevButton, nextButton);
+        addGuiElement(topBanner, title, backButton, prevButton, nextButton, previewAchievementBG, previewRewardTitle, previewReward, previewTitle, previewHowTo);
     }
 
     @Override

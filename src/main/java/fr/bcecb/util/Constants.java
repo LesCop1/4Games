@@ -1,6 +1,7 @@
 package fr.bcecb.util;
 
 import fr.bcecb.Achievement;
+import fr.bcecb.ProfilePictureItem;
 import fr.bcecb.resources.ResourceHandle;
 import fr.bcecb.resources.Texture;
 import org.joml.Vector4f;
@@ -19,7 +20,7 @@ public class Constants {
     public static final Vector4f COLOR_GREEN = new Vector4f(0f, 1f, 0f, 1f);
 
 
-    public static final Vector4f COLOR_ACHIEVEMENT_2ND_BG = new Vector4f(0.569f, 0.569f, 0.569f, 0.75f);
+    public static final Vector4f COLOR_BANNER = new Vector4f(0.569f, 0.569f, 0.569f, 0.75f);
 
     /* SUDOKU */
     public static final ResourceHandle<Texture> SUDOKU_BACKGROUND = new ResourceHandle<>("textures/sudoku/sudokuBackground.png") {};
@@ -83,6 +84,25 @@ public class Constants {
         put(GameType.BINGO, new ArrayList<>());
         put(GameType.BATTLESHIP, new ArrayList<>());
         put(GameType.POKER, new ArrayList<>());
+    }};
+
+    /* SHOP */
+    private static final ProfilePictureItem ppi1 = new ProfilePictureItem(1, new ResourceHandle<>("textures/default/default.png") {}, "Le gamer casque", "no", 25);
+    private static final ProfilePictureItem ppi2 = new ProfilePictureItem(2, new ResourceHandle<>("textures/default/default.png") {}, "ta", "ee", 50);
+    private static final ProfilePictureItem ppi3 = new ProfilePictureItem(3, new ResourceHandle<>("textures/default/default.png") {}, "mer", "eea", 75);
+    private static final ProfilePictureItem ppi4 = new ProfilePictureItem(4, new ResourceHandle<>("textures/default/default.png") {}, "la", "eeee", 100);
+    private static final ProfilePictureItem ppi5 = new ProfilePictureItem(5, new ResourceHandle<>("textures/default/default.png") {}, "pu", "eeeee", 125);
+    private static final ProfilePictureItem ppi6 = new ProfilePictureItem(6, new ResourceHandle<>("textures/default/default.png") {}, "a", "eeeeeee", 150);
+    private static final ProfilePictureItem ppi7 = new ProfilePictureItem(7, new ResourceHandle<>("textures/default/default.png") {}, "led", "ea", 175);
+
+    public static final List<ProfilePictureItem> shopItems = new ArrayList<>() {{
+        add(ppi1);
+        add(ppi2);
+        add(ppi3);
+        add(ppi4);
+        add(ppi5);
+        add(ppi6);
+        add(ppi7);
     }};
 
     /* PROFILE */
