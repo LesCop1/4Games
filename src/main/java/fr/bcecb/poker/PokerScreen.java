@@ -47,6 +47,11 @@ public class PokerScreen extends ScreenState {
         return null;
     }
 
+    public static Vector4f getColor(Deck.Card card){
+        Deck.Type type = card.getType();
+        return type.equals(Deck.Type.DIAMOND) || type.equals(Deck.Type.HEART) ? Constants.COLOR_RED : Constants.COLOR_BLACK;
+    }
+
     @Override
     public ResourceHandle<Texture> getBackgroundTexture() {
         return Constants.POKER_BACKGROUND;
@@ -101,13 +106,12 @@ public class PokerScreen extends ScreenState {
 
             @Override
             public float getTitleScale() {
-                return 1f;
+                return 2f;
             }
 
             @Override
             public Vector4f getTitleColor() {
-                return Constants.COLOR_WHITE;
-            }
+                return getColor(poker.getPlayer(((poker.getCurrentPlayer() + order) % playerCount)).getCard(0));       }
         };
 
         RoundedButton botSecondCard = new RoundedButton(1, (width / 2f) + 5, height - 60, 40, 60, 5f, null) {
@@ -128,12 +132,12 @@ public class PokerScreen extends ScreenState {
 
             @Override
             public float getTitleScale() {
-                return 1f;
+                return 2f;
             }
 
             @Override
             public Vector4f getTitleColor() {
-                return Constants.COLOR_WHITE;
+                return getColor(poker.getPlayer(((poker.getCurrentPlayer() + order) % playerCount)).getCard(1));
             }
         };
 
@@ -264,12 +268,12 @@ public class PokerScreen extends ScreenState {
 
                     @Override
                     public float getTitleScale() {
-                        return 1f;
+                        return 2f;
                     }
 
                     @Override
                     public Vector4f getTitleColor() {
-                        return Constants.COLOR_WHITE;
+                        return getColor(poker.getTable().getCard(finalI));
                     }
 
                     @Override

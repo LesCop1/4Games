@@ -15,6 +15,7 @@ public class Constants {
     public static final Vector4f COLOR_GREY = new Vector4f(0.5f, 0.5f, 0.5f, 1f);
     public static final Vector4f COLOR_LIGHT_GREY = new Vector4f(0.8f, 0.8f, 0.8f, 1f);
     public static final Vector4f COLOR_GREEN = new Vector4f(0f, 1f, 0f, 1f);
+    public static final Vector4f COLOR_RED = new Vector4f(1f,0f,0f,1f);
 
     /* SUDOKU */
     public static final ResourceHandle<Texture> SUDOKU_BACKGROUND = new ResourceHandle<>("textures/sudoku/sudokuBackground.png") {
