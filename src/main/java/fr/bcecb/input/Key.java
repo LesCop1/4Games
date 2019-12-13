@@ -1,5 +1,7 @@
 package fr.bcecb.input;
 
+import org.lwjgl.glfw.GLFW;
+
 import java.util.Arrays;
 
 import static org.lwjgl.glfw.GLFW.*;
