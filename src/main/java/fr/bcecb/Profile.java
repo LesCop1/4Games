@@ -27,7 +27,7 @@ public class Profile {
             this.achievementsSucceed.put(gameType, new ArrayList<>());
         }
 
-        // TODO Add achievement and bought stuff.
+        // TODO Add bought stuff.
     }
 
     public void loadProfile() {
