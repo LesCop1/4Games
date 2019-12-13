@@ -29,6 +29,8 @@ public class Resources {
     };
     public static final ResourceHandle<Texture> CURRENT_PROFILE_TEXTURE = new ResourceHandle<>("textures/default/defaultProfile.jpg") {
     };
+    public static final ResourceHandle<Texture> DEFAULT_BUTTON_CONFIRMED = new ResourceHandle<>("textures/default/defaultButtonConfirmed.png") {
+    };
 
     public static final ResourceHandle<Font> DEFAULT_FONT = new ResourceHandle<>("font.ttf") {
     };
