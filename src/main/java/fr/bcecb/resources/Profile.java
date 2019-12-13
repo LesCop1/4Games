@@ -62,8 +62,11 @@ public class Profile implements IResource {
     }
 
     public long getRecord(Constants.GameType gameType) {
-        System.out.println("this.records.getOrDefault(gameType, Long.MAX_VALUE) = " + this.records.getOrDefault(gameType, Long.MAX_VALUE));
         return this.records.getOrDefault(gameType, Long.MAX_VALUE);
+    }
+
+    public long getRecordDisplay(Constants.GameType gameType) {
+        return this.records.getOrDefault(gameType, 0L);
     }
 
     public Map<Constants.GameType, List<Integer>> getAchievementsSucceed() {
@@ -87,8 +90,7 @@ public class Profile implements IResource {
     }
 
     public void setRecord(Constants.GameType gameType, long value) {
-        System.out.println("value = " + value);
-        this.records.replace(gameType, value);
+        this.records.put(gameType, value);
     }
 
     @Override

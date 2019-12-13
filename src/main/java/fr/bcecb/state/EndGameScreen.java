@@ -62,7 +62,7 @@ public class EndGameScreen extends PopUpScreenState {
     }
 
     private String findBestTime(Constants.GameType gameType) {
-        long bestTime = Game.instance().getProfile().getRecord(gameType);
+        long bestTime = Game.instance().getProfile().getRecordDisplay(gameType);
         return longToTime(bestTime);
     }
 

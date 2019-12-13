@@ -10,6 +10,7 @@ import fr.bcecb.util.Constants;
 import fr.bcecb.util.Resources;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 public class ProfileScreen extends ScreenState {
     public ProfileScreen(StateManager stateManager) {
@@ -67,6 +68,12 @@ public class ProfileScreen extends ScreenState {
         addGuiElement(score);
     }
 
+    private String longToTime(long millis) {
+        return String.format("%02d:%02d:%02d", TimeUnit.MILLISECONDS.toHours(millis),
+                TimeUnit.MILLISECONDS.toMinutes(millis) % TimeUnit.HOURS.toMinutes(1),
+                TimeUnit.MILLISECONDS.toSeconds(millis) % TimeUnit.MINUTES.toSeconds(1));
+    }
+
     private void drawGameStats(int GameID, float centerX, float centerY, float radius) {
         int id = GameID * 10;
         Constants.GameType gameType;
@@ -88,8 +95,9 @@ public class ProfileScreen extends ScreenState {
         }
         Profile profile = Game.instance().getProfile();
         Text gameName = new Text(id++, centerX, (centerY - 4 * radius / 8f), true, gameType.getName(), 0.9f);
-        long time = profile.getRecord(gameType);
-        Text gameBestScore = new Text(id++, centerX, centerY, true, "Best time : " + (time != Long.MAX_VALUE ? time : 0), 0.5f);
+        long time = profile.getRecordDisplay(gameType);
+        System.out.println("time = " + time);
+        Text gameBestScore = new Text(id++, centerX, centerY, true, "Best time : " + longToTime(time), 0.5f);
         addGuiElement(gameName, gameBestScore);
 
     }
