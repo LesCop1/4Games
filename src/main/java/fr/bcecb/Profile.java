@@ -6,7 +6,9 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
 import java.io.FileWriter;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class Profile {
@@ -14,6 +16,7 @@ public class Profile {
     private long moneyAmount;
     private Constants.ProfilePicture profilePictureValue;
     private Map<Constants.GameType, Long> records = new HashMap<>();
+    private Map<Constants.GameType, List<Integer>> achievementsSucceed = new HashMap<>();
 
     public Profile() {
         this.name = "Default";
@@ -21,7 +24,10 @@ public class Profile {
         this.profilePictureValue = Constants.ProfilePicture.DEFAULT;
         for (Constants.GameType gameType : Constants.GameType.values()) {
             this.records.put(gameType, 0L);
+            this.achievementsSucceed.put(gameType, new ArrayList<>());
         }
+
+        // TODO Add achievement and bought stuff.
     }
 
     public void loadProfile() {
@@ -88,6 +94,18 @@ public class Profile {
 
     public long getRecord(Constants.GameType gameType) {
         return this.records.get(gameType);
+    }
+
+    public Map<Constants.GameType, List<Integer>> getAchievementsSucceed() {
+        return achievementsSucceed;
+    }
+
+    public List<Integer> getAchievementsByGameType(Constants.GameType gameType) {
+        return this.achievementsSucceed.get(gameType);
+    }
+
+    public void addAchievement(Constants.GameType gameType, int id) {
+        this.achievementsSucceed.get(gameType).add(id);
     }
 
     public void setRecord(Constants.GameType gameType, long value) {

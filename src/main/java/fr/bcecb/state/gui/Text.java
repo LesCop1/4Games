@@ -9,6 +9,8 @@ public class Text extends GuiElement {
 
     private final boolean centered;
 
+    private Vector4f color;
+
     public Text(int id, float x, float y, boolean centered, String text) {
         this(id, x, y, centered, text, 1.0f);
     }
@@ -18,6 +20,7 @@ public class Text extends GuiElement {
         this.centered = centered;
         this.text = text;
         this.scale = scale;
+        this.color = Constants.COLOR_WHITE;
     }
 
     public String getText() {
@@ -29,7 +32,11 @@ public class Text extends GuiElement {
     }
 
     public Vector4f getColor() {
-        return Constants.COLOR_WHITE;
+        return this.color;
+    }
+
+    public void setColor(Vector4f color) {
+        this.color = color;
     }
 
     public boolean isCentered() {

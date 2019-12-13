@@ -15,17 +15,14 @@ import java.util.stream.Collectors;
 
 public class Resources {
     /* TEXTURES */
-    public static final ResourceHandle<Texture> DEFAULT_TEXTURE = new ResourceHandle<>("textures/default/default.png") {
-    };
-    public static final ResourceHandle<Texture> DEFAULT_LOGO_TEXTURE = new ResourceHandle<>("textures/default/defaultLogo.png") {
-    };
-    public static final ResourceHandle<Texture> DEFAULT_BACKGROUND_TEXTURE = new ResourceHandle<>("textures/default/defaultBackground.png") {
-    };
+    public static final ResourceHandle<Texture> DEFAULT_TEXTURE = new ResourceHandle<>("textures/default/default.png") {};
+    public static final ResourceHandle<Texture> DEFAULT_LOGO_TEXTURE = new ResourceHandle<>("textures/default/defaultLogo.png") {};
+    public static final ResourceHandle<Texture> DEFAULT_BACKGROUND_TEXTURE = new ResourceHandle<>("textures/default/defaultBackground.png") {};
     public static final ResourceHandle<Texture> DEFAULT_BUTTON_TEXTURE = new ResourceHandle<>("textures/default/defaultButton.png") {};
     public static final ResourceHandle<Texture> DEFAULT_BUTTON_HOVER_TEXTURE = new ResourceHandle<>("textures/default/defaultButtonHover.png") {};
     public static final ResourceHandle<Texture> DEFAULT_BUTTON_DISABLED_TEXTURE = new ResourceHandle<>("textures/default/defaultButtonDisabled.png") {};
-    public static final ResourceHandle<Texture> CURRENT_PROFILE_TEXTURE = new ResourceHandle<>("textures/default/defaultProfile.jpg") {
-    };
+    public static final ResourceHandle<Texture> DEFAULT_BUTTON_CONFIRMED = new ResourceHandle<Texture>("textures/default/defaultButtonConfirmed.png") {};
+    public static final ResourceHandle<Texture> CURRENT_PROFILE_TEXTURE = new ResourceHandle<>("textures/default/defaultProfile.jpg") {};
 
     public static final ResourceHandle<Font> DEFAULT_FONT = new ResourceHandle<>("font.ttf") {};
     /* SHADERS */
