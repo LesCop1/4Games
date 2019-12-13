@@ -25,6 +25,8 @@ public class EndGameScreen extends PopUpScreenState {
             Game.instance().getProfile().setRecord(gameType, this.time);
         }
         Game.instance().getProfile().setMoneyAmount((long) (Game.instance().getProfile().getMoneyAmount() + this.moneyEarned));
+
+        Constants.BANKROLL += this.moneyEarned;
     }
 
     @Override

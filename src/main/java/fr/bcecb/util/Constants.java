@@ -25,6 +25,7 @@ public class Constants {
     public static final ResourceHandle<Texture> SUDOKU_BACKGROUND = new ResourceHandle<>("textures/sudoku/sudokuBackground.png") {};
     public static final ResourceHandle<Texture> SUDOKU_FIXED_CASE = new ResourceHandle<>("textures/sudoku/caseSudokuBase.png") {};
     public static final ResourceHandle<Texture> SUDOKU_FREE_CASE = new ResourceHandle<>("textures/sudoku/caseSudoku.png") {};
+    public static final ResourceHandle<Texture> SUDOKU_CANDIDATES_VALUE_CASE = new ResourceHandle<>("textures/sudoku/candidateValuesTextures.png") {};
 
     /* BINGO */
     public static final ResourceHandle<Texture> BINGO_BACKGROUND = new ResourceHandle<>("textures/bingo/bingoBG.png") {};
@@ -51,14 +52,14 @@ public class Constants {
     public static final ResourceHandle<Texture> BS_J2 = new ResourceHandle<>("textures/BatailleNavale/j2.png"){};
 
     /* POKER */
-    public static final ResourceHandle<Texture> POKER_BACKGROUND = new ResourceHandle<Texture>("textures/poker/poker_background.jpg") {};
-    public static final ResourceHandle<Texture> POKER_BACK_CARD = new ResourceHandle<Texture>("textures/poker/back_card.png") {};
-    public static final ResourceHandle<Texture> POKER_HBACK_CARD = new ResourceHandle<Texture>("textures/poker/horizontal_back_card.png") {};
-    public static final ResourceHandle<Texture> POKER_BUTTON = new ResourceHandle<Texture>("textures/poker/btn_texture.jpg") {};
-    public static final ResourceHandle<Texture> POKER_CLUB = new ResourceHandle<Texture>("textures/poker/club.png") {};
-    public static final ResourceHandle<Texture> POKER_DIAMOND = new ResourceHandle<Texture>("textures/poker/diamond.png") {};
-    public static final ResourceHandle<Texture> POKER_HEART = new ResourceHandle<Texture>("textures/poker/heart.png") {};
-    public static final ResourceHandle<Texture> POKER_SPADE = new ResourceHandle<Texture>("textures/poker/spade.png") {};
+    public static final ResourceHandle<Texture> POKER_BACKGROUND = new ResourceHandle<>("textures/poker/poker_background.jpg") {};
+    public static final ResourceHandle<Texture> POKER_BACK_CARD = new ResourceHandle<>("textures/poker/back_card.png") {};
+    public static final ResourceHandle<Texture> POKER_HBACK_CARD = new ResourceHandle<>("textures/poker/horizontal_back_card.png") {};
+    public static final ResourceHandle<Texture> POKER_BUTTON = new ResourceHandle<>("textures/poker/btn_texture.jpg") {};
+    public static final ResourceHandle<Texture> POKER_CLUB = new ResourceHandle<>("textures/poker/club.png") {};
+    public static final ResourceHandle<Texture> POKER_DIAMOND = new ResourceHandle<>("textures/poker/diamond.png") {};
+    public static final ResourceHandle<Texture> POKER_HEART = new ResourceHandle<>("textures/poker/heart.png") {};
+    public static final ResourceHandle<Texture> POKER_SPADE = new ResourceHandle<>("textures/poker/spade.png") {};
 
     /* GAME BASED VARS */
     public static final Collector<?, ?, ?> SHUFFLER = Collectors.collectingAndThen(Collectors.toCollection(ArrayList::new), list -> {
@@ -136,6 +137,15 @@ public class Constants {
             return nbState;
         }
     }
+
+    public static int BANKROLL = 0;
+
+    public static Map<GameType, Long> BEST_TIMES = new EnumMap<>(GameType.class) {{
+        put(GameType.SUDOKU, 0L);
+        put(GameType.BINGO, 0L);
+        put(GameType.BATTLESHIP, 0L);
+        put(GameType.POKER, 0L);
+    }};
 
     public enum ProfilePicture {
         DEFAULT
