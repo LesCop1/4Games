@@ -5,14 +5,14 @@ import fr.bcecb.event.EventExceptionHandler;
 import fr.bcecb.input.InputManager;
 import fr.bcecb.render.RenderManager;
 import fr.bcecb.render.Window;
+import fr.bcecb.resources.Profile;
+import fr.bcecb.resources.ResourceHandle;
 import fr.bcecb.resources.ResourceManager;
 import fr.bcecb.sound.SoundManager;
 import fr.bcecb.state.StateManager;
 import fr.bcecb.util.Constants;
 import fr.bcecb.util.Log;
 import fr.bcecb.util.RenderHelper;
-
-import java.io.File;
 
 import static org.lwjgl.glfw.GLFW.glfwGetTime;
 import static org.lwjgl.glfw.GLFW.glfwInit;
@@ -52,17 +52,10 @@ public final class Game implements AutoCloseable {
 
         this.inputManager = new InputManager(this, this.window);
 
-        this.profile = new Profile();
+        this.profile = resourceManager.getResource(new ResourceHandle<>(Constants.PROFILE_FILE_PATH) {});
     }
 
     private void start() {
-        File file = new File(Constants.PROFILE_FILE_PATH);
-        if (!file.exists()) {
-            this.profile.save();
-        } else {
-            this.profile.loadProfile();
-        }
-
         Log.SYSTEM.info("Starting the game");
         this.running = true;
 

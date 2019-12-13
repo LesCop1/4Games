@@ -1,9 +1,6 @@
 package fr.bcecb.util;
 
-import fr.bcecb.resources.Font;
-import fr.bcecb.resources.ResourceHandle;
-import fr.bcecb.resources.Shader;
-import fr.bcecb.resources.Texture;
+import fr.bcecb.resources.*;
 import org.lwjgl.BufferUtils;
 
 import java.io.BufferedReader;
@@ -42,6 +39,9 @@ public class Resources {
     public static final ResourceHandle<Shader> ROUNDED_SHADER = new ResourceHandle<>("shaders/rounded.json") {
     };
     public static final ResourceHandle<Shader> FONT_SHADER = new ResourceHandle<>("shaders/font.json") {
+    };
+
+    public static final ResourceHandle<Profile> DEFAULT_PROFILE_FILE = new ResourceHandle<>("defaultprofile.json") {
     };
 
     public static ByteBuffer readByteBuffer(InputStream inputStream) throws IOException {

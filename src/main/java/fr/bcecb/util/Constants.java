@@ -1,7 +1,6 @@
 package fr.bcecb.util;
 
 import fr.bcecb.Achievement;
-import fr.bcecb.ProfilePictureItem;
 import fr.bcecb.resources.ResourceHandle;
 import fr.bcecb.resources.Texture;
 import org.joml.Vector4f;
@@ -87,15 +86,15 @@ public class Constants {
     }};
 
     /* SHOP */
-    private static final ProfilePictureItem ppi1 = new ProfilePictureItem(1, new ResourceHandle<>("textures/default/default.png") {}, "Le gamer casque", "no", 25);
-    private static final ProfilePictureItem ppi2 = new ProfilePictureItem(2, new ResourceHandle<>("textures/default/default.png") {}, "ta", "ee", 50);
-    private static final ProfilePictureItem ppi3 = new ProfilePictureItem(3, new ResourceHandle<>("textures/default/default.png") {}, "mer", "eea", 75);
-    private static final ProfilePictureItem ppi4 = new ProfilePictureItem(4, new ResourceHandle<>("textures/default/default.png") {}, "la", "eeee", 100);
-    private static final ProfilePictureItem ppi5 = new ProfilePictureItem(5, new ResourceHandle<>("textures/default/default.png") {}, "pu", "eeeee", 125);
-    private static final ProfilePictureItem ppi6 = new ProfilePictureItem(6, new ResourceHandle<>("textures/default/default.png") {}, "a", "eeeeeee", 150);
-    private static final ProfilePictureItem ppi7 = new ProfilePictureItem(7, new ResourceHandle<>("textures/default/default.png") {}, "led", "ea", 175);
+    private static final ItemDescriptor ppi1 = new ItemDescriptor(1, new ResourceHandle<>("textures/default/default.png") {}, "Le gamer casque", "no", 25);
+    private static final ItemDescriptor ppi2 = new ItemDescriptor(2, new ResourceHandle<>("textures/default/default.png") {}, "ta", "ee", 50);
+    private static final ItemDescriptor ppi3 = new ItemDescriptor(3, new ResourceHandle<>("textures/default/default.png") {}, "mer", "eea", 75);
+    private static final ItemDescriptor ppi4 = new ItemDescriptor(4, new ResourceHandle<>("textures/default/default.png") {}, "la", "eeee", 100);
+    private static final ItemDescriptor ppi5 = new ItemDescriptor(5, new ResourceHandle<>("textures/default/default.png") {}, "pu", "eeeee", 125);
+    private static final ItemDescriptor ppi6 = new ItemDescriptor(6, new ResourceHandle<>("textures/default/default.png") {}, "a", "eeeeeee", 150);
+    private static final ItemDescriptor ppi7 = new ItemDescriptor(7, new ResourceHandle<>("textures/default/default.png") {}, "led", "ea", 175);
 
-    public static final List<ProfilePictureItem> shopItems = new ArrayList<>() {{
+    public static final List<ItemDescriptor> shopItems = new ArrayList<>() {{
         add(ppi1);
         add(ppi2);
         add(ppi3);

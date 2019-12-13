@@ -19,6 +19,8 @@ public class ResourceManager implements AutoCloseable {
         DEFAULT_RESOURCES.put(Shader.class, Resources.DEFAULT_SHADER);
         DEFAULT_RESOURCES.put(Texture.class, Resources.DEFAULT_TEXTURE);
         DEFAULT_RESOURCES.put(Font.class, Resources.DEFAULT_FONT);
+
+        DEFAULT_RESOURCES.put(Profile.class, Resources.DEFAULT_PROFILE_FILE);
     }
 
     public <R extends IResource> R getResourceOrDefault(ResourceHandle<R> handle, ResourceHandle<R> defaultHandle) {

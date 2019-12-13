@@ -1,16 +1,16 @@
-package fr.bcecb;
+package fr.bcecb.util;
 
 import fr.bcecb.resources.ResourceHandle;
 import fr.bcecb.resources.Texture;
 
-public class ProfilePictureItem {
+public class ItemDescriptor {
     private int id;
     private ResourceHandle<Texture> texture;
     private String name;
     private String desc;
     private int price;
 
-    public ProfilePictureItem(int id, ResourceHandle<Texture> texture, String name, String desc, int price) {
+    public ItemDescriptor(int id, ResourceHandle<Texture> texture, String name, String desc, int price) {
         this.id = id;
         this.texture = texture;
         this.name = name;

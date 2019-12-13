@@ -1,19 +1,19 @@
 package fr.bcecb.state;
 
 import fr.bcecb.Game;
-import fr.bcecb.Profile;
-import fr.bcecb.ProfilePictureItem;
 import fr.bcecb.input.MouseButton;
+import fr.bcecb.resources.Profile;
 import fr.bcecb.resources.ResourceHandle;
 import fr.bcecb.resources.Texture;
 import fr.bcecb.state.gui.*;
 import fr.bcecb.util.Constants;
+import fr.bcecb.util.ItemDescriptor;
 import fr.bcecb.util.Resources;
 
 import java.util.List;
 
 public class ShopScreen extends ScreenState {
-    private List<ProfilePictureItem> items;
+    private List<ItemDescriptor> items;
 
     private int currentPage;
     private int selectedItem;
@@ -225,12 +225,11 @@ public class ShopScreen extends ScreenState {
             this.currentPage++;
         } else if (id == 10) {
             Profile profile = Game.instance().getProfile();
-            ProfilePictureItem item = items.get(selectedItem);
+            ItemDescriptor item = items.get(selectedItem);
             if (!profile.getItemsOwns().contains(item.getId())) {
                 if (profile.getMoneyAmount() >= item.getPrice()) {
                     profile.remMoneyAmount(item.getPrice());
                     profile.addItem(item.getId());
-                    profile.save();
                 }
             }
         } else if (id >= 100 && id < 200) {
