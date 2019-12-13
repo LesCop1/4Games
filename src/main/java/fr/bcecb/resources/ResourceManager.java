@@ -5,9 +5,7 @@ import com.google.common.collect.Maps;
 import fr.bcecb.util.Log;
 import fr.bcecb.util.Resources;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Map;
 
@@ -74,11 +72,13 @@ public class ResourceManager implements AutoCloseable {
     }
 
     private boolean resourceExists(ResourceHandle resource) {
-        return ResourceManager.class.getClassLoader().getResource(resource.getHandle()) != null;
+        File file = new File(resource.getHandle());
+        return file.exists() || ResourceManager.class.getClassLoader().getResource(resource.getHandle()) != null;
     }
 
-    private InputStream getInputStream(ResourceHandle resource) {
-        return ResourceManager.class.getClassLoader().getResourceAsStream(resource.getHandle());
+    private InputStream getInputStream(ResourceHandle resource) throws FileNotFoundException {
+        File file = new File(resource.getHandle());
+        return file.exists() ? new FileInputStream(file) : ResourceManager.class.getClassLoader().getResourceAsStream(resource.getHandle());
     }
 
     @Override

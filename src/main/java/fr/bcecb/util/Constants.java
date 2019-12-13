@@ -105,7 +105,7 @@ public class Constants {
     }};
 
     /* PROFILE */
-    public static final String PROFILE_FILE_PATH = "./profile.json";
+    public static final String PROFILE_FILE_PATH = System.getProperty("user.dir") + "\\profile.json";
 
     private Constants() {
     }
