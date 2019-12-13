@@ -4,7 +4,10 @@ import fr.bcecb.input.MouseButton;
 import fr.bcecb.resources.ResourceHandle;
 import fr.bcecb.resources.Sound;
 import fr.bcecb.resources.Texture;
-import fr.bcecb.state.gui.*;
+import fr.bcecb.state.gui.Button;
+import fr.bcecb.state.gui.CircleButton;
+import fr.bcecb.state.gui.GuiElement;
+import fr.bcecb.state.gui.ScreenState;
 import fr.bcecb.util.Resources;
 
 public class MainMenuScreen extends ScreenState {
@@ -29,7 +32,7 @@ public class MainMenuScreen extends ScreenState {
 
     @Override
     public ResourceHandle<Sound> getBackgroundMusic() {
-        return new ResourceHandle<>("sounds/test1.ogg") {};
+        return new ResourceHandle<>("sounds/title.ogg") {};
     }
 
     @Override

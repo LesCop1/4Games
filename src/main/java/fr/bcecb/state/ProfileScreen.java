@@ -88,7 +88,8 @@ public class ProfileScreen extends ScreenState {
         }
         Profile profile = Game.instance().getProfile();
         Text gameName = new Text(id++, centerX, (centerY - 4 * radius / 8f), true, gameType.getName(), 0.9f);
-        Text gameBestScore = new Text(id++, centerX, centerY, true, "Best time :" + profile.getRecord(gameType), 0.5f);
+        long time = profile.getRecord(gameType);
+        Text gameBestScore = new Text(id++, centerX, centerY, true, "Best time : " + (time != Long.MAX_VALUE ? time : 0), 0.5f);
         addGuiElement(gameName, gameBestScore);
 
     }
