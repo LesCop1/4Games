@@ -440,42 +440,42 @@ public class BattleshipScreen extends ScreenState {
         }, (width / 24f) + 20f, (height / 2f), (width / 24f), (height / 6f), true) {
             @Override
             public ResourceHandle<Texture> getImage() {
-                return battleship.hit(currentPlayer) > 3 ? new ResourceHandle<>("textures/BatailleNavale/minecraftBoatTouch.png") {
+                return battleship.hit(nextPlayer) > 3 ? new ResourceHandle<>("textures/BatailleNavale/minecraftBoatTouch.png") {
                 } : new ResourceHandle<>("textures/BatailleNavale/minecraftBoat.png") {
                 };
             }
 
             @Override
             public boolean isVisible() {
-                return battleship.countBoat(currentPlayer) < 2 ? false : true;
+                return battleship.countBoat(nextPlayer) < 2 ? false : true;
             }
         };
         Image b8 = new Image(137, new ResourceHandle<>("textures/BatailleNavale/minecraftBoat.png") {
         }, (width / 24f) + 40f, (height / 2f), (width / 24f), (height / 6f), true) {
             @Override
             public ResourceHandle<Texture> getImage() {
-                return battleship.hit(currentPlayer) > 2 ? new ResourceHandle<>("textures/BatailleNavale/minecraftBoatTouch.png") {
+                return battleship.hit(nextPlayer) > 2 ? new ResourceHandle<>("textures/BatailleNavale/minecraftBoatTouch.png") {
                 } : new ResourceHandle<>("textures/BatailleNavale/minecraftBoat.png") {
                 };
             }
 
             @Override
             public boolean isVisible() {
-                return battleship.countBoat(currentPlayer) < 3 ? false : true;
+                return battleship.countBoat(nextPlayer) < 3 ? false : true;
             }
         };
         Image b9 = new Image(138, new ResourceHandle<>("textures/BatailleNavale/minecraftBoat.png") {
         }, (width / 24f) + 60f, (height / 2f), (width / 24f), (height / 6f), true) {
             @Override
             public ResourceHandle<Texture> getImage() {
-                return battleship.hit(currentPlayer) > 1 ? new ResourceHandle<>("textures/BatailleNavale/minecraftBoatTouch.png") {
+                return battleship.hit(nextPlayer) > 1 ? new ResourceHandle<>("textures/BatailleNavale/minecraftBoatTouch.png") {
                 } : new ResourceHandle<>("textures/BatailleNavale/minecraftBoat.png") {
                 };
             }
 
             @Override
             public boolean isVisible() {
-                return battleship.countBoat(currentPlayer) < 4 ? false : true;
+                return battleship.countBoat(nextPlayer) < 4 ? false : true;
             }
         };
         Image b10 = new Image(139, new ResourceHandle<>("textures/BatailleNavale/minecraftBoat.png") {
