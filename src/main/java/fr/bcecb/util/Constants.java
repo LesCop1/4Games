@@ -70,9 +70,9 @@ public class Constants {
     public static final String MONEY_NAME_SHORT = "FC";
 
     /* ACHIEVEMENTS */
-    private static final Achievement a1 = new Achievement(1, GameType.SUDOKU, "e", "get gud", "potatoes");
-    private static final Achievement a2 = new Achievement(1, GameType.SUDOKU, "ea", "get gud", "potatoes");
-    private static final Achievement a3 = new Achievement(1, GameType.SUDOKU, "ez", "get gud", "potatoes");
+    private static final Achievement a1 = new Achievement(1, GameType.SUDOKU, "Get started", "Finish a game of sudoku", "Nothing");
+    private static final Achievement a2 = new Achievement(1, GameType.SUDOKU, "I am speed", "Complete a sudoku in less than 2 minutes", "100 FC");
+    private static final Achievement a3 = new Achievement(1, GameType.SUDOKU, "Secret achievement", "It's a mystery !", "Something, maybe");
 
     public static final Map<GameType, List<Achievement>> achievements = new HashMap<>() {{
         put(GameType.SUDOKU, new ArrayList<>() {{
@@ -87,13 +87,13 @@ public class Constants {
     }};
 
     /* SHOP */
-    private static final ItemDescriptor ppi1 = new ItemDescriptor(1, new ResourceHandle<>("textures/default/default.png") {}, "Le gamer casque", "no", 25);
-    private static final ItemDescriptor ppi2 = new ItemDescriptor(2, new ResourceHandle<>("textures/default/default.png") {}, "ta", "ee", 50);
-    private static final ItemDescriptor ppi3 = new ItemDescriptor(3, new ResourceHandle<>("textures/default/default.png") {}, "mer", "eea", 75);
-    private static final ItemDescriptor ppi4 = new ItemDescriptor(4, new ResourceHandle<>("textures/default/default.png") {}, "la", "eeee", 100);
-    private static final ItemDescriptor ppi5 = new ItemDescriptor(5, new ResourceHandle<>("textures/default/default.png") {}, "pu", "eeeee", 125);
-    private static final ItemDescriptor ppi6 = new ItemDescriptor(6, new ResourceHandle<>("textures/default/default.png") {}, "a", "eeeeeee", 150);
-    private static final ItemDescriptor ppi7 = new ItemDescriptor(7, new ResourceHandle<>("textures/default/default.png") {}, "led", "ea", 175);
+    private static final ItemDescriptor ppi1 = new ItemDescriptor(1, new ResourceHandle<>("textures/default/default.png") {}, "Deck de cartes", "Des jolies cartes", 25);
+    private static final ItemDescriptor ppi2 = new ItemDescriptor(2, new ResourceHandle<>("textures/default/default.png") {}, "Fonds d'écran", "Fonds d'écran alternatifs", 50);
+    private static final ItemDescriptor ppi3 = new ItemDescriptor(3, new ResourceHandle<>("textures/default/default.png") {}, "Set de musiques", "Des musiques entraînantes", 75);
+    private static final ItemDescriptor ppi4 = new ItemDescriptor(4, new ResourceHandle<>("textures/default/default.png") {}, "Deck de cartes 2", "Des cartes encore plus jolies", 100);
+    private static final ItemDescriptor ppi5 = new ItemDescriptor(5, new ResourceHandle<>("textures/default/default.png") {}, "Fonds d'écran 2", "Fonds d'écran alternatifs", 125);
+    private static final ItemDescriptor ppi6 = new ItemDescriptor(6, new ResourceHandle<>("textures/default/default.png") {}, "Police d'écriture", "Une police toute mignonne", 150);
+    private static final ItemDescriptor ppi7 = new ItemDescriptor(7, new ResourceHandle<>("textures/default/default.png") {}, "Skin mystère", "Prochainement !", 99999);
 
     public static final List<ItemDescriptor> shopItems = new ArrayList<>() {{
         add(ppi1);

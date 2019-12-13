@@ -62,7 +62,7 @@ public class Profile implements IResource {
     }
 
     public long getRecord(Constants.GameType gameType) {
-        return this.records.get(gameType);
+        return this.records.computeIfAbsent(gameType, g -> 0L);
     }
 
     public Map<Constants.GameType, List<Integer>> getAchievementsSucceed() {
@@ -70,11 +70,11 @@ public class Profile implements IResource {
     }
 
     public List<Integer> getAchievementsByGameType(Constants.GameType gameType) {
-        return this.achievementsSucceed.get(gameType);
+        return this.achievementsSucceed.computeIfAbsent(gameType, g -> new ArrayList<>());
     }
 
     public void addAchievement(Constants.GameType gameType, int id) {
-        this.achievementsSucceed.get(gameType).add(id);
+        this.achievementsSucceed.computeIfAbsent(gameType, g -> new ArrayList<>()).add(id);
     }
 
     public List<Integer> getItemsOwns() {
@@ -86,7 +86,7 @@ public class Profile implements IResource {
     }
 
     public void setRecord(Constants.GameType gameType, long value) {
-        this.records.replace(gameType, value);
+        this.records.put(gameType, value);
     }
 
     @Override

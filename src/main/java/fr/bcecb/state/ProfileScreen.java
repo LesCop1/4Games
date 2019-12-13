@@ -1,11 +1,15 @@
 package fr.bcecb.state;
 
+import fr.bcecb.Game;
 import fr.bcecb.input.MouseButton;
+import fr.bcecb.resources.Profile;
 import fr.bcecb.resources.ResourceHandle;
 import fr.bcecb.resources.Texture;
 import fr.bcecb.state.gui.*;
 import fr.bcecb.util.Constants;
 import fr.bcecb.util.Resources;
+
+import java.util.List;
 
 public class ProfileScreen extends ScreenState {
     public ProfileScreen(StateManager stateManager) {
@@ -25,15 +29,17 @@ public class ProfileScreen extends ScreenState {
                 return null;
             }
         };
-        Text name = new Text(51,width / 2f,(height / 2.0f) - 2 * ((height / 7f)),true,"Thomas Bauduin");
-        Text nbSkin = new Text(52,width / 2f ,(height / 2.0f) + 2 * ((height / 14f)),true,"Nb skin : 12");
-        Text bankRoll = new Text(53,width / 2f,(height / 2.0f) - 2 * ((height / 13f)),true,"Money : " + Constants.BANKROLL);
-        Text nbSuccess = new Text(54,width / 2f ,(height / 2.0f) + 2 * ((height / 9f)),true,"Nb Succès : 12");
+
+        Profile profile = Game.instance().getProfile();
+        Text name = new Text(51, width / 2f, (height / 2.0f) - 2 * ((height / 7f)), true, profile.getName());
+        Text nbSkin = new Text(52, width / 2f, (height / 2.0f) + 2 * ((height / 14f)), true, "Items : " + profile.getItemsOwns().size());
+        Text bankRoll = new Text(53, width / 2f, (height / 2.0f) - 2 * ((height / 13f)), true, "Money : " + profile.getMoneyAmount());
+        Text nbSuccess = new Text(54, width / 2f, (height / 2.0f) + 2 * ((height / 9f)), true, "Achievements : " + profile.getAchievementsSucceed().values().stream().mapToInt(List::size).sum());
 
         Button backButton = new Button(BACK_BUTTON_ID, (width / 20f), (height - (height / 20f) - (height / 10f)), (height / 10f), (height / 10f), false, "Back");
         int jeu = 0;
         for (int i = 0; i < 2; i++) {
-            for (int j = 0;j< 2;j++) {
+            for (int j = 0; j < 2; j++) {
                 float centerX, centerY, radius;
                 radius = profileButton.getRadius() * 1.7f;
                 centerX = i * (width / 2f) + (width / 4f);
@@ -80,10 +86,10 @@ public class ProfileScreen extends ScreenState {
             default:
                 return;
         }
+        Profile profile = Game.instance().getProfile();
         Text gameName = new Text(id++, centerX, (centerY - 4 * radius / 8f), true, gameType.getName(), 0.9f);
-        Text gameBestScore = new Text(id++, centerX, centerY, true, "Best Score :" + gameType.getBestScore(), 0.5f);
-        Text gameBestTime = new Text(id, centerX, (centerY + 2 * radius / 6f), true, "Best Time :" + gameType.getBestTime(), 0.5f);
-        addGuiElement(gameName, gameBestScore, gameBestTime);
+        Text gameBestScore = new Text(id++, centerX, centerY, true, "Best time :" + profile.getRecord(gameType), 0.5f);
+        addGuiElement(gameName, gameBestScore);
 
     }
 }

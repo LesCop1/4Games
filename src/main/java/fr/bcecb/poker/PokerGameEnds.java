@@ -16,15 +16,13 @@ public class PokerGameEnds extends PopUpScreenState {
     private int playerWinner;
 
     public PokerGameEnds(StateManager stateManager, Poker poker, int playerWinner) {
-        super(stateManager, "game_poker_turn");
+        super(stateManager, "game_poker_turn", 180, 130, Constants.COLOR_LIGHT_GREY);
         this.poker = poker;
         this.playerWinner = playerWinner;
 
         if (this.playerWinner != -1) {
             endGame();
         }
-
-        setBackground(180, 130, Constants.COLOR_LIGHT_GREY);
     }
 
     private void endGame() {
