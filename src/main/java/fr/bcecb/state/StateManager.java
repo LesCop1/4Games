@@ -15,7 +15,7 @@ import java.util.Deque;
 import java.util.Iterator;
 
 public class StateManager {
-    private final Game game;
+    protected final Game game;
 
     private int width;
     private int height;
@@ -32,10 +32,6 @@ public class StateManager {
         Game.EVENT_BUS.register(this);
     }
 
-    public Game getGame() {
-        return game;
-    }
-
     public void pushState(State state) {
         Event event = new StateEvent.Enter(state);
         Game.EVENT_BUS.post(event);
@@ -45,12 +41,6 @@ public class StateManager {
                 ScreenState screenState = (ScreenState) state;
                 screenState.clearGuiElements();
                 screenState.initGui(this.width, this.height);
-
-                if (screenState.hasBackgroundMusic()) {
-//                    game.getSoundManager().playSound(screenState.getBackgroundMusic());
-                } else {
-                    game.getSoundManager().stopSound();
-                }
             }
 
             stateStack.push(state);
@@ -70,25 +60,10 @@ public class StateManager {
             Game.EVENT_BUS.post(event);
 
             if (!event.isCancelled()) {
-                State poppedState = stateStack.pop();
-                poppedState.onExit();
+                stateStack.pop().onExit();
 
                 if (stateStack.isEmpty()) {
                     this.game.stop();
-                    return;
-                }
-
-                if (poppedState instanceof ScreenState && stateStack.peek() instanceof ScreenState) {
-                    ScreenState poppedScreenState = (ScreenState) poppedState;
-                    ScreenState screenState = (ScreenState) stateStack.peek();
-
-                    if (!screenState.hasBackgroundMusic() || poppedScreenState.getBackgroundMusic() != screenState.getBackgroundMusic()) {
-                        game.getSoundManager().stopSound();
-                    }
-
-                    if (poppedScreenState.getBackgroundMusic() != null && !screenState.hasBackgroundMusic()) {
-                        game.getSoundManager().playSound(screenState.getBackgroundMusic());
-                    }
                 }
             }
         }
@@ -144,16 +119,6 @@ public class StateManager {
             this.rebuildGui(this.width, this.height);
         } else if (key == Key.BACK) {
             this.popState();
-        }
-
-        for (State state : stateStack) {
-            if (state instanceof ScreenState) {
-                ScreenState screenState = (ScreenState) state;
-
-                if (screenState.keyPressed(key)) return;
-            }
-
-            if (state.shouldPauseBelow()) return;
         }
     }
 
