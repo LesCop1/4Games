@@ -1,12 +1,11 @@
 package fr.bcecb.util;
 
+import fr.bcecb.Achievement;
 import fr.bcecb.resources.ResourceHandle;
 import fr.bcecb.resources.Texture;
 import org.joml.Vector4f;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
@@ -19,11 +18,13 @@ public class Constants {
     public static final Vector4f COLOR_RED = new Vector4f(1f, 0f, 0f, 1f);
     public static final Vector4f COLOR_GREEN = new Vector4f(0f, 1f, 0f, 1f);
 
+
+    public static final Vector4f COLOR_ACHIEVEMENT_2ND_BG = new Vector4f(0.569f, 0.569f, 0.569f, 0.75f);
+
     /* SUDOKU */
     public static final ResourceHandle<Texture> SUDOKU_BACKGROUND = new ResourceHandle<>("textures/sudoku/sudokuBackground.png") {};
     public static final ResourceHandle<Texture> SUDOKU_FIXED_CASE = new ResourceHandle<>("textures/sudoku/caseSudokuBase.png") {};
     public static final ResourceHandle<Texture> SUDOKU_FREE_CASE = new ResourceHandle<>("textures/sudoku/caseSudoku.png") {};
-    public static final ResourceHandle<Texture> SUDOKU_CANDIDATES_VALUE_CASE = new ResourceHandle<>("textures/sudoku/candidateValuesTextures.png") {};
 
     /* BINGO */
     public static final ResourceHandle<Texture> BINGO_BACKGROUND = new ResourceHandle<>("textures/bingo/bingoBG.png") {};
@@ -66,6 +67,23 @@ public class Constants {
     });
     public static final String MONEY_NAME = "FourCoins";
     public static final String MONEY_NAME_SHORT = "FC";
+
+    /* ACHIEVEMENTS */
+    private static final Achievement a1 = new Achievement(1, GameType.SUDOKU, "e", "get gud", "potatoes");
+    private static final Achievement a2 = new Achievement(1, GameType.SUDOKU, "ea", "get gud", "potatoes");
+    private static final Achievement a3 = new Achievement(1, GameType.SUDOKU, "ez", "get gud", "potatoes");
+
+    public static final Map<GameType, List<Achievement>> achievements = new HashMap<>() {{
+        put(GameType.SUDOKU, new ArrayList<>() {{
+            add(a1);
+            add(a2);
+            add(a3);
+            add(a1);
+        }});
+        put(GameType.BINGO, new ArrayList<>());
+        put(GameType.BATTLESHIP, new ArrayList<>());
+        put(GameType.POKER, new ArrayList<>());
+    }};
 
     /* PROFILE */
     public static final String PROFILE_FILE_PATH = "./profile.json";
